@@ -1,4 +1,4 @@
-<img src="https://capsule-render.vercel.app/api?type=rounded&height=99&color=gradient&text=Peter%20Bodnar&textBg=false&fontAlign=50&fontColor=000000&section=header&reversal=true" alt="Peter Bodnar" />
+<img src="https://capsule-render.vercel.app/api?type=rounded&height=100&color=000AF5&text=Peter%20Bodnar&fontColor=FFFFFF&fontSize=60" alt="Peter Bodnar" />
 
 <p align="center" width="100%">
   
