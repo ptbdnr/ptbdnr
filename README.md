@@ -2,7 +2,7 @@
 
 <p align="center" width="100%">
   
-  [![Peters's GitHub stats](https://github-readme-stats.vercel.app/api?username=ptbdnr)](https://github.com/ptbdnr/github-readme-stats) &emsp; [![Peter's Github stats](https://github-readme-stats.vercel.app/api/top-langs/?username=ptbdnr&show_icons=true&hide_border=true&title_color=004386&icon_color=004386&layout=compact)](https://github.com/ptbdnr)
+  [![Peters's GitHub stats](https://github-readme-stats.vercel.app/api?username=ptbdnr&show_icons=true&hide=stars&theme=transparent)](https://github.com/ptbdnr/github-readme-stats) &emsp; [![Peter's Github stats](https://github-readme-stats.vercel.app/api/top-langs/?username=ptbdnr&show_icons=true&theme=transparent&layout=compact)](https://github.com/ptbdnr)
 </p>
 
 <p align="center">
