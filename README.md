@@ -1,16 +1,19 @@
-# Peter Bodnar
+<img src="https://capsule-render.vercel.app/api?type=rounded&height=99&color=gradient&text=Peter%20Bodnar&textBg=false&fontAlign=50&fontColor=000000&section=header&reversal=true" alt="Peter Bodnar" />
 
-[![Peters's GitHub stats](https://github-readme-stats.vercel.app/api?username=ptbdnr)](https://github.com/ptbdnr/github-readme-stats)[![Peter's github stats](https://github-readme-stats.vercel.app/api/top-langs/?username=ptbdnr&show_icons=true&hide_border=true&title_color=004386&icon_color=004386&layout=compact)](https://github.com/ptbdnr)
+<p align="center" width="100%">
+  
+  [![Peters's GitHub stats](https://github-readme-stats.vercel.app/api?username=ptbdnr)](https://github.com/ptbdnr/github-readme-stats) &emsp; [![Peter's Github stats](https://github-readme-stats.vercel.app/api/top-langs/?username=ptbdnr&show_icons=true&hide_border=true&title_color=004386&icon_color=004386&layout=compact)](https://github.com/ptbdnr)
+</p>
 
 <p align="center">
   <a href="https://hits.seeyoufarm.com">
-    <img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fptbdnr&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false"/>
+    <img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fptbdnr&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false" alt="visitor_counter"/>
   </a>
 </p>
 
 ---
 
-### 💬 &nbsp;Brief Me
+### 👋 &nbsp;About
 ```yaml
 name: Peter Bodnar
 location: London, United Kingdom
