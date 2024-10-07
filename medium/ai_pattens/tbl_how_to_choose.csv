@@ -1,0 +1,9 @@
+,Foundation Model only,Compound System,Fine-Tuning
+client input complexity,simple and generic,complex, simple and specific
+response style and language,via prompt engineering,via prompt engineering,inherent
+data update,not supported,dynamic,during training
+reference to source,not supported,supported,not supported
+speed,fastest,slow-slowest,fast-fastest
+inference cost,low-lowest,medium-high,low-medium
+setup cost,low-lowest,medium-high,very high
+engineering required,low,moderate-very high,high-very high
