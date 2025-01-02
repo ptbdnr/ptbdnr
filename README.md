@@ -26,14 +26,14 @@ background:
   ]
 fields_of_interests:
   [
-    "Simulation",
-    "Optimisation",
-    "Data Science",
     "Machine Learning",
     "GenAI",
     "Agentic AI".
     "AI Guardrails".
     "DevOps",
+    "MLOps",
+    "Optimisation",
+    "Simulation",
   ]  
 currently_learning: ["LORA, Rust, Mojo"]
 ```
