@@ -1,30 +1,3 @@
-<!--
-<img src="https://capsule-render.vercel.app/api?type=rounded&height=95&color=000AF5&text=Peter%20Bodnar&fontColor=FFFFFF&fontSize=60" alt="Peter Bodnar" />
-
-<p align="center" width="100%">
-  
-  [![Peters's GitHub stats](https://github-readme-stats.vercel.app/api?username=ptbdnr&show_icons=true&hide=stars&theme=transparent)](https://github.com/ptbdnr/github-readme-stats) &emsp; [![Peter's Github stats](https://github-readme-stats.vercel.app/api/top-langs/?username=ptbdnr&show_icons=true&theme=transparent&layout=compact)](https://github.com/ptbdnr)
-</p>
-
-<p align="center">
-  <a href="https://hits.seeyoufarm.com">
-    <img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fptbdnr&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false" alt="visitor_counter"/>
-  </a>
-</p>
--->
-
-<!--
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ..
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
-
-
 
 ### 👋 &nbsp;About
 ```yaml
@@ -69,9 +42,7 @@ currently_learning: ["Mojo"]
 <span style="display: inline-block; margin-right: 10px;">
   <img src="static/icons/git.svg" alt="git" width="40" height="40"/>
 </span>
-<span style="display: inline-block; margin-right: 10px;">
-  <img src="static/icons/github-dark.svg" alt="github" width="40" height="40"/>
-</span>
+<!-- <img src="static/icons/github-dark.svg" alt="github" width="40" height="40"/> -->
 <!-- ENVIRONMENTS AND PLATFORMS -->
 <span style="display: inline-block; margin-right: 10px;">
   <img src="static/icons/docker.svg" alt="docker" width="40" height="40"/>
@@ -109,5 +80,29 @@ currently_learning: ["Mojo"]
 <span style="display: inline-block; margin-right: 10px;">
   <img src="static/icons/opencv-dark.svg" alt="opencv" width="40" height="40" />
 </span>
-
+<!-- DATABASE -->
+<span style="display: inline-block; margin-right: 10px;">
+  <img src="static/icons/postgresql-dark.svg" alt="postgresql" width="40" height="40" />
+</span>
+<span style="display: inline-block; margin-right: 10px;">
+  <img src="static/icons/mysql-dark.svg" alt="mysql" width="40" height="40" />
+</span>
+<span style="display: inline-block; margin-right: 10px;">
+  <img src="static/icons/mongodb.svg" alt="mongodb" width="40" height="40" />
+</span>
 </p>
+
+---
+
+<!-- METRICS -->
+<div align="center">
+  <img align="center" src="http://github-profile-summary-cards.vercel.app/api/cards/stats?username=ptbdnr&theme=cobalt2" height="180em" />
+  <img align="center" src="http://github-profile-summary-cards.vercel.app/api/cards/stats?username=ptbdnr&theme=cobalt2" height="180em" />
+  <img align="center" src="http://github-profile-summary-cards.vercel.app/api/cards/productive-time?username=ptbdnr&theme=cobalt2&utcOffset=8" height="180em" />
+  <img align="center" src="http://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=ptbdnr&theme=cobalt2" height="180em" />
+  <img align="center" src="http://github-profile-summary-cards.vercel.app/api/cards/most-commit-language?username=ptbdnr&theme=cobalt2" height="180em" />
+  <img align="center" src="http://github-profile-summary-cards.vercel.app/api/cards/repos-per-language?username=ptbdnr&theme=cobalt2" height="180em" />
+  <img align="center" src="http://github-profile-summary-cards.vercel.app/api/cards/productive-time?username=ptbdnr&theme=cobalt2" height="180em" />
+  <img align="center" src="https://github-readme-activity-graph.vercel.app/graph?username=ptbdnr&theme=synthwave-84"/> -->
+  <!-- https://githubunwrapped.com/ptbdnr -->
+</div>
