@@ -1,7 +1,7 @@
 
 ### 👋 &nbsp;About
 ```yaml
-name: Peter Bodnar
+name: Peter
 location: London, United Kingdom
 background:
   [
@@ -20,6 +20,7 @@ fields_of_interests:
     "Simulation",
   ]  
 currently_learning: ["Mojo"]
+fun_fact: "HTTP/1.1 418 I'm a teapot"
 ```
 
 ---
