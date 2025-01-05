@@ -19,7 +19,7 @@ fields_of_interests:
     "Optimisation",
     "Simulation",
   ]  
-currently_learning: ["Mojo"]
+currently_learning: ["Mojo", "Mechanistic interpretability", "Heterogeneous computing"]
 fun_fact: "HTTP/1.1 418 I'm a teapot"
 ```
 
@@ -64,14 +64,23 @@ fun_fact: "HTTP/1.1 418 I'm a teapot"
 <span style="display: inline-block; margin-right: 10px;">
   <a href="https://fastapi.tiangolo.com/" target="_blank"><img src="static/icons/fastapi.svg" alt="fastapi" width="40" height="40" /></a>
 </span>
+<span style="display: inline-block; margin-right: 10px;">
+  <a href="https://flask.palletsprojects.com/" target="_blank"><img src="static/icons/flask-dark.svg" alt="flask" width="40" height="40" /></a>
+</span>
 <!-- QUALITY ASSURANCE AND TESTING -->
 <span style="display: inline-block; margin-right: 10px;">
-  <a href="https://www.soapui.org/" target="_blank"><img src="static/icons/soapui.svg" alt="soapui" width="40" height="40" /></a>
+  <a href="https://www.postman.com/" target="_blank"><img src="static/icons/postman.svg" alt="postman" width="40" height="40" /></a>
 </span>
 <span style="display: inline-block; margin-right: 10px;">
   <a href="https://playwright.dev/" target="_blank"><img src="static/icons/playwright.svg" alt="playwright" width="40" height="40" /></a>
 </span>
 <!-- DEEP LEARNING -->
+<span style="display: inline-block; margin-right: 10px;">
+  <a href="https://scikit-learn.org/" target="_blank"><img src="static/icons/scikitlearn-dark.svg" alt="scikitlearn" width="40" height="40" /></a>
+</span>
+<span style="display: inline-block; margin-right: 10px;">
+  <a href="https://huggingface.co/" target="_blank"><img src="static/icons/huggingface.svg" alt="huggingface" width="40" height="40" /></a>
+</span>
 <span style="display: inline-block; margin-right: 10px;">
   <a href="https://pytorch.org/" target="_blank"><img src="static/icons/pytorch-dark.svg" alt="pytorch" width="40" height="40" /></a>
 </span>
@@ -79,7 +88,7 @@ fun_fact: "HTTP/1.1 418 I'm a teapot"
   <a href="https://www.tensorflow.org/" target="_blank"><img src="static/icons/tensorflow-dark.svg" alt="tensorflow" width="40" height="40" /></a>
 </span>
 <span style="display: inline-block; margin-right: 10px;">
-  <a href="https://opencv.org/" target="_blank"><img src="static/icons/opencv-dark.svg" alt="opencv" width="40" height="40" /></a>
+  <a href="https://dvc.org/" target="_blank"><img src="static/icons/dvc.svg" alt="dvc" width="40" height="40" /></a>
 </span>
 <!-- DATABASE -->
 <span style="display: inline-block; margin-right: 10px;">
@@ -91,4 +100,8 @@ fun_fact: "HTTP/1.1 418 I'm a teapot"
 <span style="display: inline-block; margin-right: 10px;">
   <a href="https://www.mongodb.com/" target="_blank"><img src="static/icons/mongodb.svg" alt="mongodb" width="40" height="40" /></a>
 </span>
+<span style="display: inline-block; margin-right: 10px;">
+  <a href="https://spark.apache.org/" target="_blank"><img src="static/icons/apachespark.svg" alt="spark" width="40" height="40" /></a>
+</span>
+
 </p>
