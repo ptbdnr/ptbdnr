@@ -1,5 +1,5 @@
 
-### 👋 &nbsp;Hello world!
+### 👋 &nbsp;Hello World!
 ```yaml
 name: Peter
 location: London, United Kingdom
