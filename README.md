@@ -43,6 +43,9 @@ fun_fact: "HTTP/1.1 418 I'm a teapot"
 <span style="display: inline-block; margin-right: 10px;">
   <a href="https://git-scm.com/" target="_blank"><img src="static/icons/git.svg" alt="git" width="40" height="40"/></a>
 </span>
+<span style="display: inline-block; margin-right: 10px;">
+  <a href="https://dvc.org/" target="_blank"><img src="static/icons/dvc.svg" alt="dvc" width="40" height="40" /></a>
+</span>
 <!-- <img src="static/icons/github-dark.svg" alt="github" width="40" height="40"/> -->
 <!-- ENVIRONMENTS AND PLATFORMS -->
 <span style="display: inline-block; margin-right: 10px;">
@@ -86,9 +89,6 @@ fun_fact: "HTTP/1.1 418 I'm a teapot"
 </span>
 <span style="display: inline-block; margin-right: 10px;">
   <a href="https://www.tensorflow.org/" target="_blank"><img src="static/icons/tensorflow-dark.svg" alt="tensorflow" width="40" height="40" /></a>
-</span>
-<span style="display: inline-block; margin-right: 10px;">
-  <a href="https://dvc.org/" target="_blank"><img src="static/icons/dvc.svg" alt="dvc" width="40" height="40" /></a>
 </span>
 <!-- DATABASE -->
 <span style="display: inline-block; margin-right: 10px;">
