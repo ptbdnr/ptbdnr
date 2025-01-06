@@ -10,6 +10,12 @@ installer-executor: [WinGet](https://github.com/microsoft/winget-cli), [Chocolat
 
 package manager: [Scoop](https://scoop.sh/)
 
+
+# Infrastructure
+
+cloud: AWS CDK, Azure Bicep, Terraform
+
+
 # Code
 
 ## Python
