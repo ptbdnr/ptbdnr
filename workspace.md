@@ -1,3 +1,15 @@
+# OS
+
+## Unix (Linux Mac)
+
+package manager: [Homebrew](https://brew.sh/)
+
+## Windows
+
+installer-executor: [WinGet](https://github.com/microsoft/winget-cli), [Chocolatey](https://chocolatey.org/)
+
+package manager: [Scoop](https://scoop.sh/)
+
 # Code
 
 ## Python
@@ -31,6 +43,10 @@ TBC
 
 raw: [zed](https://zed.dev/), [Pulsar](https://pulsar-edit.dev/)
 
+
+# Whiteboard
+
+[excalidraw](https://excalidraw.com/), [tldraw](https://tldraw.dev/), [Miro](https://miro.com/)
 
 # Image
 
