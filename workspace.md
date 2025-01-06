@@ -43,7 +43,7 @@ TBC
 
 ## Testing
 
-Playwright,  [Stagehand](https://github.com/browserbase/stagehand), SoapUI, Apache JMeter, Cypress, Selenium
+Playwright,  [Stagehand](https://github.com/browserbase/stagehand), Selenium, SoapUI, Apache JMeter, Cypress
 
 
 # Text
