@@ -35,7 +35,9 @@ raw: [zed](https://zed.dev/), [Pulsar](https://pulsar-edit.dev/)
 # Image
 
 simple: [LibreOffice Draw](https://www.libreoffice.org/discover/draw/)
+
 vector: [Inkscape](https://inkscape.org/)
+
 raster: [GIMP](https://www.gimp.org/)
 
 
