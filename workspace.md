@@ -46,6 +46,13 @@ TBC
 Playwright,  [Stagehand](https://github.com/browserbase/stagehand), Selenium, SoapUI, Apache JMeter, Cypress
 
 
+## User Interface
+
+no-code: [Visily](https://www.visily.ai/)
+
+low-code: [Figma](https://www.figma.com/)
+
+
 # Text
 
 raw: [zed](https://zed.dev/), [Pulsar](https://pulsar-edit.dev/)
