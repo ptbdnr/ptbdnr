@@ -20,9 +20,11 @@ Package management: [UV](https://github.com/astral-sh/uv)
 
 Type checker: [Mypy](https://mypy-lang.org/), [Pyright](https://github.com/microsoft/pyright), [Pyre](https://pyre-check.org/)
 
-Linter: [Ruff](https://docs.astral.sh/ruff/), [Pylint](https://github.com/pylint-dev/pylint), [Flake8](https://flake8.pycqa.org/)
+Linter: [Ruff](https://docs.astral.sh/ruff/) (config TBC), [Pylint](https://github.com/pylint-dev/pylint), [Flake8](https://flake8.pycqa.org/)
 
-Formatter: [Ruff](https://docs.astral.sh/ruff/), [Black](https://github.com/psf/black)
+Formatter: [Ruff](https://docs.astral.sh/ruff/) (config TBC), [Black](https://github.com/psf/black)
+
+Data validation: Pydantic
 
 IDE: [VSCode](https://code.visualstudio.com/), [Cursor](https://www.cursor.com/)
 
@@ -37,6 +39,11 @@ TBC
 ## C++
 
 TBC
+
+
+## Testing
+
+Playwright,  [Stagehand](https://github.com/browserbase/stagehand)
 
 
 # Text
