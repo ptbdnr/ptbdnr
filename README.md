@@ -19,7 +19,7 @@ fields_of_interests:
     "Optimisation",
     "Simulation",
   ]  
-currently_learning: ["Mojo", "Mechanistic interpretability", "Heterogeneous computing"]
+currently_learning: ["Mojo", "Mechanistic interpretability", "Heterogeneous computing for AI/ML"]
 fun_fact: "HTTP/1.1 418 I'm a teapot"
 ```
 
