@@ -25,7 +25,8 @@ fun_fact: "HTTP/1.1 418 I'm a teapot"
 
 ---
 
-### 📝 &nbsp;Languages:
+### 🚀 &nbsp;Languages and Tools:
+<!-- ### 📝 &nbsp;Languages: -->
 <div align="center">
 <p>
 <span style="display: inline-block; margin-right: 10px;">
@@ -40,14 +41,9 @@ fun_fact: "HTTP/1.1 418 I'm a teapot"
 <span style="display: inline-block; margin-right: 10px;">
   <a href="https://isocpp.org/" target="_blank"><img src="static/icons/cpp.svg" alt="cplusplus" width="40" height="40" /></a>
 </span>
-</p>
-</div>
-  
-### 🚀 &nbsp;Tools:
-<div align="center">
-<p>
+<!-- ### 🚀 &nbsp;Tools: -->
 <!-- VERSION CONTROL -->
-  <span style="display: inline-block; margin-right: 10px;">
+<span style="display: inline-block; margin-right: 10px;">
   <a href="https://git-scm.com/" target="_blank"><img src="static/icons/git.svg" alt="git" width="40" height="40"/></a>
 </span>
 <span style="display: inline-block; margin-right: 10px;">
