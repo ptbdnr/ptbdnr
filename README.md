@@ -1,5 +1,6 @@
 
 ### 👋 &nbsp;Hello World!
+
 ```yaml
 name: Peter
 location: London, United Kingdom
@@ -11,7 +12,6 @@ background:
 fields_of_interests:
   [
     "Machine Learning",
-    "GenAI",
     "Agentic AI".
     "AI Guardrails".
     "DevOps",
@@ -19,7 +19,12 @@ fields_of_interests:
     "Optimisation",
     "Simulation",
   ]  
-currently_learning: ["Mojo", "Mechanistic interpretability", "Heterogeneous computing for AI/ML"]
+currently_learning:
+  [
+    "Mojo",
+    "Heterogeneous AI",
+    "Mechanistic Interpretability",
+  ]
 fun_fact: "HTTP/1.1 418 I'm a teapot"
 ```
 
