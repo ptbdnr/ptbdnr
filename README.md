@@ -56,10 +56,10 @@ fun_fact: "HTTP/1.1 418 I'm a teapot"
 </span>
 <!-- MACHINE LEARNING, DEEP LEARNING -->
 <span style="display: inline-block; margin-right: 10px;">
-  <a href="https://scikit-learn.org/" target="_blank"><img src="static/icons/scikitlearn-dark.svg" alt="scikitlearn" width="40" height="40" /></a>
+  <a href="https://huggingface.co/" target="_blank"><img src="static/icons/huggingface.svg" alt="huggingface" width="40" height="40" /></a>
 </span>
 <span style="display: inline-block; margin-right: 10px;">
-  <a href="https://huggingface.co/" target="_blank"><img src="static/icons/huggingface.svg" alt="huggingface" width="40" height="40" /></a>
+  <a href="https://scikit-learn.org/" target="_blank"><img src="static/icons/scikitlearn-dark.svg" alt="scikitlearn" width="40" height="40" /></a>
 </span>
 <span style="display: inline-block; margin-right: 10px;">
   <a href="https://pytorch.org/" target="_blank"><img src="static/icons/pytorch-dark.svg" alt="pytorch" width="40" height="40" /></a>
