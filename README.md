@@ -14,7 +14,6 @@ fields_of_interests:
     "Machine Learning",
     "Agentic AI".
     "AI Guardrails".
-    "DevOps",
     "MLOps",
     "Optimisation",
     "Simulation",
