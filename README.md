@@ -5,25 +5,19 @@
 name: Peter
 location: London, United Kingdom
 background:
-  [
     Current: "AI/ML Engineer",
     Past: "Research Scientist"
-  ]
 fields_of_interests:
-  [
-    "Machine Learning",
-    "Agentic AI".
-    "AI Guardrails".
-    "MLOps",
-    "Optimisation",
-    "Simulation",
-  ]  
+    - "Machine Learning",
+    - "Agentic AI".
+    - "AI Guardrails".
+    - "MLOps",
+    - "Optimisation",
+    - "Simulation",
 currently_learning:
-  [
-    "Mojo",
-    "Heterogeneous AI",
-    "Mechanistic Interpretability",
-  ]
+    - "Mojo",
+    - "Heterogeneous AI",
+    - "Mechanistic Interpretability",
 fun_fact: "HTTP/1.1 418 I'm a teapot"
 ```
 
