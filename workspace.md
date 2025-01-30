@@ -37,11 +37,16 @@ Linter: [Ruff](https://docs.astral.sh/ruff/) (config TBC), [Pylint](https://gith
 
 Formatter: [Ruff](https://docs.astral.sh/ruff/) (config TBC), [Black](https://github.com/psf/black)
 
-Data validation: Pydantic
+Data validation: [Pydantic](https://docs.pydantic.dev/latest/)
 
 IDE: [VSCode](https://code.visualstudio.com/), [Cursor](https://www.cursor.com/)
 
 Testing framework: [pytest](https://docs.pytest.org/)
+
+
+## TypeScript
+
+Testing framework: [jest](https://jestjs.io/)
 
 
 ## Java
@@ -56,12 +61,13 @@ TBC
 
 ## Testing
 
-Playwright,  [Stagehand](https://github.com/browserbase/stagehand), Selenium, SoapUI, Apache JMeter, Cypress
+[Playwright](https://playwright.dev/), [Postman](https://www.postman.com/),  [Stagehand](https://github.com/browserbase/stagehand), Selenium, SoapUI, Apache JMeter, Cypress
+
 
 
 ## User Interface
 
-no-code: [Visily](https://www.visily.ai/), Canva
+no-code: [Visily](https://www.visily.ai/), [Canva](https://www.canva.com/)
 
 low-code: [Figma](https://www.figma.com/)
 
