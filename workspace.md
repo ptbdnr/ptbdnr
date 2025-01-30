@@ -20,7 +20,12 @@ package manager: [Scoop](https://scoop.sh/)
 
 # Infrastructure
 
-cloud: AWS CDK, Azure Bicep, Terraform
+platform:
+* AWS, Azure,GCP
+* web server, static site, container, cron: [Render](https://render.com)
+
+infrastructure as a code:
+* AWS CDK, Azure Bicep, Terraform
 
 
 # Code
