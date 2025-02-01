@@ -38,7 +38,7 @@ Package management: [UV](https://github.com/astral-sh/uv)
 
 Type checker: [Mypy](https://mypy-lang.org/), [Pyright](https://github.com/microsoft/pyright), [Pyre](https://pyre-check.org/)
 
-Linter: [Ruff](https://docs.astral.sh/ruff/) (config TBC), [Pylint](https://github.com/pylint-dev/pylint), [Flake8](https://flake8.pycqa.org/)
+Linting and Formatting: [Ruff](https://docs.astral.sh/ruff/) (config TBC), [Pylint](https://github.com/pylint-dev/pylint), [Flake8](https://flake8.pycqa.org/)
 
 Formatter: [Ruff](https://docs.astral.sh/ruff/) (config TBC), [Black](https://github.com/psf/black)
 
@@ -50,6 +50,10 @@ Testing framework: [pytest](https://docs.pytest.org/)
 
 
 ## TypeScript
+
+Package management: [pnpm](https://pnpm.io)
+
+Linting and Formatting: ESLint (`pnpm add -D eslint @typescript-eslint/eslint-plugin @typescript-eslint/parser eslint-config-prettier`)
 
 Testing framework: [jest](https://jestjs.io/)
 
