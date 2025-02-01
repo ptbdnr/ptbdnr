@@ -53,9 +53,9 @@ Testing framework: [pytest](https://docs.pytest.org/)
 
 Package management: [pnpm](https://pnpm.io)
 
-Linting and Formatting: ESLint (`pnpm add -D eslint @typescript-eslint/eslint-plugin @typescript-eslint/parser eslint-config-prettier`)
+Linting and Formatting: ESLint with Prettier integration (`pnpm add -D eslint @typescript-eslint/eslint-plugin @typescript-eslint/parser eslint-config-prettier`)
 
-Testing framework: [jest](https://jestjs.io/)
+Testing framework: [jest](https://jestjs.io/), [vitest](https://vitest.dev/)
 
 
 ## Java
