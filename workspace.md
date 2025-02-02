@@ -104,6 +104,16 @@ raster: [GIMP](https://www.gimp.org/)
 [Blender](https://www.blender.org/)
 
 
+# Screen capture
+
+gif: [Cockos LICEcap](https://www.cockos.com/licecap/)
+
+complex: [OBS studio](https://obsproject.com/)
+
+eCourse: [Articulate Storyline](https://www.articulate.com/360/storyline/)
+
+Camtasia
+
 # Audio
 
 [Ardour](https://ardour.org/), [Reaper](https://www.reaper.fm/)
