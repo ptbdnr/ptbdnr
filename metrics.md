@@ -12,35 +12,43 @@ https://docs.github.com/en/get-started/exploring-integrations/github-developer-p
 <!-- https://github.com/anuraghazra/github-readme-stats#deploy-on-your-own -->
 <h1>GitHub</h1>
 <div align="center">  
-  <img alt="Stats01" src="https://github-profile-summary-cards.vercel.app/api/cards/stats?username=ptbdnr&theme=apprentice" height=200 />
-  <!-- rank_icon=[default, percentile, github]&hide_title=[true,false]&custom_title=<username> GitHub Stats -->
-  <img alt="Stats02" src="https://github-readme-stats.vercel.app/api?username=ptbdnr&theme=apprentice&show_icons=true&hide_border=true&include_all_commits=true&count_private=true&rank_icon=percentile&hide_title=false&custom_title=ptbdnr" height=200 />
-  <img alt="Stats03" src="https://stats.hyo.dev/api/github-stats-advanced?login=ptbdnr" height=200 />
-  <br>
-  <img alt="Trophies01" src="https://github-profile-trophy.vercel.app/?username=ptbdnr&theme=apprentice&no-frame=true&no-bg=false&margin-w=4" />
-  <img alt="Trophies02" src="https://stats.hyo.dev/api/github-trophies?login=ptbdnr" width="600" />
-  <br>
-  <img alt="Commits over Time" src="https://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=ptbdnr&theme=apprentice" height=200 />
-  <img alt="Productive Time" src="https://github-profile-summary-cards.vercel.app/api/cards/productive-time?username=ptbdnr&theme=apprentice&utcOffset=8" height=200 />
-  <br>
-  <img alt="GitHub Streak01" src="https://streak-stats.demolab.com?user=ptbdnr&theme=apprentice" height=200 />
-  <!-- radical -->
-  <img alt="GitHub Streak02" src="https://github-readme-streak-stats.herokuapp.com/?user=ptbdnr&theme=apprentice" height=200 />
-  <br>
-  <img alt="Activity Graph" src="https://github-readme-activity-graph.vercel.app/graph?username=ptbdnr&bg_color=262626&title_color=FF8700&color=FF8700&line=FF8700&point=FFFFAF&hide_border=true&custom_title=Contribution⠀Graph" />
-  <!-- Language -->
-  <br>
-  <img alt="Top Language" src="https://github-readme-stats.vercel.app/api/top-langs/?username=ptbdnr&langs_count=20&theme=apprentice&hide_border=true&include_all_commits=false&count_private=false&layout=compact" height="180em" />
-  <img alt="Top Language" src="https://github-readme-stats.vercel.app/api/top-langs/?username=ptbdnr&theme=apprentice&langs_count=20&hide_border=true" height="180em" />
-  <img alt="Top Language by Commit" src="https://github-profile-summary-cards.vercel.app/api/cards/most-commit-language?username=ptbdnr&theme=apprentice" height="180em" />
-  <img alt="Top Language by Repo" src="https://github-profile-summary-cards.vercel.app/api/cards/repos-per-language?username=ptbdnr&theme=apprentice" height="180em" />
-  
+  <div>
+    <!-- Summary -->
+    <img alt="Stats01" src="https://github-profile-summary-cards.vercel.app/api/cards/stats?username=ptbdnr&theme=apprentice" height=200 />
+    <!-- rank_icon=[default, percentile, github]&hide_title=[true,false]&custom_title=<username> GitHub Stats -->
+    <img alt="Stats02" src="https://github-readme-stats.vercel.app/api?username=ptbdnr&theme=apprentice&show_icons=true&hide_border=true&include_all_commits=true&count_private=true&rank_icon=percentile&hide_title=false&custom_title=ptbdnr" height=200 />
+    <img alt="Stats03" src="https://stats.hyo.dev/api/github-stats-advanced?login=ptbdnr" height=200 />
+  </div>
+  <div>
+    <!-- Trophies -->
+    <img alt="Trophies01" src="https://github-profile-trophy.vercel.app/?username=ptbdnr&theme=apprentice&no-frame=true&no-bg=false&margin-w=4" />
+    <img alt="Trophies02" src="https://stats.hyo.dev/api/github-trophies?login=ptbdnr" width="600" />
+  </div>
+  <div>
+    <!-- Language -->
+    <img alt="Top Language" src="https://github-readme-stats.vercel.app/api/top-langs/?username=ptbdnr&langs_count=20&theme=apprentice&hide_border=true&include_all_commits=false&count_private=false&layout=compact" height="180em" />
+    <img alt="Top Language" src="https://github-readme-stats.vercel.app/api/top-langs/?username=ptbdnr&theme=apprentice&langs_count=20&hide_border=true" height="180em" />
+    <img alt="Top Language by Commit" src="https://github-profile-summary-cards.vercel.app/api/cards/most-commit-language?username=ptbdnr&theme=apprentice" height="180em" />
+    <img alt="Top Language by Repo" src="https://github-profile-summary-cards.vercel.app/api/cards/repos-per-language?username=ptbdnr&theme=apprentice" height="180em" />
+  </div>
+  <div>
+    <!-- Frequency -->
+    <img alt="Commits over Time" src="https://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=ptbdnr&theme=apprentice" height=200 />
+    <img alt="Productive Time" src="https://github-profile-summary-cards.vercel.app/api/cards/productive-time?username=ptbdnr&theme=apprentice&utcOffset=8" height=200 />
+    <img alt="Activity Graph" src="https://github-readme-activity-graph.vercel.app/graph?username=ptbdnr&bg_color=262626&title_color=FF8700&color=FF8700&line=FF8700&point=FFFFAF&hide_border=true&custom_title=Contribution⠀Graph" />
+  </div>
+  <div>
+    <!-- Continuity -->
+    <img alt="GitHub Streak01" src="https://streak-stats.demolab.com?user=ptbdnr&theme=apprentice" height=200 />
+    <!-- radical -->
+    <img alt="GitHub Streak02" src="https://github-readme-streak-stats.herokuapp.com/?user=ptbdnr&theme=apprentice" height=200 />
+  </div>
 </div>
 
-<!-- https://github.com/anuraghazra/github-readme-stats?tab=readme-ov-file -->
-
 <div>
-  <img alt="GitHub Unwrapped" src="https://githubunwrapped.com/ptbdnr" />
+  <!-- Other -->
+  <!-- https://github.com/anuraghazra/github-readme-stats?tab=readme-ov-file -->
+  <!-- <img alt="GitHub Unwrapped" src="https://githubunwrapped.com/ptbdnr" /> -->
 </div>
 
 <h2>Projects</h2>
@@ -55,13 +63,10 @@ https://docs.github.com/en/get-started/exploring-integrations/github-developer-p
 
 <h1>Wakatime</h1>
 
-![WakaTime stats](https://github-readme-stats.vercel.app/api/wakatime?username=ptbdnr)
-
 <div align="center">
-  <img src="https://wakatime.com/share/@ptbdnr/e713d501-852d-48fb-adb3-8e9f584cfdf4.svg" />
+  <!-- <img src="https://wakatime.com/share/@ptbdnr/e713d501-852d-48fb-adb3-8e9f584cfdf4.svg" /> -->
   <img src="https://github-readme-stats.vercel.app/api/wakatime?username=ptbdnr" />
   <img src="https://github-readme-stats.vercel.app/api/wakatime?username=ptbdnr&layout=compact&theme=shadow_blue&hide=Other&title_color=00abf0&bg_color=00000000&text_color=DEDEDE&border_color=00000000" />
-  
 </div>
 
 ---
