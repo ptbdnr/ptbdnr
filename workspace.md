@@ -77,6 +77,8 @@ TBC
 
 ## User Interface
 
+wireframe: [balsamiq](https://balsamiq.com/)
+
 no-code: [Visily](https://www.visily.ai/), [Canva](https://www.canva.com/)
 
 low-code: [Figma](https://www.figma.com/)
@@ -121,5 +123,5 @@ Camtasia
 
 # Portfolio webapp
 
-(GitHub.io)[https://pages.github.com/]
+hosting: [GitHub.io](https://pages.github.com/)
 
