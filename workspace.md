@@ -30,6 +30,9 @@ infrastructure as a code:
 
 # Code
 
+IDE: [VSCode](https://code.visualstudio.com/), [Cursor](https://www.cursor.com/), [JetBrains](https://www.jetbrains.com/)
+
+
 ## Python
 
 Configuration file: [pyproject.toml](https://packaging.python.org/en/latest/guides/writing-pyproject-toml/)
@@ -43,8 +46,6 @@ Linting and Formatting: [Ruff](https://docs.astral.sh/ruff/) (config TBC), [Pyli
 Formatter: [Ruff](https://docs.astral.sh/ruff/) (config TBC), [Black](https://github.com/psf/black)
 
 Data validation: [Pydantic](https://docs.pydantic.dev/latest/)
-
-IDE: [VSCode](https://code.visualstudio.com/), [Cursor](https://www.cursor.com/)
 
 Testing framework: [pytest](https://docs.pytest.org/)
 
