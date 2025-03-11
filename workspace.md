@@ -104,7 +104,9 @@ raster: [GIMP](https://www.gimp.org/)
 
 # Video
 
-[Blender](https://www.blender.org/)
+simple: [ClipChamp](https://clipchamp.com/)
+
+complete: [Blender](https://www.blender.org/)
 
 
 # Screen capture
