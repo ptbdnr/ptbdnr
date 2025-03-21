@@ -93,6 +93,10 @@ raw: [zed](https://zed.dev/), [Pulsar](https://pulsar-edit.dev/)
 
 [excalidraw](https://excalidraw.com/), [tldraw](https://tldraw.dev/), [Miro](https://miro.com/)
 
+# Diagram and charting
+
+[Mermaid](https://mermaid.js.org)
+
 # Image
 
 simple: [LibreOffice Draw](https://www.libreoffice.org/discover/draw/)
