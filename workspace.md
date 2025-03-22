@@ -71,8 +71,14 @@ TBC
 
 ## Testing
 
-[Playwright](https://playwright.dev/), [Postman](https://www.postman.com/),  [Stagehand](https://github.com/browserbase/stagehand), Selenium, SoapUI, Apache JMeter, Cypress
+Integration, E2E: [Playwright](https://playwright.dev/), [Postman](https://www.postman.com/),  [Stagehand](https://github.com/browserbase/stagehand), Selenium, SoapUI, Apache JMeter, Cypress
 
+Load test: [Locust](https://locust.io/)
+
+
+# Containerization
+
+Docker: [dive](https://github.com/wagoodman/dive)
 
 
 ## User Interface
