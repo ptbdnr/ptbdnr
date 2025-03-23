@@ -30,7 +30,10 @@ infrastructure as a code:
 
 # Code
 
-IDE: [VSCode](https://code.visualstudio.com/), [Cursor](https://www.cursor.com/), [JetBrains](https://www.jetbrains.com/)
+Code Editor: [VSCode](https://code.visualstudio.com/), [Cursor](https://www.cursor.com/),
+Windsurf,  [JetBrains](https://www.jetbrains.com/)
+
+IDE: Google IDX
 
 
 ## Python
