@@ -98,15 +98,22 @@ low-code: [Figma](https://www.figma.com/)
 raw: [zed](https://zed.dev/), [Pulsar](https://pulsar-edit.dev/)
 
 
+# Survey
+
+real-time: [Mentimeter](www.menti.com)
+
+
 # Whiteboard
 
 no-code: [Miro](https://miro.com/)
 
 no/pro-code: [excalidraw](https://excalidraw.com/), [tldraw](https://tldraw.dev/), [MermaidChart](https://www.mermaidchart.com/)
 
+
 # Diagram and charting
 
 [Mermaid](https://mermaid.js.org)
+
 
 # Image
 
@@ -133,6 +140,7 @@ complex: [OBS studio](https://obsproject.com/)
 eCourse: [Articulate Storyline](https://www.articulate.com/360/storyline/)
 
 Camtasia
+
 
 # Audio
 
