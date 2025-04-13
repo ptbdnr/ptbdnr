@@ -117,9 +117,14 @@ no/pro-code: [excalidraw](https://excalidraw.com/), [tldraw](https://tldraw.dev/
 
 # Image
 
-simple: [LibreOffice Draw](https://www.libreoffice.org/discover/draw/)
+simple: 
+* [LibreOffice Draw](https://www.libreoffice.org/discover/draw/)
+* Linux: Pinta
 
-vector: [Inkscape](https://inkscape.org/)
+vector: 
+* view, prettify, pro-code edit: [svgviewer](https://www.svgviewer.dev/)
+* view, low-code edit: [BoxySVG](https://boxy-svg.com/)
+* [Inkscape](https://inkscape.org/)
 
 raster: [GIMP](https://www.gimp.org/)
 
