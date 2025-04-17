@@ -72,6 +72,18 @@ TBC
 TBC
 
 
+## Project management
+
+Roadmap: [Roadmunk](https://roadmunk.com/), [Aha!](https://www.aha.io/)
+
+Backlog: [GitHub Projects](https://docs.github.com/en/issues/planning-and-tracking-with-projects/learning-about-projects/about-projects), [Azure DevOps](https://learn.microsoft.com/en-us/azure/devops/boards/backlogs/create-your-backlog?view=azure-devops&tabs=agile-process), [Jira](https://www.atlassian.com/software/jira)
+
+## Analytics
+
+request/data analytics: [Google Analytics](https://developers.google.com/analytics), [Adobe Analytics](https://business.adobe.com/products/adobe-analytics.html)
+
+behaviour analytics: [Hotjar](https://www.hotjar.com/), [Clarity](https://clarity.microsoft.com/)
+
 ## Testing
 
 Integration, E2E: [Playwright](https://playwright.dev/), [Postman](https://www.postman.com/),  [Stagehand](https://github.com/browserbase/stagehand), Selenium, SoapUI, Apache JMeter, Cypress
@@ -84,16 +96,16 @@ Load test: [Locust](https://locust.io/)
 Docker: [dive](https://github.com/wagoodman/dive)
 
 
-## User Interface
+## Prototype / UX / User Interface
 
 wireframe: [balsamiq](https://balsamiq.com/)
 
 no-code: [Visily](https://www.visily.ai/), [Canva](https://www.canva.com/)
 
-low-code: [Figma](https://www.figma.com/)
+low-code: [Figma](https://www.figma.com/), [Azure](https://www.axure.com/)
 
 
-# Text
+# Text Editor
 
 raw: [zed](https://zed.dev/), [Pulsar](https://pulsar-edit.dev/)
 
@@ -105,14 +117,16 @@ real-time: [Mentimeter](www.menti.com)
 
 # Whiteboard
 
-no-code: [Miro](https://miro.com/)
+no-code: [Mural](https://mural.co/), [Miro](https://miro.com/)
 
 no/pro-code: [excalidraw](https://excalidraw.com/), [tldraw](https://tldraw.dev/), [MermaidChart](https://www.mermaidchart.com/)
 
 
-# Diagram and charting
+# Process modelling
 
-[Mermaid](https://mermaid.js.org)
+no-code: [Draw.io](https://app.diagrams.net/)
+
+no/pro-code: [Mermaid](https://mermaid.js.org)
 
 
 # Image
