@@ -72,6 +72,11 @@ TBC
 TBC
 
 
+## Events
+
+* Online hosting: [Luma](https://lu.ma)
+
+
 ## Project management
 
 Roadmap: [Roadmunk](https://roadmunk.com/), [Aha!](https://www.aha.io/)
