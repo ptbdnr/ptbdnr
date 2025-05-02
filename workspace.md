@@ -21,11 +21,11 @@ package manager: [Scoop](https://scoop.sh/)
 # Infrastructure
 
 platform:
-* AWS, Azure,GCP
-* web server, static site, container, cron: [Render](https://render.com)
+* AWS, Azure, GCP, Vultr
+* web server, static site, container, cron: [Render](https://render.com), Vercel
 
 infrastructure as a code:
-* AWS CDK, Azure Bicep, Terraform
+* AWS CDK, Azure Bicep, HashiCorp Terraform
 
 
 # Code
