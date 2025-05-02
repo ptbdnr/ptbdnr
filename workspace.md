@@ -59,6 +59,8 @@ Package management: [pnpm](https://pnpm.io)
 
 Linting and Formatting: ESLint with Prettier integration (`pnpm add -D eslint @typescript-eslint/eslint-plugin @typescript-eslint/parser eslint-config-prettier`)
 
+UI components: [ShadCN](https://ui.shadcn.com/), [Chackra](https://chakra-ui.com/)
+
 Testing framework: [jest](https://jestjs.io/), [vitest](https://vitest.dev/)
 
 
@@ -70,6 +72,23 @@ TBC
 ## C++
 
 TBC
+
+
+
+## Model as a Service
+
+text-chat: Llama 3
+
+text-to-image: Luma AI
+
+text-to-video: Luma AI
+
+image-to-text: Mistral AI
+
+image embedding: TwelveLabs
+
+video embedding: TwelveLabs
+
 
 
 ## Events
@@ -151,6 +170,8 @@ raster: [GIMP](https://www.gimp.org/)
 # Video
 
 simple: [ClipChamp](https://clipchamp.com/)
+
+no-code: Canva
 
 complete: [Blender](https://www.blender.org/)
 
