@@ -35,6 +35,8 @@ Windsurf,  [JetBrains](https://www.jetbrains.com/)
 
 IDE: Google IDX
 
+Git Commit Standards: [Google](https://developers.google.com/blockly/guides/contribute/get-started/commits)
+
 
 ## Python
 
