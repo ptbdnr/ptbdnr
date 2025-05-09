@@ -136,6 +136,8 @@ no-code: [Visily](https://www.visily.ai/), [Canva](https://www.canva.com/)
 
 low-code: [Figma](https://www.figma.com/), [Azure](https://www.axure.com/)
 
+vibe-code: [Lovable](https://lovable.dev/), [Bolt.new](https://bolt.new/)
+
 
 # Text Editor
 
