@@ -89,6 +89,8 @@ image embedding: TwelveLabs
 
 video embedding: TwelveLabs
 
+speech-to-text: [Grow](https://groq.com)
+
 
 
 ## Events
