@@ -83,6 +83,10 @@ text-to-image: Luma AI
 
 text-to-video: Luma AI
 
+speech-to-text: [Grow](https://groq.com)
+
+speech-to-speech: [Grow](https://groq.com)
+
 image-to-text: Mistral AI
 
 image embedding: TwelveLabs
@@ -90,6 +94,8 @@ image embedding: TwelveLabs
 video embedding: TwelveLabs
 
 speech-to-text: [Grow](https://groq.com)
+
+avatar: [Tavus](https://www.tavus.io/)
 
 
 
