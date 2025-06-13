@@ -59,7 +59,7 @@ Testing framework: [pytest](https://docs.pytest.org/)
 
 Package management: [pnpm](https://pnpm.io)
 
-Linting and Formatting: ESLint with Prettier integration (`pnpm add -D eslint @typescript-eslint/eslint-plugin @typescript-eslint/parser eslint-config-prettier`)
+Linting and Formatting: ESLint with Prettier integration (`pnpm add -D eslint @typescript-eslint/eslint-plugin @typescript-eslint/parser eslint-config-prettier`), [Oxlint](https://oxc.rs)
 
 UI components: [ShadCN](https://ui.shadcn.com/), [Chackra](https://chakra-ui.com/)
 
