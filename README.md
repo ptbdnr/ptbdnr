@@ -15,9 +15,9 @@ fields_of_interests:
   - Optimisation
   - Simulation
 currently_learning:
-  - Mojo
   - Heterogeneous AI
   - Mechanistic Interpretability
+  - Homomorphic encryption
 fun_fact: "HTTP/1.1 418 I'm a teapot"
 ```
 
