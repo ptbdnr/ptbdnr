@@ -5,7 +5,7 @@
 name: Peter
 location: London, United Kingdom
 background:
-  current: AI/ML Engineer
+  current: ML Engineer, AI Engineer
   past: Research Scientist
 fields_of_interests:
   - Machine Learning
