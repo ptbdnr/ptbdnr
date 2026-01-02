@@ -77,6 +77,9 @@ platform:
 infrastructure as a code:
 * AWS CDK, Azure Bicep, HashiCorp Terraform
 
+Docker: [dive](https://github.com/wagoodman/dive)
+
+
 ## Code
 
 Code Editor: [VSCode](https://code.visualstudio.com/), [Cursor](https://www.cursor.com/),
@@ -151,10 +154,6 @@ Integration, E2E: [Playwright](https://playwright.dev/), [Postman](https://www.p
 
 Load test: [Locust](https://locust.io/)
 
-
-### Containerization
-
-Docker: [dive](https://github.com/wagoodman/dive)
 
 --------
 
