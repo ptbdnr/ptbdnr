@@ -4,7 +4,10 @@
 
 https://www.startuptoolslist.com
 
+--------
 
+# Discovery
+ 
 ## Project management
 
 Roadmap: [Roadmunk](https://roadmunk.com/), [Aha!](https://www.aha.io/)
@@ -12,14 +15,14 @@ Roadmap: [Roadmunk](https://roadmunk.com/), [Aha!](https://www.aha.io/)
 Backlog: [GitHub Projects](https://docs.github.com/en/issues/planning-and-tracking-with-projects/learning-about-projects/about-projects), [Azure DevOps](https://learn.microsoft.com/en-us/azure/devops/boards/backlogs/create-your-backlog?view=azure-devops&tabs=agile-process), [Jira](https://www.atlassian.com/software/jira)
 
 
-# Whiteboard
+## Whiteboard
 
 no-code: [Mural](https://mural.co/), [Miro](https://miro.com/)
 
 no/pro-code: [excalidraw](https://excalidraw.com/), [tldraw](https://tldraw.dev/), [MermaidChart](https://www.mermaidchart.com/)
 
 
-# Survey / Analytics
+## Survey / Analytics
 
 real-time [Menti Meter](mentimeter.com)
 
@@ -27,6 +30,9 @@ request/data analytics: [Google Analytics](https://developers.google.com/analyti
 
 behaviour analytics: [Hotjar](https://www.hotjar.com/), [Clarity](https://clarity.microsoft.com/)
 
+--------
+
+# Design 
 
 ## Prototype / UX / User Interface
 
@@ -39,27 +45,30 @@ low-code: [Figma](https://www.figma.com/), [Azure](https://www.axure.com/)
 vibe-code: [Lovable](https://lovable.dev/), [Bolt.new](https://bolt.new/)
 
 
-# Process modelling
+## Process modelling
 
 no-code: [Draw.io](https://app.diagrams.net/)
 
 no/pro-code: [Mermaid](https://mermaid.js.org), [LikeC4](https://likec4.dev/)
 
+--------
 
-# OS
+# Development
 
-## Unix (Linux Mac)
+## OS
+
+### Unix (Linux Mac)
 
 package manager: [Homebrew](https://brew.sh/)
 
-## Windows
+### Windows
 
 installer-executor: [WinGet](https://github.com/microsoft/winget-cli), [Chocolatey](https://chocolatey.org/)
 
 package manager: [Scoop](https://scoop.sh/)
 
 
-# Infrastructure
+## Infrastructure
 
 platform:
 * AWS, Azure, GCP, Vultr
@@ -68,8 +77,7 @@ platform:
 infrastructure as a code:
 * AWS CDK, Azure Bicep, HashiCorp Terraform
 
-
-# Code
+## Code
 
 Code Editor: [VSCode](https://code.visualstudio.com/), [Cursor](https://www.cursor.com/),
 [Windsurf](https://windsurf.com/), [Firebase Studio](https://firebase.studio/) [JetBrains](https://www.jetbrains.com/), [Claude Code](https://code.claude.com/), [Google Antigravity](https://antigravity.google/) 
@@ -77,7 +85,7 @@ Code Editor: [VSCode](https://code.visualstudio.com/), [Cursor](https://www.curs
 Git Commit Standards: [Google](https://developers.google.com/blockly/guides/contribute/get-started/commits)
 
 
-## Python
+### Python
 
 Configuration file: [pyproject.toml](https://packaging.python.org/en/latest/guides/writing-pyproject-toml/)
 
@@ -94,7 +102,7 @@ Data validation: [Pydantic](https://docs.pydantic.dev/latest/)
 Testing framework: [pytest](https://docs.pytest.org/)
 
 
-## TypeScript
+### TypeScript
 
 Package management: [pnpm](https://pnpm.io)
 
@@ -105,18 +113,18 @@ UI components: [ShadCN](https://ui.shadcn.com/), [Chackra](https://chakra-ui.com
 Testing framework: [jest](https://jestjs.io/), [vitest](https://vitest.dev/)
 
 
-## Java
+### Java
 
 TBC
 
 
-## C++
+### C++
 
 TBC
 
+## Services
 
-
-## Model as a Service
+### Model as a Service
 
 text-chat: Llama 3
 
@@ -137,29 +145,32 @@ image embedding: TwelveLabs
 video embedding: TwelveLabs
 
 
-## Testing
+## Quality Assurance
 
 Integration, E2E: [Playwright](https://playwright.dev/), [Postman](https://www.postman.com/),  [Stagehand](https://github.com/browserbase/stagehand), Selenium, SoapUI, Apache JMeter, Cypress
 
 Load test: [Locust](https://locust.io/)
 
 
-## Containerization
+### Containerization
 
 Docker: [dive](https://github.com/wagoodman/dive)
 
+--------
+
+# Dissemination
 
 ## Events
 
 * Online hosting: [Luma](https://lu.ma)
  
 
-# Text Editor
+## Text Editor
 
 raw: [zed](https://zed.dev/), [Pulsar](https://pulsar-edit.dev/)
 
 
-# Screen capture
+## Screen capture
 
 gif: [Cockos LICEcap](https://www.cockos.com/licecap/)
 
@@ -169,7 +180,7 @@ eCourse: [Articulate Storyline](https://www.articulate.com/360/storyline/)
 
 Camtasia
 
-# Image
+## Image
 
 simple: 
 * [LibreOffice Draw](https://www.libreoffice.org/discover/draw/)
@@ -183,7 +194,7 @@ vector:
 raster: [GIMP](https://www.gimp.org/)
 
 
-# Video
+## Video
 
 simple: [ClipChamp](https://clipchamp.com/)
 
@@ -192,12 +203,12 @@ no-code: Canva
 complete: [Blender](https://www.blender.org/)
 
 
-# Audio
+## Audio
 
 [Ardour](https://ardour.org/), [Reaper](https://www.reaper.fm/)
 
 
-# Portfolio webapp
+## Portfolio webapp
 
 hosting: [GitHub.io](https://pages.github.com/)
 
