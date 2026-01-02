@@ -1,8 +1,49 @@
 ![header](https://github.com/git0802/git0802/blob/main/header_.png)
 
-# Tool lists
+# Other Tool lists
 
 https://www.startuptoolslist.com
+
+
+## Project management
+
+Roadmap: [Roadmunk](https://roadmunk.com/), [Aha!](https://www.aha.io/)
+
+Backlog: [GitHub Projects](https://docs.github.com/en/issues/planning-and-tracking-with-projects/learning-about-projects/about-projects), [Azure DevOps](https://learn.microsoft.com/en-us/azure/devops/boards/backlogs/create-your-backlog?view=azure-devops&tabs=agile-process), [Jira](https://www.atlassian.com/software/jira)
+
+
+# Whiteboard
+
+no-code: [Mural](https://mural.co/), [Miro](https://miro.com/)
+
+no/pro-code: [excalidraw](https://excalidraw.com/), [tldraw](https://tldraw.dev/), [MermaidChart](https://www.mermaidchart.com/)
+
+
+# Survey / Analytics
+
+real-time [Menti Meter](mentimeter.com)
+
+request/data analytics: [Google Analytics](https://developers.google.com/analytics), [Adobe Analytics](https://business.adobe.com/products/adobe-analytics.html)
+
+behaviour analytics: [Hotjar](https://www.hotjar.com/), [Clarity](https://clarity.microsoft.com/)
+
+
+## Prototype / UX / User Interface
+
+wireframe: [balsamiq](https://balsamiq.com/)
+
+no-code: [Visily](https://www.visily.ai/), [Canva](https://www.canva.com/)
+
+low-code: [Figma](https://www.figma.com/), [Azure](https://www.axure.com/)
+
+vibe-code: [Lovable](https://lovable.dev/), [Bolt.new](https://bolt.new/)
+
+
+# Process modelling
+
+no-code: [Draw.io](https://app.diagrams.net/)
+
+no/pro-code: [Mermaid](https://mermaid.js.org), [LikeC4](https://likec4.dev/)
 
 
 # OS
@@ -31,9 +72,7 @@ infrastructure as a code:
 # Code
 
 Code Editor: [VSCode](https://code.visualstudio.com/), [Cursor](https://www.cursor.com/),
-Windsurf,  [JetBrains](https://www.jetbrains.com/)
-
-IDE: Google IDX
+[Windsurf](https://windsurf.com/), [Firebase Studio](https://firebase.studio/) [JetBrains](https://www.jetbrains.com/), [Claude Code](https://code.claude.com/), [Google Antigravity](https://antigravity.google/) 
 
 Git Commit Standards: [Google](https://developers.google.com/blockly/guides/contribute/get-started/commits)
 
@@ -98,23 +137,6 @@ image embedding: TwelveLabs
 video embedding: TwelveLabs
 
 
-## Events
-
-* Online hosting: [Luma](https://lu.ma)
-
-
-## Project management
-
-Roadmap: [Roadmunk](https://roadmunk.com/), [Aha!](https://www.aha.io/)
-
-Backlog: [GitHub Projects](https://docs.github.com/en/issues/planning-and-tracking-with-projects/learning-about-projects/about-projects), [Azure DevOps](https://learn.microsoft.com/en-us/azure/devops/boards/backlogs/create-your-backlog?view=azure-devops&tabs=agile-process), [Jira](https://www.atlassian.com/software/jira)
-
-## Analytics
-
-request/data analytics: [Google Analytics](https://developers.google.com/analytics), [Adobe Analytics](https://business.adobe.com/products/adobe-analytics.html)
-
-behaviour analytics: [Hotjar](https://www.hotjar.com/), [Clarity](https://clarity.microsoft.com/)
-
 ## Testing
 
 Integration, E2E: [Playwright](https://playwright.dev/), [Postman](https://www.postman.com/),  [Stagehand](https://github.com/browserbase/stagehand), Selenium, SoapUI, Apache JMeter, Cypress
@@ -127,40 +149,25 @@ Load test: [Locust](https://locust.io/)
 Docker: [dive](https://github.com/wagoodman/dive)
 
 
-## Prototype / UX / User Interface
+## Events
 
-wireframe: [balsamiq](https://balsamiq.com/)
-
-no-code: [Visily](https://www.visily.ai/), [Canva](https://www.canva.com/)
-
-low-code: [Figma](https://www.figma.com/), [Azure](https://www.axure.com/)
-
-vibe-code: [Lovable](https://lovable.dev/), [Bolt.new](https://bolt.new/)
-
+* Online hosting: [Luma](https://lu.ma)
+ 
 
 # Text Editor
 
 raw: [zed](https://zed.dev/), [Pulsar](https://pulsar-edit.dev/)
 
 
-# Survey
+# Screen capture
 
-real-time: [Mentimeter](www.menti.com)
+gif: [Cockos LICEcap](https://www.cockos.com/licecap/)
 
+complex: [OBS studio](https://obsproject.com/)
 
-# Whiteboard
+eCourse: [Articulate Storyline](https://www.articulate.com/360/storyline/)
 
-no-code: [Mural](https://mural.co/), [Miro](https://miro.com/)
-
-no/pro-code: [excalidraw](https://excalidraw.com/), [tldraw](https://tldraw.dev/), [MermaidChart](https://www.mermaidchart.com/)
-
-
-# Process modelling
-
-no-code: [Draw.io](https://app.diagrams.net/)
-
-no/pro-code: [Mermaid](https://mermaid.js.org)
-
+Camtasia
 
 # Image
 
@@ -185,27 +192,12 @@ no-code: Canva
 complete: [Blender](https://www.blender.org/)
 
 
-# Screen capture
-
-gif: [Cockos LICEcap](https://www.cockos.com/licecap/)
-
-complex: [OBS studio](https://obsproject.com/)
-
-eCourse: [Articulate Storyline](https://www.articulate.com/360/storyline/)
-
-Camtasia
-
-
 # Audio
 
 [Ardour](https://ardour.org/), [Reaper](https://www.reaper.fm/)
 
+
 # Portfolio webapp
 
 hosting: [GitHub.io](https://pages.github.com/)
-
-
-# Survey
-
-* real-time [Menti Meter](mentimeter.com)
 
