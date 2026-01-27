@@ -61,6 +61,8 @@ no/pro-code: [Mermaid](https://mermaid.js.org), [LikeC4](https://likec4.dev/)
 
 package manager: [Homebrew](https://brew.sh/)
 
+terminal: Ghostty, iTerm2
+
 ### Windows
 
 installer-executor: [WinGet](https://github.com/microsoft/winget-cli), [Chocolatey](https://chocolatey.org/)
