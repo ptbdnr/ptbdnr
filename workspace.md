@@ -85,7 +85,7 @@ Docker: [dive](https://github.com/wagoodman/dive)
 ## Code
 
 Code Editor: [VSCode](https://code.visualstudio.com/), [Cursor](https://www.cursor.com/),
-[Windsurf](https://windsurf.com/), [Firebase Studio](https://firebase.studio/) [JetBrains](https://www.jetbrains.com/), [Claude Code](https://code.claude.com/), [Google Antigravity](https://antigravity.google/) 
+[Windsurf](https://windsurf.com/), [JetBrains](https://www.jetbrains.com/), [Claude Code](https://code.claude.com/), [Google Antigravity](https://antigravity.google/), Google AI Studio
 
 Git Commit Standards: [Google](https://developers.google.com/blockly/guides/contribute/get-started/commits)
 
