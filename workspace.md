@@ -17,7 +17,7 @@ Backlog: [GitHub Projects](https://docs.github.com/en/issues/planning-and-tracki
 
 ## Whiteboard
 
-no-code: [Mural](https://mural.co/), [Miro](https://miro.com/)
+no-code: [Mural](https://mural.co/), [Miro](https://miro.com/), [MindMeister](https://www.mindmeister.com)
 
 no/pro-code: [excalidraw](https://excalidraw.com/), [tldraw](https://tldraw.dev/), [MermaidChart](https://www.mermaidchart.com/)
 
