@@ -10,6 +10,8 @@ https://www.startuptoolslist.com
  
 ## Project management
 
+Team availability: [Teamup](https://www.teamup.com/)
+
 Roadmap: [Roadmunk](https://roadmunk.com/), [Aha!](https://www.aha.io/)
 
 Backlog: [GitHub Projects](https://docs.github.com/en/issues/planning-and-tracking-with-projects/learning-about-projects/about-projects), [Azure DevOps](https://learn.microsoft.com/en-us/azure/devops/boards/backlogs/create-your-backlog?view=azure-devops&tabs=agile-process), [Jira](https://www.atlassian.com/software/jira)
