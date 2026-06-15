@@ -83,7 +83,7 @@ https://docs.github.com/en/get-started/exploring-integrations/github-developer-p
 <h1>📜 Certifications</h1>
 <div>
   <img alt="aws-practicioner" src="https://d1.awsstatic.com/training-and-certification/certification-badges/AWS-Certified-Cloud-Practitioner_badge.634f8a21af2e0e956ed8905a72366146ba22b74c.png" width="140"/>
-  <img alt="azure-ai-engineer-associate" src="https://learn.microsoft.com/en-us/users/peterbodnar-0391/credentials/certification/azure-ai-engineer?tab=credentials-tab" width="140">
+  <img alt="azure-ai-engineer-associate" src="https://learn.microsoft.com/en-us/media/learn/certification/badges/microsoft-certified-associate-badge.svg?branch=main" width="140">
 </div>
 
 <!-- 
