@@ -113,21 +113,33 @@ Clarification: Data source, size, type, ground truth labels
 
 Data Objects: names
 
-Data Gathering and Cost: 
+Data Gathering and Cost:
+
 * hand labeling (explicit feedback, human judge, select or order)
 * natural labeling (implicit feedback, interactions, results, if applicable)
 * synthetic data (RLHF)
 
-Data Schema: field name, data type (numerical discrete vs continuous, categorical ordinal vs nominal), is pkey, is nullable, foreign key
+Data schema: field name, data type (numerical discrete vs continuous, categorical ordinal vs nominal), is pkey, is nullable, foreign key.
 
-Data Store:
+Data store:
+
 * SQL: RDBS
 * Column-based: RedShift, Cassandra, HBase
 * Key/Value: Redis, DynamoDB, CosmosDB
 * Document: MongoDB, CouchDB
 * Graph: Neo4J
 
-Feature Engineering: balance dataset (over vs under sampling), data augmentation (image crop, rotate, color shift), handle missing values (deletion, imputation), image resizing, numerical scaling (normalization = min-max scaling, standardization = z-score normalisation, log scaling), discretization (bucketing), tokenization, encoding (enumerating, one-hot encoder, embedding learning), color mode (RGB, CMYK), text stemming & lemmatization (remove stop words)
+Feature Engineering: 
+
+* balance dataset (over vs under sampling),
+* handle missing values (deletion, imputation)
+* data transform:
+    * numerical: scaling (normalization = min-max scaling, standardization = z-score normalisation, log scaling), discretization (bucketing)
+    * categorical: encoding (enumerating, one-hot encoder, embedding learning), 
+    * natural language: stemming & lemmatization (remove stop words), tokenization, embedding
+    * image: resize, crop, rotate, color shift, color mode (RGB/CMYK)
+    * audio: ?
+    
 
 # System Architecture
 
@@ -149,50 +161,55 @@ Modeling craft (task → models → pitfalls)
 | Anomaly detection | per-metric z-score / quantile threshold | isolation forest; autoencoder; one-class SVM | "normal" training data is contaminated; threshold set by alert budget, not statistics; feed confirmed alerts back as labels |
 
 Model selection:
-baseline
-number of stages: one vs multi-stage, early vs late fusion (simpler vs native combined understanding)
-representation: 
-statistical: Bag of Words (key-count, sparse representation), TF-IDF (normalized BoW), BM25, n-gram
-learned: embedding (hashmap,matrix factorization), Word2vec (shallow NN, Continuous BoW + Skip-gram), transformer (context aware, DistilBERT), 3D Convolution (frame/video-level)
-similarity:
-exact (kNN)
-approximate (tree and/or cluster based, locally sensitive hashing, ScaNN, DiscScann, HNSW)
-search, fusing layer, re-ranking service, guardrails
-classification: decision tree with boosted gradients, random forest, logistic regression, naive bayes, SVM
-regression: linear regression
-ensemble: begging vs boosting
-neural networks: transformer (encoder-decoder), convolutional NN CNN), region proposal network (RPN)
-ranking: rule base, embedding based, learn to rank (point wise Q-V, pairwise Q-V(V,V), list wise Q-(V, V, …, V)) 
-Generative: watermarking (Coalition for Content Provenance and Authenticity,  C2PA)
+
+* baseline
+* number of stages: one vs multi-stage, early vs late fusion (simpler vs native combined understanding)
+* representation: 
+    * statistical: Bag of Words (key-count, sparse representation), TF-IDF (normalized BoW), BM25, n-gram
+    * learned: embedding (hashmap,matrix factorization), Word2vec (shallow NN, Continuous BoW + Skip-gram), transformer (context aware, DistilBERT), 3D Convolution (frame/video-level)
+* similarity:
+    * exact (kNN)
+    * approximate (tree and/or cluster based, locally sensitive hashing, ScaNN, DiscScann, HNSW)
+* search, fusing layer, re-ranking service, guardrails
+* classification: decision tree with boosted gradients, random forest, logistic regression, naive bayes, SVM
+* regression: linear regression
+* ensemble: begging vs boosting
+* neural networks: transformer (encoder-decoder), convolutional NN CNN), region proposal network (RPN)
+* ranking: rule base, embedding based, learn to rank (point wise Q-V, pairwise Q-V(V,V), list wise Q-(V, V, …, V)) 
+* Generative: watermarking (Coalition for Content Provenance and Authenticity,  C2PA)
 
 Model training/fitting:
-Elasticsearch
-dataset: data split to training, validation (k-fold), test (hold-out)
-regularization: dropout, weight regularization (lasso k*sum|w|, ridge k*sum w^2, elastic net), early stopping, batch normalization
-approach: forward feed (layers, bias, activation function, softmax) and backward propagation, contrastive training (feature= query + n objects, label = idx of object among n with highest similarity)
-loss function: 
-classification: cross entropy loss (log loss, softmax vs ground truth), KL divergence
-regression: MAE, MSE, RMSE
-region overlap w Non-Maximum Suppression (NMS), 
-batch, epoch, checkpoint
-distributed training
-Optimisation: stochastic gradient descent, weighted alternating least squares
+
+* Elasticsearch
+* dataset: data split to training, validation (k-fold), test (hold-out)
+* regularization: dropout, weight regularization (lasso k*sum|w|, ridge k*sum w^2, elastic net), early stopping, batch normalization
+* approach: forward feed (layers, bias, activation function, softmax) and backward propagation, contrastive training (feature= query + n objects, label = idx of object among n with highest similarity)
+* loss function: 
+* classification: cross entropy loss (log loss, softmax vs ground truth), KL divergence
+* regression: MAE, MSE, RMSE
+* region overlap w Non-Maximum Suppression (NMS), 
+* batch, epoch, checkpoint
+* distributed training
+* Optimisation: stochastic gradient descent, weighted alternating least squares
 
 Serving & Inference:
-data ingestion, data indexing pipeline
-latency budget: batch vs real-time, streaming output
-Caching
-Re-training cadence
-host: cloud vs on-device
-pipeline: stages, gates, release strategy (A/B testing, p-value, shadow = dual deployment)
-model compression: quantization, knowledge distillation, pruning
-monitoring, hardware utilisation, requests/responses, drift in performance (model/data/context drift)
+
+* data ingestion, data indexing pipeline
+* latency budget: batch vs real-time, streaming output
+* Caching
+* Re-training cadence
+* host: cloud vs on-device
+* pipeline: stages, gates, release strategy (A/B testing, p-value, shadow = dual deployment)
+* model compression: quantization, knowledge distillation, pruning
+* monitoring, hardware utilisation, requests/responses, drift in performance (model/data/context drift)
 
 Risk & Safety:
-Failure modes
-Misuse, fairness, human-in-the-loop
 
-# Roadmap & summary
-MVP to V1 to V2
-Priorities to de-risk
-What to delegate to others
+* Failure modes
+* Misuse, fairness, human-in-the-loop
+
+# Roadmap & Summary
+
+* MVP to V1 to V2
+* Priorities to de-risk
+* What to delegate to others
