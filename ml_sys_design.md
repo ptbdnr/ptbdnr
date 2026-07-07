@@ -1,7 +1,7 @@
 # ML System Design
 
 
-## Discover Scope & Clarify
+## Discover & Clarify: Business Objective, Scope, Requirements, Constraints
 
 Business Objective, vision & goal. What is success? (KPI: customer aquisition cost CAC, customer lifetime value CLTV, revenue, net profit margin, order fulfillment time, inventory turnover, average order value AOV, customer satisfaction score CSAT, net promoter score NPS, churn rate)
 
@@ -20,7 +20,7 @@ Constraints:
 Data: source, size, type, ground truth
 
 
-## Metrics
+## Business Metrics
 
 Note: business KPI ← online metric ← offline metric ← validation metric ← training loss. Each arrow is a surrogate relationship with a gap.
 
