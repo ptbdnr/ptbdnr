@@ -3,7 +3,7 @@
 
 ## Discover & Clarify: Business Objective, Scope, Requirements, Constraints
 
-Business Objective, vision & goal. What is success? (KPI: customer aquisition cost CAC, customer lifetime value CLTV, revenue, net profit margin, order fulfillment time, inventory turnover, average order value AOV, customer satisfaction score CSAT, net promoter score NPS, churn rate)
+Business Objective, vision & goal. What is success? (KPI: customer aquisition cost CAC, customer lifetime value cLTV, revenue, net profit margin, order fulfillment time, inventory turnover, average order value AOV, customer satisfaction score CSAT, net promoter score NPS, churn rate)
 
 Functional Requirements: UX, features, continuous improvement
 
@@ -22,7 +22,7 @@ Data: source, size, type, ground truth
 
 ## Business Metrics
 
-Note: business KPI ← online metric ← offline metric ← validation metric ← training loss. Each arrow is a surrogate relationship with a gap.
+Note: business KPI ← online metric ← offline metric ← validation metric ← training loss. Each arrow is a surrogate relationship with a gap. Imperfect and comes with a risk.
 
 * Business KPI: the salient number you optimize for
 * Online metric: the single number you optimize for at the edge (e.g. latency, throughput)
@@ -32,8 +32,17 @@ Note: business KPI ← online metric ← offline metric ← validation metric �
 
 Online metric:
 
-* Explicit feedback: User likes, valid dislike/complain/appeal (hard negative), Perceptual Mean Opinion Score (MOS)
-* Implicit feedback: Click-through rate (CTR), glance view (impression), watch time, completed watch,
+* User feedback
+    * Explicit feedback: User likes, valid dislike/escalation/complain/appeal (hard negative), Perceptual Mean Opinion Score (MOS), appeal rate, overturn rate on appeals
+    * Implicit feedback: glance view (impression), query reformulation rate, Click-Through Rate (CTR), watch time, completed watch, successful clicks, retention A/B
+* Operational performance:
+    * time-to-detect/process, dwell time, stockout / overstock cost, ETA
+    * SLA breach rate, fraud $ prevented, revenue error
+    * self-service (deflection) rate
+* Safety
+    * field incident / miss rate
+* HITL:
+    * expert confirm rate
 * Prevalence
 
 Guardrails: fairness and bias (age, gender, ethnicity)
@@ -67,45 +76,27 @@ Non-ML baseline first: rules / popularity / heuristic. ML must beat this.
 3. Pick one; reject runner-up against: label cost, metric alignment, latency, data volume, interpretability.
 
 
-| Task framing | Data object (training example) | Output head | Training loss | Validation metric (select/stop) | Offline test metrics | Online proxy |
+| Task framing | Data object (training example) | Output head | Training loss | Validation metric (select/stop) | Offline test metrics |
 |---|---|---|---|---|---|---|
-| Regression (ETA, LTV, watch time) | (x, y∈ℝ) | single linear unit; quantile heads for intervals | MSE / Huber; pinball for quantiles | RMSE on temporal val split | MAE, RMSE, MAPE, R²; interval coverage | SLA breach rate, revenue error |
-| Binary clf, imbalanced (fraud, churn, abuse) | (x, y∈{0,1}), heavy skew | sigmoid p(y) | weighted BCE / focal | PR-AUC | PR-AUC, precision@fixed-FPR, calibration (ECE), confusion at chosen threshold | fraud $ prevented, appeal rate |
-| Multi-class (1 of n) / multi-label (k of n) / multi-task (n binary variants) (tagging, moderation) | (x, y = 1-of-K) or (x, y ⊆ K) | softmax / K independent sigmoids | CE / per-label weighted BCE | macro-F1 / mAP | per-class P/R/F1, micro-macro avg, Hamming loss | overturn rate on appeals |
-| Clustering |---|---|---|---|---|---|
-| Dimensionality reduction |---|---|---|---|---|---|
-| Representation learning |---|---|---|---|---|---|
-| Recommendation: rule-based, content-based (similar content), collaborative (similar client), hybrid sequential or parallel, two-stage retrieval + ranking |---|---|---|---|---|---|
-| Retrieval / candidate generation | (query, positive item, sampled negatives) | two embeddings + dot/cosine | InfoNCE / sampled softmax / triplet | recall@k | recall@k, MRR, catalog coverage, ANN latency | downstream CTR, freshness |
-| Pointwise ranking (CTR, feed) | (user, item, context, y=click); multi-task labels | sigmoid pCTR (+ per-engagement heads) | BCE; weighted multi-task sum | ROC-AUC / logloss | AUC, nDCG@k on sessions, calibration (critical for auctions) | CTR, dwell, retention A/B |
-| Information Retrieval / Learning to rank | (query, doc list, graded relevance) | scoring function s(q,d) | pairwise RankNet / listwise LambdaRank | nDCG@10 | nDCG, MRR, MAP | query reformulation rate, successful clicks |
-| Sequence / Image segmentation |---|---|---|---|---|---|
-| Object detection | (image, boxes + classes) | box regression + class scores + objectness | composite: IoU/smooth-L1 + focal CE | mAP@IoU 0.5 | mAP@[.5:.95], per-class recall, FPS | field incident / miss rate |
-| Generative (LLM, RAG) | (prompt + context, target text); preference pairs | token softmax over vocab | next-token CE (SFT); DPO on preferences | perplexity / judge win-rate on eval set | groundedness, relevance, coherence (LLM-judge + human), safety rates | thumbs-up, deflection rate, escalations |
-| Translation |---|---|---|---|---|---|
-| Strategy Development (RL) |---|---|---|---|---|---|
-| Combinatorial optimisation |---|---|---|---|---|---|
-| Forecasting (time series) | (series history + covariates, horizon values) | per-horizon point / quantile outputs | MSE / pinball | rolling-origin wMAPE | wMAPE, MASE, interval coverage | stockout / overstock cost |
-| Anomaly detection | unlabeled x + few labeled anomalies | anomaly score | reconstruction error / one-class objective | PR-AUC on labeled slice | precision@k alerts, PR-AUC, alert volume | analyst confirm rate, time-to-detect |
+| Regression | (x, y∈ℝ) | single linear unit; quantile heads for intervals | MSE / Huber; pinball for quantiles | RMSE on temporal val split | MAE, RMSE, MAPE, R²; interval coverage |
+| Binary clf w/o imbalance / multi-task (N binary variants)  | (x, y∈{0,1}) w/o skew | sigmoid p(y) | weighted BCE / focal | PR-AUC | confusion at threshold, 1vsN/aggregated P/R/F1, PR-AUC and ROC-AUC at threshold, precision@fixed-FPR (for async cost), calibration (ECE) |
+| Multi-class (1-of-K) / multi-label clf (y ⊆ K) | (x, y = 1-of-K) or (x, y ⊆ K) | softmax / K independent sigmoids | CE (-1*sum y-log p(y)) / per-label weighted BCE / KL-divergence | macro-F1 / mAP | per-class P/R/F1, micro-macro avg, accuracy (TP+TN)/n, Hamming loss (FP+FN)/n |
+| Clustering |---|---|---|---|---|
+| Dimensionality reduction |---|---|---|---|---|
+| Representation learning |---|---|---|---|---|
+| Recommendation: rule-based, content-based (similar content), collaborative (similar client), hybrid sequential or parallel, two-stage retrieval + ranking |---|---|---|---| precision @ k, mAP, diversity (Avg pair-wise embedding distance) |
+| Retrieval / candidate generation | (query, positive item, sampled negatives) | two embeddings + dot/cosine | InfoNCE / sampled softmax / triplet | recall@k | recall@k, precision@k, MRR, catalog coverage, ANN latency |
+| Pointwise ranking (CTR, feed) | (user, item, context, y=click); multi-task labels | sigmoid pCTR (+ per-engagement heads) | BCE; weighted multi-task sum | ROC-AUC / logloss | AUC, nDCG@k on sessions, calibration (critical for auctions) |
+| Information Retrieval / Learning to rank | (query, doc list, graded relevance) | scoring function s(q,d) | pairwise RankNet / listwise LambdaRank | nDCG@10 | nDCG, MRR, mAP |
+| Sequence / Image segmentation |---|---|---|---| text sequence pariwise F1/ARI, img obj boundary mAP@IOU, 1-vs-all recall, FPS|
+| Object detection | (image, boxes + classes) | box regression + class scores + objectness | composite: IoU/smooth-L1 + focal CE | mAP@IoU 0.5 | mAP@[.5:.95], per-class recall, FPS |
+| Generative | (prompt + context, target text); preference pairs | token softmax over vocab | next-token CE (SFT); DPO on preferences | perplexity / judge win-rate on eval set | groundedness, relevance, coherence in logical flow (LLM-judge + human), consistency, language fluency, safety rates (self-harm content, hateful or unfair content, violent content, sexual content, protected material, indirect attack/jailbreak), ROUGE recall oriented for summarization, image generation (FID, Inseption score)|
+| Translation, STT, TTS |---|---|---|---| BLEU n-gram comparison for translation, METEOR extended BLEU, GLEU sentence-level BLEU, WER for STT/TTS |
+| Strategy Development (RL) |---|---|---|---|---|
+| Combinatorial optimisation |---|---|---|---| asymm costs|
+| Forecasting (time series) | (series history + covariates, horizon values) | per-horizon point / quantile outputs | MSE / pinball | rolling-origin wMAPE | wMAPE, MASE, interval coverage |
+| Anomaly detection | unlabeled x + few labeled anomalies | anomaly score | reconstruction error / one-class objective | PR-AUC on labeled slice | precision@k alerts, PR-AUC, alert volume |
 
-
-
-Offline evaluation (imperfect connection to business):
-
-* Regression: MAE, RMSE
-* Classification
-    * hard label with discrete classes: confusion matrix, overall metrics (accuracy (TP+TN)/n, Hamming Loss (FP+FN)/n), class-level one-vs-rest (precision, recall, F1), average (macro/micro/weighted avg of precision/recall/F1), precision at fixed FP rate (for async error costs), PR-AUC for binary classification with various thresholds for precision and recall, ROC-AUC for binary classification for recall vs FP)
-    * soft label with continuous probabilities: cross-entropy (negative sum of the true probabilities multiplied by the log of the predicted probabilities), KL-divergence 
-* Clustering:
-* Content segmentation: sequence segmentation (pairwise F1, ARI), image object boundary (mAP @ intersection over union IOU, per-class recall,  FPS, )
-* Dimensionality reduction
-* Representation learning
-* Information retrieval: search/ranking (precision @ k, recall @ k, Mean Reciprocal Rank MRR, mAP, nDCG)
-* Generative: quality (groundedness rate, relevance to request, coherence in logical flow and consistency, fluency in language w LLM-judge and human eval) risk and safety (self-harm content, hateful or unfair content, violent content, sexual content, protected material, indirect attack/jailbreak), image generation (FID, Inseption score)
-* Translation: NLP (BLEU n-gram comparison for translation, METEOR extended BLEU, GLEU sentence-level BLEU, ROUGE recall oriented for summarization)
-* Recommendation: precision @ k, mAP, diversity (avg pairwise embedding distance)
-* Reinforcement learning:
-* Combinatorial optimisation: asymmetric costs
 
 ## Data Engineering
 
