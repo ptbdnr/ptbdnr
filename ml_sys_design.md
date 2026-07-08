@@ -77,7 +77,7 @@ Non-ML baseline first: rules / popularity / heuristic. ML must beat this.
 
 
 | Task framing | Data object (training example) | Output head | Training loss | Validation metric (select/stop) | Offline test metrics |
-|---|---|---|---|---|---|---|
+|---|---|---|---|---|---|
 | Regression | (x, y∈ℝ) | single linear unit; quantile heads for intervals | MSE / Huber; pinball for quantiles | RMSE on temporal val split | MAE, RMSE, MAPE, R²; interval coverage |
 | Binary clf w/o imbalance / multi-task (N binary variants)  | (x, y∈{0,1}) w/o skew | sigmoid p(y) | weighted BCE / focal | PR-AUC | confusion at threshold, 1vsN/aggregated P/R/F1, PR-AUC and ROC-AUC at threshold, precision@fixed-FPR (for async cost), calibration (ECE) |
 | Multi-class (1-of-K) / multi-label clf (y ⊆ K) | (x, y = 1-of-K) or (x, y ⊆ K) | softmax / K independent sigmoids | CE (-1*sum y-log p(y)) / per-label weighted BCE / KL-divergence | macro-F1 / mAP | per-class P/R/F1, micro-macro avg, accuracy (TP+TN)/n, Hamming loss (FP+FN)/n |
