@@ -5,7 +5,7 @@
 
 Business Objective, vision & goal. What is success? (KPI: customer aquisition cost CAC, customer lifetime value cLTV, revenue, net profit margin, order fulfillment time, inventory turnover, average order value AOV, customer satisfaction score CSAT, net promoter score NPS, churn rate)
 
-Functional Requirements: UX, features, continuous improvement
+Functional Requirements: UX, features, session memory, continuous improvement
 
 Scale: Daily Active Users (DAU), click per user, rate of growth, data volume of knowledge base
 
