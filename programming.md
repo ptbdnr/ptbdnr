@@ -27,7 +27,11 @@ Optimised (verbal then code)
 
 * Python idiomatic: list comprehension, generative `yield` function, swap operator (`a,b=b,a`)
 
+# Develop
 
+edge-case first
+
+helper functions
 
 
 
