@@ -196,7 +196,7 @@ Serving & Inference:
 * Caching
 * Re-training cadence
 * host: cloud vs on-device
-* pipeline: stages, gates, release strategy (A/B testing, p-value, shadow = dual deployment)
+* pipeline: stages, gates, release strategy (shadow = dual deployment, A/B testing, p-value)
 * model compression: quantization, knowledge distillation, pruning
 * monitoring, hardware utilisation, requests/responses, drift in performance (model/data/context drift)
 
