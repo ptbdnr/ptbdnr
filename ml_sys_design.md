@@ -182,11 +182,11 @@ Model training/fitting:
 * regularization: dropout, weight regularization (lasso k*sum|w|, ridge k*sum w^2, elastic net), early stopping, batch normalization
 * approach: forward feed (layers, bias, activation function, softmax) and backward propagation, contrastive training (feature= query + n objects, label = idx of object among n with highest similarity)
 * loss function: 
-* classification: cross entropy loss (log loss, softmax vs ground truth), KL divergence
-* regression: MAE, MSE, RMSE
-* region overlap w Non-Maximum Suppression (NMS), 
+   * classification: cross entropy loss (log loss, softmax vs ground truth), KL divergence
+   * regression: MAE, MSE, RMSE
+   * region overlap w Non-Maximum Suppression (NMS), 
 * batch, epoch, checkpoint
-* distributed training
+* distributed training: PyTorch Distributed Data Parallel (copy model, forward minibatch, aggregate loss, sync gradients, updata all)
 * Optimisation: stochastic gradient descent, weighted alternating least squares
 
 Serving & Inference:
