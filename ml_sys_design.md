@@ -1,5 +1,10 @@
 # ML System Design
 
+org certificate:
+
+* [AI Platform on Microsoft Azure Specialization](https://teams.public.onecdn.static.microsoft/evergreen-assets/safelinks/2/atp-safelinks.html)
+* [AWS Prescriptive Guidance](https://docs.aws.amazon.com/pdfs/prescriptive-guidance/latest/gen-ai-workload-assessment/gen-ai-workload-assessment.pdf)
+* [ISO/IEC 42001](https://www.iso.org/standard/42001) [Azure ISO 42001 Audit Report 2026](https://servicetrust.microsoft.com/DocumentPage/9e8f5357-3667-46a4-99cd-1693d1e9d06a)
 
 ## Discover & Clarify: Business Objective, Scope, Requirements, Constraints
 
