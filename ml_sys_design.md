@@ -13,7 +13,7 @@ Business Objective, vision & goal. What is success? (KPI: customer aquisition co
 
 Functional Requirements: UX, features, session memory, continuous improvement
 
-Scale: Daily Active Users (DAU), ingestion/query frequency, click per user, rate of growth, data volume of knowledge base
+Scale: Daily Active Users (DAU) x Click Per User / 100K = Query Per Second (QPS), ingestion vs query frequency, rate of growth, data volume of knowledge base,
 
 Constraints:
 
