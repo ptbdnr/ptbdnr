@@ -51,7 +51,7 @@ Online metric:
     * expert confirm rate
 * Prevalence
 
-Guardrails: fairness and bias (age, gender, ethnicity)
+Guardrails: fairness and bias (age, gender, ethnicity) with constrastive evaluation
 
 
 ## Solution Design
