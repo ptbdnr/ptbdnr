@@ -16,6 +16,7 @@ Quality: test first?
 
 Trade-off: speed vs memory vs accuracy, batch vs real-time (stream?), CAP
 
+
 # Design
 
 Brute force (verbal only)
@@ -27,11 +28,18 @@ Optimised (verbal then code)
 
 * Python idiomatic: list comprehension, generative `yield` function, swap operator (`a,b=b,a`)
 
+
 # Develop
+
+class @statiwcmethod
 
 edge-case first
 
-helper functions
+side effect idempotency (mutable input objects)
+
+helper functions, Single Responsibility Principle (SRP) 
+
+meaningful white space, comments
 
 
 
