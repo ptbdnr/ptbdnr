@@ -11,11 +11,13 @@ org certificate:
 
 Business Objective, vision & goal. What is success? KPIs:
 
-* annual recurring revenue ARR, net profit margin NPP
-* customer aquisition cost CAC, churn rate
+* annual recurring revenue ARR, net profit margin NPM
+* customer aquisition cost CAC, churn rate, conversion rate CVR
 * customer satisfaction score CSat, net promoter score NPS
+* output per FTE, cycle time per task, cost per task
 * average order value AOV, customer lifetime value CLtV
 * order fulfillment cycle time OFCT, inventory turnover COGS/avgINV
+ 
 
 Functional Requirements: UX, features, session memory, continuous improvement
 
@@ -90,19 +92,19 @@ Non-ML baseline first: rules / popularity / heuristic. ML must beat this.
 
 | Task framing | Offline test metrics | Data object (training example) | Output head | Validation metric (select/stop) | Training loss |
 |---|---|---|---|---|---|
-| Regression | [MAE](#mae), [RMSE](#rmse), [MAPE](#mape), [R²](#r); [interval coverage](#interval-coverage) | (x, y∈ℝ) | single linear unit; [quantile heads for intervals](#quantile-heads-for-intervals) | [RMSE](#rmse) on [temporal val split](#temporal-val-split) | [MSE](#mse) / [Huber](#huber); [pinball for quantiles](#quantile-heads-for-intervals) |
-| Binary clf w/o imbalance / multi-task (K binary heads) | [P](#precision)/[R](#recall)/[F1](##f1)@(0..1), [P@fixed-FPR](#precision), [PR-AUC](#pr-auc), [ROC-AUC](#roc-auc), [calibration (ECE)](#calibration-ece) | (x, y∈{0,1}) | [sigmoid p(y)](#sigmoid-function) | [PR-AUC](#pr-auc) | ([Weighted](#weighted-bce)) [BCE](#bce); [Focal loss](#focal-loss) |
-| Multi-class / multi-label clf | per-class/macro [P](#precision)/[R](#recall)/[F1](#f1), [Accuracy](#accuracy), [Hamming loss](#hamming-loss) | (x, y∈K$) / (x, y⊆K) | [softmax](#softmax); K independent [sigmoids](#sigmoid-function) | macro-[F1](#f1) | [CE](#ce); per-label [weighted BCE](#weighted-bce); [KL-divergence](#kl-divergence) |
-| Clustering | --- | --- | --- | --- | --- |
-| Dimensionality reduction | --- | --- | --- | --- | --- |
-| Representation learning | --- | --- | --- | --- | --- |
-| Recommendation: rule-based, content-based (similar content), collaborative (similar client), hybrid sequential or parallel, two-stage retrieval + ranking | precision @ k, mAP, diversity (Avg pair-wise embedding distance) | --- | --- | --- | --- |
-| Retrieval / candidate generation | recall@k, precision@k, MRR, catalog coverage, ANN latency | (query, positive item, sampled negatives) | two embeddings + dot/cosine | recall@k | InfoNCE / sampled softmax / triplet |
-| Pointwise ranking (CTR, feed) | AUC, nDCG@k on sessions, calibration (critical for auctions) | (user, item, context, y=click); multi-task labels | sigmoid pCTR (+ per-engagement heads) | ROC-AUC / logloss | BCE; weighted multi-task sum |
-| Information Retrieval / Learning to rank | nDCG, MRR, mAP | (query, doc list, graded relevance) | scoring function s(q,d) | nDCG@10 | pairwise RankNet / listwise LambdaRank |
-| Sequence / Image segmentation | text sequence pariwise F1/ARI, img obj boundary mAP@IOU, 1-vs-all recall, FPS | --- | --- | --- | --- |
+| Regression | [MAE](#mae), [RMSE](#rmse), [wMAPE](#mape), [R²](#r); [interval coverage](#interval-coverage) | (x, y∈ℝ) | single linear unit; [quantile heads for intervals](#quantile-heads-for-intervals) | [RMSE](#rmse) on [temporal val split](#temporal-val-split) | [MSE](#mse) / [Huber](#huber); [pinball for quantiles](#quantile-heads-for-intervals) |
+| Binary clf w/o imbalance / multi-task (K binary heads) | [P](#precision)/[R](#recall)/[Fβ](#f1)@(0..1), [P@fixed-FPR](#precision), [PR-AUC](#pr-auc), [ROC-AUC](#roc-auc), [ECE](#calibration-ece) | (x, y∈{0,1}) | [sigmoid p(y)](#sigmoid-function) | [PR-AUC](#pr-auc) | ([Weighted](#weighted-bce)) [BCE](#bce--logloss); [Focal loss](#focal-loss) |
+| Multi-class / multi-label clf | per-class/macro [P](#precision)/[R](#recall)/[Fβ](#f1), [Accuracy](#accuracy), [Hamming loss](#hamming-loss) | (x, y∈K$) / (x, y⊆K) | [softmax](#softmax) over K; [sigmoid](#sigmoid-function) p(k) ∀k∈K| macro-[F1](#f1) | [CE](#ce); per-label [weighted BCE](#weighted-bce); [KL-divergence](#kl-divergence) |
+| Clustering | ? | ? | ? | ? | ? |
+| Dimensionality reduction | ? | ? | ? | ? | ? |
+| Representation learning | ? | (q, 1x similar, n-1 dissimilar) | ? | ? | CE |
+| Info Retrieval / Candidate generation | [HitRate](#hitratek)@K, [R](#recall)/[P](#precision)@k, [MRR](#mrr), [catalog coverage](#catalog-coverage), ANN latency | (q, TPs, sample TNs) | dot/cosine (of 2 embeddings) | [recall](#recall)@k | [InfoNCE](#infonce) / sampled [softmax](#softmax) / [triplet loss](#triplet-loss) |
+| Pointwise ranking (for CTR) | [ROC-AUC](#roc-auc), [nDCG](#ndcg)@k on sessions, [ECE](#calibration-ece) | (user, item, context, y∈{0,1}) | [sigmoid p(y)](#sigmoid-function) | [ROC-AUC](#roc-auc) / [BCE](#bce--logloss) | [BCE](#bce--logloss); multi-task [weighted sum of losses](#weighted-sum-of-losses)  |
+| Pairwise Ranking | [MRR](#mrr) | (Q, 2x scored doc) | ? | ? | ? |
+| Listwise Ranking | [mAP](#map), [nDCG](#ndcg) | (Q, K scored doc) | ? | ? | ? |
+| Sequence / Image segmentation | text sequence pariwise F1/ARI, img obj boundary mAP@IOU, 1-vs-all recall, FPS | ? | ? | ? | ? |
 | Object detection | mAP@[.5:.95], per-class recall, FPS | (image, boxes + classes) | box regression + class scores + objectness | mAP@IoU 0.5 | composite: IoU/smooth-L1 + focal CE |
-| Generative | groundedness, relevance, coherence in logical flow (LLM-judge + human), consistency, language fluency, safety rates (self-harm content, hateful or unfair content, violent content, sexual content, protected material, indirect attack/jailbreak), ROUGE recall oriented for summarization, image generation (FID, Inseption score) | (prompt + context, target text); preference pairs | token softmax over vocab | perplexity / judge win-rate on eval set | next-token CE (SFT); DPO on preferences |
+| Generative seq2seq | [ROUGE](#rouge), [safety rates](#safety-rates), [RAGAS metrics](#ragas-metrics), seq2img ([Inception Score](#inception-score), [FID](#fid)) | (prompt, response); preference pairs (prompt, choosen response, rejected response) | [softmax](#softmax) over VOCAB | [perplexity](#perplexity) / [judge win-rate](#judge-win-rate) | next-token [CE](#ce) for supervised fine-tuning; [DPO](#DPO) on preferences |
 | Translation, STT, TTS | BLEU n-gram comparison for translation, METEOR extended BLEU, GLEU sentence-level BLEU, WER for STT/TTS | --- | --- | --- | --- |
 | Strategy Development (RL) | --- | --- | --- | --- | --- |
 | Combinatorial optimisation | asymm costs | --- | --- | --- | --- |
@@ -151,14 +153,19 @@ Realistic system: add complexity only if justified
 
 Modeling craft (task → models → pitfalls)
 
+| Recommendation: rule-based, content-based (similar content), collaborative (similar client), hybrid sequential or parallel, two-stage retrieval + ranking | precision @ k, mAP, diversity (Avg pair-wise embedding distance) 
+
 | Task framing | Baseline (incl. non-ML) | Candidate models | Training notes (splits, sampling, pitfalls) |
 |---|---|---|---|
 | Regression | segment mean/median; last value | linear reg → GBDT → MLP | log-transform skewed targets; clip outliers; temporal split against leakage |
 | Binary clf, imbalanced | rules engine; logistic regression | GBDT; DNN | class weights over naive oversampling; recalibrate after any resampling; threshold from cost matrix, not 0.5; label delay (chargebacks arrive weeks late) |
 | Multi-class / multi-label | one-vs-rest logistic on TF-IDF | fine-tuned DistilBERT; CNN | per-class thresholds; upsample rare classes; taxonomy drift over time |
-| Retrieval | popularity; BM25; co-visitation | matrix factorization (ALS); two-tower + HNSW/ScaNN | in-batch negatives + hard-negative mining; logQ sampling correction; cold-start via content features |
+| Representation Learning |  |  | Contrastive Learning |
+| Info Retrieval | popularity; BM25; IF-IDF |  | KNN, ANN (tree-based, locality sensitive hashing) |
+|  |  | matrix factorization (ALS); two-tower + HNSW/ScaNN | in-batch negatives + hard-negative mining; logQ sampling correction; cold-start via content features |
 | Pointwise ranking | logistic w/ feature crosses; GBDT | DCN / DLRM; transformer over user history | position bias (position feature at train, fixed at serve, or IPS); temporal split; negative downsampling then recalibrate |
-| Learning to rank | BM25 | LambdaMART; cross-encoder re-ranker | split by query, never by doc; click labels are biased vs human judgments; runs as stage 2 after retrieval |
+| Pariwise ranking | BM25 | RankNet | |
+| Listwise ranking | BM25 | LambdaRank, LambdaMART; cross-encoder re-ranker | split by query, never by doc; click labels are biased vs human judgments; runs as stage 2 after retrieval |
 | Object detection | pretrained YOLO, frozen backbone | YOLO family; Faster R-CNN; DETR | transfer-learn, don't train from scratch; flip/crop/color augmentation; NMS and anchor tuning; small-object failure mode |
 | Generative | prompt-engineered frozen LLM + RAG | LoRA fine-tune; RAG + re-ranker | prompt-first, fine-tune only when evals prove the gap; curate eval set, guard against contamination; hallucination guardrails; cost/latency per token |
 | Forecasting | seasonal naive; ETS/ARIMA | GBDT on lag features; DeepAR / TFT | never random split — rolling-origin backtest; leakage through future-known covariates; hierarchical reconciliation |
@@ -288,6 +295,12 @@ $$
 MAPE = \frac{100\%}{n} \sum |\frac{y_i-\hat{y_i}}{y_i}|
 $$
 
+Weighted Mean Absolute Percentage Error weights each error by the actual value, making it more stable for intermittent or low-volume data. Prefered in forecasting because it reflects total error relative to total volume rather than treating each item equally.
+
+$$
+wMAPE = \frac{\sum |y - \hat{y}|}{\sum |y|} \times 100\%
+$$
+
 ## R²
 
 $R^2$ is the coefficient of determination, a regression metric for how much variance in $y$ your model explains.
@@ -408,6 +421,9 @@ $$
 
 If you cap $FPR$ at 0.5%, and precision there is 40%, then about 4 in 10 selected items are real positives while staying within your false-alert budget.
 
+Issues:
+
+* does not consider raking quality
 
 ## Recall
 
@@ -417,9 +433,14 @@ $$
 R = \frac{TP}{TP+FN}
 $$
 
+Issues:
+
+* Does not consider raking quality
+* if the total positive item count is large (denominator is large) and we truncate to first $k$ then this has a negative effect.
+
 ## F1
 
-The harmonic mean of precision and recall.
+F1 is the harmonic mean of precision and recall.
 
 $$
 F1 = \frac{2PR}{P+R}
@@ -430,6 +451,15 @@ Why it is used:
 * Balances precision and recall in one number.
 * Useful when class imbalance exists and both false positives and false negatives matter.
 * Range is [0,1]; higher is better.
+
+F-beta, $F_β$, score is the weighted harmonic mean of precision and recall.
+
+$$
+F_β = \frac {(1 + β²) × (Precision × Recall)}{β² × Precision + Recall}
+$$
+
+* $β > 1$: emphasizes recall
+* $β < 1$: emphasize precision
 
 ## PR-AUC
 
@@ -474,9 +504,34 @@ It measures ranking quality, not calibration. Two models can have the same ROC-A
 
 ## Calibration (ECE)
 
-Calibration means predicted probabilities should match observed frequencies. Expected Calibration Error (ECE) is a summary of mismatch.
+Calibration means predicted probabilities should match observed frequencies. 
 
-Example intuition: predictions around 0.8 should be correct about 80% of the time. If they are correct only 65%, the model is overconfident in that region.
+Expected Calibration Error (ECE) is a summary of mismatch. Intuition: predictions around 0.8 should be correct about 80% of the time. If they are correct only 65%, the model is overconfident in that region.
+
+Reliability curves (aka calibration plots): $y=z$: perfect calibration on the diagonal, above diagonal the model is underconfident, below diagonal the model is overconfident.
+
+1. Bin predictions by confidence [(0.0-0.1), (0.1-0.2),...]
+2. For each bin, compute avg predicted probability and observed positive rate
+3. Plot observed rate (y-axis) vs predicted confidence (x-axis)
+
+Platt scaling: post-hoc calibration method, mainly for binary classification, fits a logistic mapping from model score $s$ to calibrated probability: $\hat{p}=σ(As+B)=\frac{1}{1+e^{-(As+B)}}$ where $A$, $B$ is learned on validation set.
+
+Isotomic regression: post-hoc non-parametric calibration method for binary classification, requires large calibration dataset. Learns a monotonic function $f$ such that $\hat{p}=f(s)$, where $f$ is non-decreasing. More flexible than Platt scaling, it can fit complex shapes, but can overfit with small calibration data.
+
+Temperature scaling: post-hoc calibration method for multi-class NN. Divides logits by temperature $T > 0$ before softmax: $\hat{p} = \frac{e^{z/T}}{\sum e ^{z/T}}$. Fir one scalar T on validation data. $1<T$ softens overconfident predictions, $0<T<1$ sharpens. Preserves class ranking (argmax usually unchanged), mainly fixed confidence values.
+
+## Inception Score
+
+Inception Score rewards images that are individually classifiable (low entropy in $p(y|x)$) and globally diverse (high entropy in $p(y)$). Does not compare to real data directly, so it can be gamed and is less reliable than FID for many modern settings. Higher is better.
+
+## FID
+
+Fréchet Inception Distance compares feature distributions of real vs generated images (features usually from an Inception network). Captures both quality and diversity mismatch. Sensitive to preprocessing, sample count, and implementation details. Lower is better.
+
+$$
+\text{FID} = |\mu_r - \mu_g|^2_2 + Tr(\Sigma_r + \Sigma_g - 2(\Sigma_r \Sigma_g)^{1/2})
+$$
+where real features have mean/covariance $(\mu_r, \Sigma_r)$ and generated features have $(\mu_g, \Sigma_g)$
 
 ## KL-divergence
 
@@ -505,12 +560,12 @@ $$
 For one-hot labels, this simplifies to 
 $− \log p_{\text{true class}}$
 
-## BCE
+## BCE / LogLoss
 
-Binary Cross-Entropy is the binary case of CE. It is used when target is $y∈\{0,1\}$ and model outputs probability $p=P(y=1∣x)$. It heavily penalizes being confidently wrong in binary classification, while creating a smooth (difentiable) curve. It treat every training example equally. For multi-label classification (several can be 1) we use independent BCE per label.
+Binary Cross-Entropy (aka Logarithmic Loss, LogLoss for binary classification tasks) is the binary case of CE. It is used when target is $y∈\{0,1\}$ and model outputs probability $p=P(y=1∣x)$. It heavily penalizes being confidently wrong in binary classification, while creating a smooth (difentiable) curve. It treat every training example equally. For multi-label classification (several can be 1) we use independent BCE per label.
 
 $$
-BCE = - [y \log p + (1-y) \log (1-p)]
+\text{BCE} = \text{LogLoss} = - \frac{1}{n} \sum [y \log p + (1-y) \log (1-p)]
 $$
 
 
@@ -534,6 +589,34 @@ $$
 
 where $p = yp + (1-y)(1-p)$ and $α = yα + (1-y)(1-α)$
 
+## HitRate@K
+
+HitRate@K is the probability of getting at least one hit in top-K. For each query, it checks whether at least one relevant item appears in top-K. Unlike Recall@K, it does not reward finding multiple relevant items once one hit is present.
+
+$$
+HR@K = \frac{1}{Q} \sum 1(\text{top-K} ∩ R \ne ∅)
+$$
+
+whre $R_q$ is the set of relevant items for query $q \in Q$
+
+
+## DPO
+
+Direct Preference Optimization trains a NN on preference pairs (chosen response y+ vs rejected response y- for same prompt x). Instead of token imitation, it optimizes relative preference so model scores chosen outputs higher than rejected ones. It aligns style/helpfulness/safety preferences better than SFT alone.
+
+## MRR
+
+Mean Reciprocal Rank rewards getting at least one correct result very early, but it ony considers the first. For each query $q$, find the rank of the first relevant result, $\text{rank}$. Reciprocal rank is $1/\text{rank}_q$ (or 0 if no relevant item found).
+
+Then average over queries:
+
+$$
+\text{MRR} = \frac{1}{Q} \sum \frac{1}{rank}
+$$
+
+Issues:
+* only considers the first relevant result
+
 ## mAP
 
 Mean Average Precision is used for ranking/retrieval/detection quality. $mAP$ rewards putting true positives early in the ranked list, not just finding them eventually
@@ -541,14 +624,57 @@ Mean Average Precision is used for ranking/retrieval/detection quality. $mAP$ re
 For one query or one class, Average Precision (AP):
 
 $$
-AP = \sum P(k) \Delta R(k)
+\text{AP} = \sum P(k) \Delta R(k)
 $$
 
 where $P(k)$ is precision at cutoff k, and $\Delta R(k)$ is recall increase at k.
 
 $$
-mAP = \frac {1}{K} \sum AP
+\text{mAP} = \frac {1}{K} \sum \text{AP}
 $$
+
+Issues:
+
+* designed for binary relevances
+
+## nDCG
+
+Normalized Discounted Cumulative Gain handles graded relevance (not just relevant/irrelevant), and discounts lower positions. Range is [0, 1]. 
+
+Intuition:
+* Higher relevance at higher ranks gives more gain.
+* Same relevant item lower down contributes less.
+* Normalization makes scores comparable across queries.
+
+For top-K results:
+
+$$
+\text{DCG@K} = \sum^K \frac{2^{rel_i} - 1}{\log_2 (i+1)}
+$$
+
+Compute ideal DCG (best possible ordering): $\text{IDCG@K}$
+
+Normalise:
+
+$$
+\text{nDCG@K} = \frac{\text{DCG@K}}{\text{IDCG@K}}
+$$
+
+## Catalog Coverage
+
+Catalog coverage is a recommendation metric that measures how much of the item catalog your system actually exposes in its recommendations.
+
+Intuition:
+
+* High coverage means recommendations are spread across many items (better exploration/diversity).
+* Low coverage means the system keeps showing the same small subset of popular items.
+* Coverage does not guarantee relevance, so it is usually tracked alongside precision, recall, or nDCG.
+
+$$
+\text{CatalogCoverage@K} = \frac{|⋃_{U} Rec^{@K}_{u}|}{|I|}
+$$
+
+where $U$ is the user set, $Rec^{@K}_{u}$ is the top-K items recommended to user $u$, $I$ is the full item catalog.
 
 ## Softmax
 
@@ -563,3 +689,66 @@ Properties:
 * output is in (0,1)
 * outputs sum to 1
 * larger logit → larget class probability
+
+Sampled softmax is an approximation of full softmax over a huge catalog. Instead of normalizing over all items, use the true item plus a sampled negative set.
+
+## InfoNCE
+
+InfoNCE treats retrieval as a classification problem: pick the true item among distractors. In-batch negatives are commonly used for efficiency. It is a strong default for two-tower retrieval. It helps models learn to distinguish between positive and negative samples by estimating mutual information.
+
+$$
+L_{\text{InfoNCE}} = - \log \frac{e ^ {s(q,i^+)/\tau}}{e^{s(q, i^+) / \tau} + \sum e^{s(q,i^-)/\tau}}
+$$
+
+where $q$ is query embedding, $i^+$ is positive item, $i^-$ is negative, $s(.,.)$ is similarity and $\tau$ is temperature.
+
+## Triplet loss
+
+Triplet enforces ordering: positive must be closer than negative by at least margin m. It works best with hard or semi-hard negative mining. Used for metric-learning setups with explicit margin constraints.
+
+$$
+L_{\text{triplet}} = \max (0, m + d(q,i^+) - d(q,i^-))
+$$
+
+where $q$ is the query, $i^+$ is positive, $i^-$ is negative, $d(.,.)$ is distance, and $m$ is margin.
+
+## Weighted sum of losses
+
+The training loss is a weighted combination of several loss functions. Used to align model training with business value, and prevent one task/aspect dominating gradients. To choose weight use one of:
+1. manual business priors,
+2. normalise by label prevalence or loss scale
+3. dynamic wighting methods (uncertainty weighting, GradNorm)
+
+$$
+L_{\text{total}} = \sum w L
+$$
+
+where $L$ is a loss function, $w$ is weight controlling importance
+
+## ROUGE
+
+recall oriented for summarization
+
+## RAGAS metrics
+
+LLM-judge + human
+
+groundedness,
+faithfulness,
+answer relevancy,
+context precision/recall, utilisation,
+coherence in logical flow,
+consistency,
+language fluency,
+
+## Safety rates
+
+self-harm content, hateful or unfair content, violent content, sexual content, protected material, indirect attack/jailbreak
+
+## Perplexity
+
+Perplexity measures how well the model predicts the reference next tokens. It is roughly the model's average branching uncertainty per token. Good for fluency/fit to reference text, but not enought for usefulness or safety. Likelihood-based, token-level fit.
+
+## Judge Win-Rate
+
+Judge Win-Rate compares model outputs head-to-head. Captures preference-quality dimensions (helpfulness, relevance, style, safety) better than perplexity. Depends on judge quality, rubic, and pairwise protocol. Preference-based, outcome quality on tasks.
