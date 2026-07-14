@@ -9,7 +9,13 @@ org certificate:
 
 ## Discover & Clarify: Business Objective, Scope, Requirements, Constraints
 
-Business Objective, vision & goal. What is success? (KPI: customer aquisition cost CAC, customer lifetime value cLTV, revenue, net profit margin, order fulfillment time, inventory turnover, average order value AOV, customer satisfaction score CSAT, net promoter score NPS, churn rate)
+Business Objective, vision & goal. What is success? KPIs:
+
+* annual recurring revenue ARR, net profit margin NPP
+* customer aquisition cost CAC, churn rate
+* customer satisfaction score CSat, net promoter score NPS
+* average order value AOV, customer lifetime value CLtV
+* order fulfillment cycle time OFCT, inventory turnover COGS/avgINV
 
 Functional Requirements: UX, features, session memory, continuous improvement
 
@@ -30,17 +36,17 @@ Data: source, size, type, ground truth
 
 Note: business KPI ← online metric ← offline metric ← validation metric ← training loss. Each arrow is a surrogate relationship with a gap. Imperfect and comes with a risk.
 
-* Business KPI: the salient number you optimize for
-* Online metric: the single number you optimize for at the edge (e.g. latency, throughput)
+* Business KPI: the bottom line metric to improve
+* Online metric: the real impact number to optimize for
 * Offline metrics: the complete holdout report performance
-* Validation metric: the single number you early-stop and model-select on
+* Validation metric: the single number to early-stop and model-select on
 * Training loss: the model's loss on the training data
 
 Online metric:
 
 * User feedback
     * Explicit feedback: User likes, valid dislike/escalation/complain/appeal (hard negative), Perceptual Mean Opinion Score (MOS), appeal rate, overturn rate on appeals
-    * Implicit feedback: glance view (impression), query reformulation rate, Click-Through Rate (CTR), watch time, completed watch, successful clicks, retention A/B
+    * Implicit feedback: glance view (impression), query reformulation rate, Click-Through Rate (CTR, risk clickbait), watch time, completed watch, successful clicks, retention A/B
 * Operational performance:
     * time-to-detect/process, dwell time, stockout / overstock cost, ETA
     * SLA breach rate, fraud $ prevented, revenue error
@@ -82,26 +88,27 @@ Non-ML baseline first: rules / popularity / heuristic. ML must beat this.
 3. Pick one; reject runner-up against: label cost, metric alignment, latency, data volume, interpretability.
 
 
-| Task framing | Data object (training example) | Output head | Training loss | Validation metric (select/stop) | Offline test metrics |
+| Task framing | Offline test metrics | Data object (training example) | Output head | Validation metric (select/stop) | Training loss |
 |---|---|---|---|---|---|
-| Regression | (x, y∈ℝ) | single linear unit; quantile heads for intervals | MSE / Huber; pinball for quantiles | RMSE on temporal val split | MAE, RMSE, MAPE, R²; interval coverage |
-| Binary clf w/o imbalance / multi-task (N binary variants)  | (x, y∈{0,1}) w/o skew | sigmoid p(y) | weighted BCE / focal | PR-AUC | confusion at threshold, 1vsN/aggregated P/R/F1, PR-AUC and ROC-AUC at threshold, precision@fixed-FPR (for async cost), calibration (ECE) |
-| Multi-class (1-of-K) / multi-label clf (y ⊆ K) | (x, y = 1-of-K) or (x, y ⊆ K) | softmax / K independent sigmoids | CE (-1*sum y-log p(y)) / per-label weighted BCE / KL-divergence | macro-F1 / mAP | per-class P/R/F1, micro-macro avg, accuracy (TP+TN)/n, Hamming loss (FP+FN)/n |
-| Clustering |---|---|---|---|---|
-| Dimensionality reduction |---|---|---|---|---|
-| Representation learning |---|---|---|---|---|
-| Recommendation: rule-based, content-based (similar content), collaborative (similar client), hybrid sequential or parallel, two-stage retrieval + ranking |---|---|---|---| precision @ k, mAP, diversity (Avg pair-wise embedding distance) |
-| Retrieval / candidate generation | (query, positive item, sampled negatives) | two embeddings + dot/cosine | InfoNCE / sampled softmax / triplet | recall@k | recall@k, precision@k, MRR, catalog coverage, ANN latency |
-| Pointwise ranking (CTR, feed) | (user, item, context, y=click); multi-task labels | sigmoid pCTR (+ per-engagement heads) | BCE; weighted multi-task sum | ROC-AUC / logloss | AUC, nDCG@k on sessions, calibration (critical for auctions) |
-| Information Retrieval / Learning to rank | (query, doc list, graded relevance) | scoring function s(q,d) | pairwise RankNet / listwise LambdaRank | nDCG@10 | nDCG, MRR, mAP |
-| Sequence / Image segmentation |---|---|---|---| text sequence pariwise F1/ARI, img obj boundary mAP@IOU, 1-vs-all recall, FPS|
-| Object detection | (image, boxes + classes) | box regression + class scores + objectness | composite: IoU/smooth-L1 + focal CE | mAP@IoU 0.5 | mAP@[.5:.95], per-class recall, FPS |
-| Generative | (prompt + context, target text); preference pairs | token softmax over vocab | next-token CE (SFT); DPO on preferences | perplexity / judge win-rate on eval set | groundedness, relevance, coherence in logical flow (LLM-judge + human), consistency, language fluency, safety rates (self-harm content, hateful or unfair content, violent content, sexual content, protected material, indirect attack/jailbreak), ROUGE recall oriented for summarization, image generation (FID, Inseption score)|
-| Translation, STT, TTS |---|---|---|---| BLEU n-gram comparison for translation, METEOR extended BLEU, GLEU sentence-level BLEU, WER for STT/TTS |
-| Strategy Development (RL) |---|---|---|---|---|
-| Combinatorial optimisation |---|---|---|---| asymm costs|
-| Forecasting (time series) | (series history + covariates, horizon values) | per-horizon point / quantile outputs | MSE / pinball | rolling-origin wMAPE | wMAPE, MASE, interval coverage |
-| Anomaly detection | unlabeled x + few labeled anomalies | anomaly score | reconstruction error / one-class objective | PR-AUC on labeled slice | precision@k alerts, PR-AUC, alert volume |
+| Regression | [MAE](#mae), [RMSE](#rmse), [MAPE](#mape), [R²](#r); [interval coverage](#interval-coverage) | (x, y∈ℝ) | single linear unit; [quantile heads for intervals](#quantile-heads-for-intervals) | [RMSE](#rmse) on [temporal val split](#temporal-val-split) | [MSE](#mse) / [Huber](#huber); [pinball for quantiles](#quantile-heads-for-intervals) |
+| Binary clf w/o imbalance / multi-task (K binary heads) | [P](#precision)/[R](#recall)/[F1](##f1)@(0..1), [P@fixed-FPR](#precision), [PR-AUC](#pr-auc), [ROC-AUC](#roc-auc), [calibration (ECE)](#calibration-ece) | (x, y∈{0,1}) | [sigmoid p(y)](#sigmoid-function) | [PR-AUC](#pr-auc) | ([Weighted](#weighted-bce)) [BCE](#bce); [Focal loss](#focal-loss) |
+| Multi-class / multi-label clf | per-class/macro [P](#precision)/[R](#recall)/[F1](#f1), [Accuracy](#accuracy), [Hamming loss](#hamming-loss) | (x, y∈K$) / (x, y⊆K) | [softmax](#softmax); K independent [sigmoids](#sigmoid-function) | macro-[F1](#f1) | [CE](#ce); per-label [weighted BCE](#weighted-bce); [KL-divergence](#kl-divergence) |
+| Clustering | --- | --- | --- | --- | --- |
+| Dimensionality reduction | --- | --- | --- | --- | --- |
+| Representation learning | --- | --- | --- | --- | --- |
+| Recommendation: rule-based, content-based (similar content), collaborative (similar client), hybrid sequential or parallel, two-stage retrieval + ranking | precision @ k, mAP, diversity (Avg pair-wise embedding distance) | --- | --- | --- | --- |
+| Retrieval / candidate generation | recall@k, precision@k, MRR, catalog coverage, ANN latency | (query, positive item, sampled negatives) | two embeddings + dot/cosine | recall@k | InfoNCE / sampled softmax / triplet |
+| Pointwise ranking (CTR, feed) | AUC, nDCG@k on sessions, calibration (critical for auctions) | (user, item, context, y=click); multi-task labels | sigmoid pCTR (+ per-engagement heads) | ROC-AUC / logloss | BCE; weighted multi-task sum |
+| Information Retrieval / Learning to rank | nDCG, MRR, mAP | (query, doc list, graded relevance) | scoring function s(q,d) | nDCG@10 | pairwise RankNet / listwise LambdaRank |
+| Sequence / Image segmentation | text sequence pariwise F1/ARI, img obj boundary mAP@IOU, 1-vs-all recall, FPS | --- | --- | --- | --- |
+| Object detection | mAP@[.5:.95], per-class recall, FPS | (image, boxes + classes) | box regression + class scores + objectness | mAP@IoU 0.5 | composite: IoU/smooth-L1 + focal CE |
+| Generative | groundedness, relevance, coherence in logical flow (LLM-judge + human), consistency, language fluency, safety rates (self-harm content, hateful or unfair content, violent content, sexual content, protected material, indirect attack/jailbreak), ROUGE recall oriented for summarization, image generation (FID, Inseption score) | (prompt + context, target text); preference pairs | token softmax over vocab | perplexity / judge win-rate on eval set | next-token CE (SFT); DPO on preferences |
+| Translation, STT, TTS | BLEU n-gram comparison for translation, METEOR extended BLEU, GLEU sentence-level BLEU, WER for STT/TTS | --- | --- | --- | --- |
+| Strategy Development (RL) | --- | --- | --- | --- | --- |
+| Combinatorial optimisation | asymm costs | --- | --- | --- | --- |
+| Forecasting (time series) | wMAPE, MASE, interval coverage | (series history + covariates, horizon values) | per-horizon point / quantile outputs | rolling-origin wMAPE | MSE / pinball |
+| Anomaly detection | precision@k alerts, PR-AUC, alert volume | unlabeled x + few labeled anomalies | anomaly score | PR-AUC on labeled slice | reconstruction error / one-class objective |
+
 
 
 ## Data Engineering
@@ -210,3 +217,349 @@ Risk & Safety:
 * MVP to V1 to V2
 * Priorities to de-risk
 * What to delegate to others
+
+
+# Definitions
+
+## Accuracy
+
+Accuracy is the fraction of all predictions that are correct. It counts correct decisions. For binary classification, with total samples $n$:
+
+$$
+\text{Accuracy} = \frac{TP+TN}{n}
+$$
+
+## Hamming loss
+
+Hamming loss is the fraction of all predictions that are wrong. It counts mistakes. In a binary setting it is:
+
+$$
+\text{Hamming loss} = \frac{FP+FN}{n} = 1 - \text{Accuracy}
+$$
+
+In multi-label tasks, Hamming loss is often preferred over Accuracy because it measures per-label error rate across all label decisions.
+
+## MAE
+
+Mean Absolute Error is the average absolute difference between predictions and true values. Same units as the target (easy to interpret). Every error contributes linearly, so a Kx bigger error counts Kx more.
+
+$$
+MAE = \frac{1}{n} \sum |y-\hat{y}|
+$$
+
+## MSE
+
+Mean Squared Error: quares the error, so large mistakes get penalized heavily. But it is sensitive to outliers.
+
+$$
+MSE=\frac{1}{n}∑(y−\hat{y})^2
+$$
+
+## Huber loss
+
+Huber loss is a hybrid of squared error and absolute error. For small errors it behaves like MSE, and for large errors it behaves more like MAE. Use when labels are noisy or occasional extreme values would otherwise dominate training.
+
+$$
+L_δ(r)=\begin{cases}
+\frac{1}{2} r^2 & \text{if} |r| ≤ δ \\ 
+δ(∣r∣−(1/2)δ) & \text{if} |r| > δ
+\end{cases}
+$$
+
+$$
+L_{Huber} = \frac{1}{n} \sum L_δ(y−\hat{y})
+$$
+ 
+where $r=y−\hat{y}$.
+
+## RMSE
+
+Root Mean Squared Error is the square root of average squared error, so it penalizes large errors more heavily. It is in the same units as y, and is sensitive to outliers.
+
+$$
+RMSE = \sqrt{\frac{1}{n} \sum (y - \hat{y})^2}
+$$
+
+## MAPE
+
+Mean Absolute Percentage Error is the average absolute error as a percentage of the true value. It is scale-free (%), easy to explain to business users. But it can be unstable or undefined when $y \approx 0$.
+
+$$
+MAPE = \frac{100\%}{n} \sum |\frac{y_i-\hat{y_i}}{y_i}|
+$$
+
+## R²
+
+$R^2$ is the coefficient of determination, a regression metric for how much variance in $y$ your model explains.
+
+Interpretation:
+* $R^2 = 1$: perfect prediction
+* $R^2 = 0$: no better than predicting the mean
+* $R^2 < 0$: worse than the mean baseline
+
+$$
+R^2 = 1 - \frac{ \sum (y-\hat{y})^2}{ \sum (y-\bar{y})^2}
+$$
+
+where $\bar{y} = \frac{1}{n} \sum y$ 
+
+## Interval coverage
+
+Interval coverage measures how often the true value falls inside the predicted interval.
+
+For prediction intervals $[L,U]$ and targets $y$, empirical coverage is:
+
+$$
+Coverage = \frac{1}{n} \sum 1(L \le y \le U)
+$$
+
+where $1(.)$ is the indicator function.
+
+
+## temporal val split
+
+“Temporal val split” means a validation split that respects time order: train on older data, validate on newer data.
+
+Instead of randomly splitting examples, you split by timestamp so the model is evaluated the way it will be used in production.
+
+Why it matters:
+
+* It prevents leakage from the future into the past.
+* Random splits can make results look better than they really are when adjacent events are highly correlated.
+
+
+## quantile heads for intervals
+
+Quantile heads give you prediction intervals directly, without assuming a distribution. Instead of one output predicting the mean, you output several quantiles (say 0.05, 0.5, 0.95), and the gap between the low and high ones is your interval.
+
+The whole trick is the loss function — the pinball loss (a.k.a. quantile / check loss). For a target quantile τ:
+```python
+import torch
+def pinball_loss(y_true, y_pred, tau):
+    e = y_true - y_pred
+    return torch.mean(torch.max(tau * e, (tau - 1) * e))
+```
+For τ=0.5 it's symmetric and you recover the median (MAE).
+The asymmetry is what makes it work for quantiles: for τ=0.95 it penalizes under-prediction ~19× harder than over-prediction, so the model learns to sit above 95% of the data.
+
+Architecture — one shared trunk, one linear head per quantile:
+```python
+import torch; import torch.nn
+class QuantileRegressor(nn.Module):
+    def __init__(self, in_dim, quantiles=(0.05, 0.5, 0.95)):
+        super().__init__()
+        self.quantiles = quantiles
+        self.trunk = nn.Sequential(
+            nn.Linear(in_dim, 128), nn.ReLU(),
+            nn.Linear(128, 64), nn.ReLU(),
+        )
+        self.heads = nn.ModuleList(nn.Linear(64, 1) for _ in quantiles)
+
+    def forward(self, x):
+        z = self.trunk(x)
+        return torch.cat([h(z) for h in self.heads], dim=1)  # (B, n_quantiles)
+```
+
+Training loop sums the pinball loss across heads:
+```python
+def multi_quantile_loss(preds, y_true, quantiles):
+    y_true = y_true.unsqueeze(1)
+    losses = []
+    for i, tau in enumerate(quantiles):
+        e = y_true - preds[:, i:i+1]
+        losses.append(torch.max(tau * e, (tau - 1) * e))
+    return torch.mean(torch.cat(losses, dim=1))
+```
+At inference, pred[:, 0] and pred[:, 2] are your 90% interval bounds, pred[:, 1] is the median.
+The one gotcha: quantile crossing. Since the heads are independent, nothing stops the model from predicting q05 > q95 in some regions. 
+
+Fixes, cheapest first:
+* Sort the outputs post-hoc (torch.sort along the quantile dim) — simple, works fine for most cases.
+* Monotone parameterization: predict the lowest quantile plus non-negative increments, e.g. q_k = q_0 + cumsum(softplus(deltas)). Guarantees ordering by construction.
+* Single-head conditional quantile: feed τ as an input and train on random τ per batch — one head, infinitely many quantiles, no crossing if you enforce monotonicity in τ.
+
+## Sigmoid function
+
+The sigmoid function maps any real number to a value between 0 and 1:
+
+$$
+\sigma (z) = \frac{1}{1+e^{-z}}
+$$
+
+$σ(0)=0.5$; as $z → +∞, σ(z) → 1$; az $z → -∞, σ(z) → 0$; 
+
+## Precision
+
+Precision answers: “Of all items predicted positive, how many were truly positive?” High precision means few false alarms.
+
+$$
+P = \frac{TP}{TP+FP}
+$$
+
+Precision@fixed-FPR means:
+
+$$
+\text{Precision}|\text{FPR=α}
+$$
+
+1. Choose an acceptable false positive rate target, say $FPR=α$ (for example 0.01).
+2. Tune the score threshold so the model operates at that FPR on validation data.
+3. Report precision at that operating point.
+
+If you cap $FPR$ at 0.5%, and precision there is 40%, then about 4 in 10 selected items are real positives while staying within your false-alert budget.
+
+
+## Recall
+
+Recall answers: “Of all truly positive items, how many did we catch?” It is the true positive rate. High recall means few misses.
+
+$$
+R = \frac{TP}{TP+FN}
+$$
+
+## F1
+
+The harmonic mean of precision and recall.
+
+$$
+F1 = \frac{2PR}{P+R}
+$$
+
+Why it is used:
+
+* Balances precision and recall in one number.
+* Useful when class imbalance exists and both false positives and false negatives matter.
+* Range is [0,1]; higher is better.
+
+## PR-AUC
+
+Area under the Precision-Recall curve: plot precision vs recall across thresholds, then take the area. The baseline is roughly the positive class prevalence: 
+
+$$
+\text{baseline}=\frac{\text{nb.positive}}{\text{nb.all.samples}}
+$$
+
+Why it is useful:
+* Focuses on positive-class performance.
+* Higher is better;  1.0 is perfect.
+* More informative than ROC-AUC on highly imbalanced data.
+
+$$
+\text{PR-AUC} = \int_{0}^{1} P(R)\,dR
+$$
+
+where $P(R)$ is precision as a function of recall.
+
+## ROC-AUC
+
+The Area Under the Receiver Operating Characteristic curve. It plots:
+
+True Positive Rate (ie. recall): $TPR = \frac{TP}{TP+FN}$
+
+False Positive Rate: $FPR=\frac{FP}{FP+TN}$
+
+for all classification tresholds.
+
+$$
+\text{ROC-AUC} = \int_{0}^{1}\mathrm{TPR}(\mathrm{FPR})\,d(\mathrm{FPR})
+$$
+
+Interpretation:
+
+* $AUC = 1.0$: perfect ranking.
+* $AUC=0.5$: random ranking.
+* Probability view: ROC-AUC equals the probability a random positive gets a higher score than a random negative.
+
+It measures ranking quality, not calibration. Two models can have the same ROC-AUC but very different predicted probabilities.
+
+## Calibration (ECE)
+
+Calibration means predicted probabilities should match observed frequencies. Expected Calibration Error (ECE) is a summary of mismatch.
+
+Example intuition: predictions around 0.8 should be correct about 80% of the time. If they are correct only 65%, the model is overconfident in that region.
+
+## KL-divergence
+
+Kullback-Leibler divergence measures how one probability distribution $Q$ differs from a reference distribution $P$:
+
+$$
+D_{KL}(P||Q) = \sum P(x) \log \frac{P(x)}{Q(x)}
+$$
+
+(continuous version uses an integral).
+
+Intuition:
+
+* $D_{KL}=0$ only when $P=Q$ (almost everywhere)
+* Larger value means $Q$ is a worse approximation of $P$.
+* Not symmetric: generally $D_{KL}(P||Q) ≠ D_{KL}(Q||P)$
+
+## CE
+
+(Categorical) Cross-Entropy is used for one-of-K classes with true class vector $y_k$ (usually one-hot) and predicted class probs $p_k$ (typically the softmax output). It pushes probability mass onto the correct class.
+
+$$
+CE = - \sum y \log p
+$$
+​
+For one-hot labels, this simplifies to 
+$− \log p_{\text{true class}}$
+
+## BCE
+
+Binary Cross-Entropy is the binary case of CE. It is used when target is $y∈\{0,1\}$ and model outputs probability $p=P(y=1∣x)$. It heavily penalizes being confidently wrong in binary classification, while creating a smooth (difentiable) curve. It treat every training example equally. For multi-label classification (several can be 1) we use independent BCE per label.
+
+$$
+BCE = - [y \log p + (1-y) \log (1-p)]
+$$
+
+
+## Weighted BCE
+
+Weighted Binary Cross-Entropy is a simple baseline used to counter class imbalance or asymmetric mistake costs. Weighted BCE says: “Mistakes on positives hurt more (or less), based on business need.” 
+
+$$
+L_{\text{WBCE}} = - \frac{1}{n} \sum [w_1 y \log p + w_0 (1-y) \log(1-p)]
+$$
+
+where $p$ is the predicted probability and label $y \in \{0, 1 \}$, $w_{\{1, 0\}}$ are up/down-weight positive and negative classes
+
+## Focal loss
+
+Focal loss is for heavy imbalance with many easy negatives (e.g., detection, rare-event classification). It says: “Stop spending so much effort on easy examples you already get right. Focus on hard ones.” Easy examples get down-weighted automatically. Hard/misclassified examples keep large influence.
+
+$$
+L_{\text{focal}} = - \frac{1}{n} \sum α (1-p)^{\gamma} \log (p)
+$$
+
+where $p = yp + (1-y)(1-p)$ and $α = yα + (1-y)(1-α)$
+
+## mAP
+
+Mean Average Precision is used for ranking/retrieval/detection quality. $mAP$ rewards putting true positives early in the ranked list, not just finding them eventually
+
+For one query or one class, Average Precision (AP):
+
+$$
+AP = \sum P(k) \Delta R(k)
+$$
+
+where $P(k)$ is precision at cutoff k, and $\Delta R(k)$ is recall increase at k.
+
+$$
+mAP = \frac {1}{K} \sum AP
+$$
+
+## Softmax
+
+Softmax converts logits $z_1, ... z_K$ into a probability distribution over $K$ classes:
+
+$$
+softmax(z)_i = \frac{e^{z_i}}{ \sum e^z}
+$$
+
+Properties:
+
+* output is in (0,1)
+* outputs sum to 1
+* larger logit → larget class probability
