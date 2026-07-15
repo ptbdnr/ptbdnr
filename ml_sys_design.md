@@ -1,13 +1,34 @@
 # ML System Design
 
-org certificate:
+Org certificate:
 
 * [AI Platform on Microsoft Azure Specialization](https://teams.public.onecdn.static.microsoft/evergreen-assets/safelinks/2/atp-safelinks.html)
 * [AWS Prescriptive Guidance](https://docs.aws.amazon.com/pdfs/prescriptive-guidance/latest/gen-ai-workload-assessment/gen-ai-workload-assessment.pdf)
 * [GCP Audit Manager](https://cloud.google.com/products/audit-manager?hl=en)
-* [ISO/IEC 42001](https://www.iso.org/standard/42001) [Azure ISO 42001](https://learn.microsoft.com/en-us/compliance/regulatory/offering-iso-42001) [AWS ISO 42001 FAQS](https://aws.amazon.com/compliance/iso-42001-faqs/) [GCP ISO 42001](https://cloud.google.com/security/compliance/iso-42001?hl=en)
+* [ISO/IEC 42001](https://www.iso.org/standard/42001): [Azure ISO 42001](https://learn.microsoft.com/en-us/compliance/regulatory/offering-iso-42001); [AWS ISO 42001 FAQS](https://aws.amazon.com/compliance/iso-42001-faqs/); [GCP ISO 42001](https://cloud.google.com/security/compliance/iso-42001?hl=en)
 
-## Discover & Clarify: Business Objective, Scope, Requirements, Constraints
+## Outline
+
+```mermaid
+flowchart LR
+    discover[Goal, Req, Scope]
+    b_metrics[Business Metrics]
+    subgraph TD sol_des[Solution Design]
+        api[I/O API]
+        ml_task[ML Task & Eval]
+        data[Data Eng]
+        sec_by_design[Responsible]
+    end
+    tech_arch[Ingest & Train / Serve]
+
+    discover --> b_metrics
+    discover --> api --> tech_arch
+    b_metrics --> ml_task --> tech_arch
+    discover --> data --> tech_arch
+    discover --> sec_by_design --> tech_arch
+```
+
+## Discover: Business Objective, Requirements, Scope
 
 Business Objective, vision & goal. What is success? KPIs:
 
@@ -34,7 +55,7 @@ Constraints:
 Data: source, size, type, ground truth
 
 
-## Business Metrics
+## Business Metrics: Online, Responsible ML
 
 Note: business KPI ← online metric ← offline metric ← validation metric ← training loss. Each arrow is a surrogate relationship with a gap. Imperfect and comes with a risk.
 
@@ -59,10 +80,12 @@ Online metric:
     * expert confirm rate
 * Prevalence
 
-Guardrails: fairness and bias (age, gender, ethnicity) with constrastive evaluation
+Resposible:
+
+* Guardrails: fairness and bias (age, gender, ethnicity) with constrastive evaluation
 
 
-## Solution Design
+## Solution Design: I/O API, ML Task Framing
 
 I/O spec:
  
@@ -92,16 +115,15 @@ Non-ML baseline first: rules / popularity / heuristic. ML must beat this.
 
 | Task framing | Offline test metrics | Data object (training example) | Output head | Validation metric (select/stop) | Training loss |
 |---|---|---|---|---|---|
-| Regression | [MAE](#mae), [RMSE](#rmse), [wMAPE](#mape), [R²](#r); [interval coverage](#interval-coverage) | (x, y∈ℝ) | single linear unit; [quantile heads for intervals](#quantile-heads-for-intervals) | [RMSE](#rmse) on [temporal val split](#temporal-val-split) | [MSE](#mse) / [Huber](#huber); [pinball for quantiles](#quantile-heads-for-intervals) |
+| Regression | [MAE](#mae), [RMSE](#rmse), [wMAPE](#mape), [R²](#r); [interval coverage](#interval-coverage) | (x, y∈ℝ) | single scalar; [quantile heads for intervals](#quantile-heads-for-intervals) | [RMSE](#rmse) on [temporal val split](#temporal-val-split) | [MSE](#mse) / [Huber](#huber); [pinball for quantiles](#quantile-heads-for-intervals) |
 | Binary clf w/o imbalance / multi-task (K binary heads) | [P](#precision)/[R](#recall)/[Fβ](#f1)@(0..1), [P@fixed-FPR](#precision), [PR-AUC](#pr-auc), [ROC-AUC](#roc-auc), [ECE](#calibration-ece) | (x, y∈{0,1}) | [sigmoid p(y)](#sigmoid-function) | [PR-AUC](#pr-auc) | ([Weighted](#weighted-bce)) [BCE](#bce--logloss); [Focal loss](#focal-loss) |
 | Multi-class / multi-label clf | per-class/macro [P](#precision)/[R](#recall)/[Fβ](#f1), [Accuracy](#accuracy), [Hamming loss](#hamming-loss) | (x, y∈K$) / (x, y⊆K) | [softmax](#softmax) over K; [sigmoid](#sigmoid-function) p(k) ∀k∈K| macro-[F1](#f1) | [CE](#ce); per-label [weighted BCE](#weighted-bce); [KL-divergence](#kl-divergence) |
-| Clustering | ? | ? | ? | ? | ? |
-| Dimensionality reduction | ? | ? | ? | ? | ? |
-| Representation learning | ? | (q, 1x similar, n-1 dissimilar) | ? | ? | CE |
-| Info Retrieval / Candidate generation | [HitRate](#hitratek)@K, [R](#recall)/[P](#precision)@k, [MRR](#mrr), [catalog coverage](#catalog-coverage), ANN latency | (q, TPs, sample TNs) | dot/cosine (of 2 embeddings) | [recall](#recall)@k | [InfoNCE](#infonce) / sampled [softmax](#softmax) / [triplet loss](#triplet-loss) |
-| Pointwise ranking (for CTR) | [ROC-AUC](#roc-auc), [nDCG](#ndcg)@k on sessions, [ECE](#calibration-ece) | (user, item, context, y∈{0,1}) | [sigmoid p(y)](#sigmoid-function) | [ROC-AUC](#roc-auc) / [BCE](#bce--logloss) | [BCE](#bce--logloss); multi-task [weighted sum of losses](#weighted-sum-of-losses)  |
-| Pairwise Ranking | [MRR](#mrr) | (Q, 2x scored doc) | ? | ? | ? |
-| Listwise Ranking | [mAP](#map), [nDCG](#ndcg) | (Q, K scored doc) | ? | ? | ? |
+| Clustering | [Silhouette](#silhouette), [Davies-Bouldin](#davies-bouldin), [Calinski-Harabasz](#calinski-harabasz), labels exist:[ARI](#ari) or [NMI](#nmi) | (x∈ℝ) / G=(V,E) + similarity for (i,j)∈E| p(x∈K) / centroid or prototype | [Silhouette](#silhouette) + stability across samples | [K-means with SSE](#k-means-inertia--sse) / [GMM with negative log-likelihood](#gmm-negative-log-likelihood) / [DEC with KL loss](#dec-with-kl-loss) |
+| Representation Learning / Encoding | [R](#recall)@K, [MRR](#mrr), [Silhouette](#silhouette), [Davies-Bouldin](#davies-bouldin), [Linear probe](#linear-probe) | (x, 1x similar, n-1 dissimilar) | embedding vector | [InfoNCE](#infonce) / [triplet loss](#triplet-loss) + [R](#recall)@K | [CE](#ce) / [InfoNCE](#infonce) / [triplet loss](#triplet-loss) |
+| Info Retrieval | [HitRate](#hitratek)@K, [R](#recall)/[P](#precision)@k, [MRR](#mrr), [catalog coverage](#catalog-coverage), ANN latency | (q, TPs, sample TNs) | dot/cosine (of 2 embeddings) | [recall](#recall)@k | [InfoNCE](#infonce) / sampled [softmax](#softmax) / [triplet loss](#triplet-loss) |
+| Pointwise ranking (for bid offer) | [ROC-AUC](#roc-auc), [nDCG](#ndcg)@k on sessions, [ECE](#calibration-ece) | (user, item, context, y∈{0,1}) | [sigmoid p(y)](#sigmoid-function) | [ROC-AUC](#roc-auc) / [BCE](#bce--logloss) | [BCE](#bce--logloss); multi-task [weighted sum of losses](#weighted-sum-of-losses)  |
+| Pairwise Ranking | [MRR](#mrr), [Pairwise Accuracy](#pairwise-accuracy), [ROC-AUC on ordered pairs](#roc-auc-on-ordered-pairs)  | (q, 2x scored d) | 2x scalar score s(q,d)  | [MRR](#mrr) | [Pairwise Logistic Loss](#pairwise-logistic-loss) / [Hinge ranking loss](#hinge-ranking-loss) |
+| Listwise Ranking | [mAP](#map), [nDCG](#ndcg) | (q, k scored d) | k scalar scores s(q,d) | [nDCG](#ndcg)@k | [ListNet](#listnet) / [LambdaRank](#lambdarank)-[LambdaMART](#lambdamart) |
 | Sequence / Image segmentation | text sequence pariwise F1/ARI, img obj boundary mAP@IOU, 1-vs-all recall, FPS | ? | ? | ? | ? |
 | Object detection | mAP@[.5:.95], per-class recall, FPS | (image, boxes + classes) | box regression + class scores + objectness | mAP@IoU 0.5 | composite: IoU/smooth-L1 + focal CE |
 | Generative seq2seq | [ROUGE](#rouge), [safety rates](#safety-rates), [RAGAS metrics](#ragas-metrics), seq2img ([Inception Score](#inception-score), [FID](#fid)) | (prompt, response); preference pairs (prompt, choosen response, rejected response) | [softmax](#softmax) over VOCAB | [perplexity](#perplexity) / [judge win-rate](#judge-win-rate) | next-token [CE](#ce) for supervised fine-tuning; [DPO](#DPO) on preferences |
@@ -112,8 +134,7 @@ Non-ML baseline first: rules / popularity / heuristic. ML must beat this.
 | Anomaly detection | precision@k alerts, PR-AUC, alert volume | unlabeled x + few labeled anomalies | anomaly score | PR-AUC on labeled slice | reconstruction error / one-class objective |
 
 
-
-## Data Engineering
+### Data Engineering
 
 Clarification: Data source, size, type, ground truth labels
 
@@ -135,6 +156,16 @@ Data store:
 * Document: MongoDB, CouchDB
 * Graph: Neo4J
 
+### Risk & Safety:
+
+* Failure modes
+* Misuse, fairness, human-in-the-loop
+
+
+## Technical Architecture: Ingest & Train / Serve
+
+Realistic system: add complexity only if justified
+
 Feature Engineering: 
 
 * balance dataset (over vs under sampling),
@@ -145,11 +176,6 @@ Feature Engineering:
     * natural language: stemming & lemmatization (remove stop words), tokenization, embedding
     * image: resize, crop, rotate, color shift, color mode (RGB/CMYK)
     * audio: ?
-    
-
-# System Architecture
-
-Realistic system: add complexity only if justified
 
 Modeling craft (task → models → pitfalls)
 
@@ -203,7 +229,7 @@ Model training/fitting:
 * distributed training: PyTorch Distributed Data Parallel (copy model, forward minibatch, aggregate loss, sync gradients, updata all)
 * Optimisation: stochastic gradient descent, weighted alternating least squares
 
-Serving & Inference:
+Inference Serving:
 
 * data ingestion, data indexing pipeline
 * latency budget: batch vs real-time, streaming output
@@ -213,11 +239,6 @@ Serving & Inference:
 * pipeline: stages, gates, release strategy (shadow = dual deployment, A/B testing, p-value)
 * model compression: quantization, knowledge distillation, pruning
 * monitoring, hardware utilisation, requests/responses, drift in performance (model/data/context drift)
-
-Risk & Safety:
-
-* Failure modes
-* Misuse, fairness, human-in-the-loop
 
 # Roadmap & Summary
 
@@ -230,6 +251,8 @@ Risk & Safety:
 
 ## Accuracy
 
+> classification metric
+
 Accuracy is the fraction of all predictions that are correct. It counts correct decisions. For binary classification, with total samples $n$:
 
 $$
@@ -237,6 +260,8 @@ $$
 $$
 
 ## Hamming loss
+
+> classification metric (multi-label)
 
 Hamming loss is the fraction of all predictions that are wrong. It counts mistakes. In a binary setting it is:
 
@@ -248,6 +273,8 @@ In multi-label tasks, Hamming loss is often preferred over Accuracy because it m
 
 ## MAE
 
+> regression metric
+
 Mean Absolute Error is the average absolute difference between predictions and true values. Same units as the target (easy to interpret). Every error contributes linearly, so a Kx bigger error counts Kx more.
 
 $$
@@ -256,6 +283,8 @@ $$
 
 ## MSE
 
+> regression loss
+
 Mean Squared Error: quares the error, so large mistakes get penalized heavily. But it is sensitive to outliers.
 
 $$
@@ -263,6 +292,8 @@ MSE=\frac{1}{n}∑(y−\hat{y})^2
 $$
 
 ## Huber loss
+
+> regression loss
 
 Huber loss is a hybrid of squared error and absolute error. For small errors it behaves like MSE, and for large errors it behaves more like MAE. Use when labels are noisy or occasional extreme values would otherwise dominate training.
 
@@ -281,6 +312,8 @@ where $r=y−\hat{y}$.
 
 ## RMSE
 
+> regression metric
+
 Root Mean Squared Error is the square root of average squared error, so it penalizes large errors more heavily. It is in the same units as y, and is sensitive to outliers.
 
 $$
@@ -288,6 +321,8 @@ RMSE = \sqrt{\frac{1}{n} \sum (y - \hat{y})^2}
 $$
 
 ## MAPE
+
+> regression metric
 
 Mean Absolute Percentage Error is the average absolute error as a percentage of the true value. It is scale-free (%), easy to explain to business users. But it can be unstable or undefined when $y \approx 0$.
 
@@ -302,6 +337,8 @@ wMAPE = \frac{\sum |y - \hat{y}|}{\sum |y|} \times 100\%
 $$
 
 ## R²
+
+> regression metric
 
 $R^2$ is the coefficient of determination, a regression metric for how much variance in $y$ your model explains.
 
@@ -318,6 +355,8 @@ where $\bar{y} = \frac{1}{n} \sum y$
 
 ## Interval coverage
 
+> regression metric, uncertainty
+
 Interval coverage measures how often the true value falls inside the predicted interval.
 
 For prediction intervals $[L,U]$ and targets $y$, empirical coverage is:
@@ -328,8 +367,9 @@ $$
 
 where $1(.)$ is the indicator function.
 
-
 ## temporal val split
+
+> validation methodology
 
 “Temporal val split” means a validation split that respects time order: train on older data, validate on newer data.
 
@@ -342,6 +382,8 @@ Why it matters:
 
 
 ## quantile heads for intervals
+
+> regression technique, uncertainty
 
 Quantile heads give you prediction intervals directly, without assuming a distribution. Instead of one output predicting the mean, you output several quantiles (say 0.05, 0.5, 0.95), and the gap between the low and high ones is your interval.
 
@@ -393,6 +435,8 @@ Fixes, cheapest first:
 
 ## Sigmoid function
 
+> activation function
+
 The sigmoid function maps any real number to a value between 0 and 1:
 
 $$
@@ -401,7 +445,108 @@ $$
 
 $σ(0)=0.5$; as $z → +∞, σ(z) → 1$; az $z → -∞, σ(z) → 0$; 
 
+## Silhouette
+
+> clustering separability
+
+Silhouette measures how well each point matches its own cluster versus other clusters. Points should be close to their own cluster and far from others.
+
+$$
+s_i = \frac{b_i -a_i}{\max(a_i,b_i)}
+$$
+
+where $a_i$ is avg distance to points in the same cluster, $b_i$ is avg distance to the nearest other cluster. Range is [-1,1], higher is better.
+
+Intra-cluster distance is the distance among points inside the same cluster. Points in the same group should be compact. Usually you want it small.
+
+$$
+d_{intra}(k) = \frac{1}{|C|} \sum ||x-\mu||^2
+$$
+
+where $\mu$ is the centroid of cluster $C$
+
+Inter-cluster distance is the distance between different clusters. Different groups should be far apart.Usually you want it large. 
+
+$$
+d_{inter}(a,b) = ||\mu_a - \mu_b||
+$$
+where $\mu_i$ is cluster centrod
+
+## Davies-Bouldin
+
+> clustering separability
+
+Davies-Bouldin measures avg “similarity” between each cluster and its most similar other cluster. Lower is better, compact clusters that are well separated get a low score. It penalizes clusters that are spread out or overlap.
+
+## Calinski-Harabasz
+
+> clustering separability
+
+Calinski-Harabasz ratio of between-cluster dispersion to within-cluster dispersion. Clusters should be tight inside and far apart from each other. Higher is better.
+
+$$
+CH = \frac{\text{between-cluster variance} / (K-1)}{\text{within-cluster variance} /(N-K)}
+$$
+
+## Linear probe
+
+> clustering separability
+
+Linear probe is a practical test of representation quality. If an additional simple linear layer can provide a good Accuracy/F1/AUC, then the representation already contains useful, separable information. The embeddings stay fixed; only the linear classifier is learned. Better probe performance usually means the embedding space is more informative and linearly separable.
+
+Steps:
+1. Freeze encoder
+2. Extract embeddings
+3. Train logistic regression or linear classifier
+4. Measure Accuracy/F1/AUC.
+
+## ARI
+
+> clustering metric (vs ground truth)
+
+Adjusted Rand Index compares pairwise agreement between predicted clusters and true labels. Adjusted for chance. Range is roughly [−1,1], where 1 is perfect, 0 is random-like.
+
+Requires: gound-truth labels
+
+## NMI
+
+> clustering metric (vs ground truth)
+
+Normalized Mutual Information measures shared information between cluster assignments and true labels. If clusters align well with labels, mutual information is high. Range is [0,1], higher is better.
+
+Requires: gound-truth labels
+
+## K-means inertia / SSE
+
+> clustering loss
+
+K-means inertia is the standard K-means objective: sum of squared distances from each point $x$ to its assigned cluster centroid $\mu$. Clusters should be compact. Points should lie close to their centroid.
+
+$$
+SSE = \sum ||x - \mu||^2
+$$
+
+Issues: hard clusters
+
+## GMM negative log-likelihood
+
+> clustering loss
+
+For a Gaussian Mixture Model, the objective is the negative log-likelihood of the data under the mixture. The model should assign high probability to the observed data. Clusters can be soft, not just hard assignments.
+
+## DEC with KL loss
+
+> clustering loss
+
+Deep Embedded Clustering learns a representation and cluster assignments jointly using a KL-divergence loss between a soft assignment distribution $q_{ik}$ and a target distribution $p_{ik}$. The model starts with soft cluster probabilities. It sharpens them using a target distribution. It encourages points to move toward more confident cluster centers. It is representation learning plus clustering together.
+
+$$
+\mathcal{L}_{\text{DEC}} = KL(P||Q)=\sum \sum p_{ik} \log \frac{p_{ik}}{q_{ik}}
+$$
+
 ## Precision
+
+> classification metric
 
 Precision answers: “Of all items predicted positive, how many were truly positive?” High precision means few false alarms.
 
@@ -427,6 +572,8 @@ Issues:
 
 ## Recall
 
+> classification metric
+
 Recall answers: “Of all truly positive items, how many did we catch?” It is the true positive rate. High recall means few misses.
 
 $$
@@ -439,6 +586,8 @@ Issues:
 * if the total positive item count is large (denominator is large) and we truncate to first $k$ then this has a negative effect.
 
 ## F1
+
+> classification metric
 
 F1 is the harmonic mean of precision and recall.
 
@@ -463,6 +612,8 @@ $$
 
 ## PR-AUC
 
+> classification metric, threshold-free
+
 Area under the Precision-Recall curve: plot precision vs recall across thresholds, then take the area. The baseline is roughly the positive class prevalence: 
 
 $$
@@ -481,6 +632,8 @@ $$
 where $P(R)$ is precision as a function of recall.
 
 ## ROC-AUC
+
+> classification metric, threshold-free
 
 The Area Under the Receiver Operating Characteristic curve. It plots:
 
@@ -504,6 +657,8 @@ It measures ranking quality, not calibration. Two models can have the same ROC-A
 
 ## Calibration (ECE)
 
+> calibration metric
+
 Calibration means predicted probabilities should match observed frequencies. 
 
 Expected Calibration Error (ECE) is a summary of mismatch. Intuition: predictions around 0.8 should be correct about 80% of the time. If they are correct only 65%, the model is overconfident in that region.
@@ -522,9 +677,13 @@ Temperature scaling: post-hoc calibration method for multi-class NN. Divides log
 
 ## Inception Score
 
+> generative image metric
+
 Inception Score rewards images that are individually classifiable (low entropy in $p(y|x)$) and globally diverse (high entropy in $p(y)$). Does not compare to real data directly, so it can be gamed and is less reliable than FID for many modern settings. Higher is better.
 
 ## FID
+
+> generative image metric
 
 Fréchet Inception Distance compares feature distributions of real vs generated images (features usually from an Inception network). Captures both quality and diversity mismatch. Sensitive to preprocessing, sample count, and implementation details. Lower is better.
 
@@ -534,6 +693,8 @@ $$
 where real features have mean/covariance $(\mu_r, \Sigma_r)$ and generated features have $(\mu_g, \Sigma_g)$
 
 ## KL-divergence
+
+> ditribution divergence
 
 Kullback-Leibler divergence measures how one probability distribution $Q$ differs from a reference distribution $P$:
 
@@ -551,6 +712,8 @@ Intuition:
 
 ## CE
 
+> classification loss
+
 (Categorical) Cross-Entropy is used for one-of-K classes with true class vector $y_k$ (usually one-hot) and predicted class probs $p_k$ (typically the softmax output). It pushes probability mass onto the correct class.
 
 $$
@@ -562,6 +725,8 @@ $− \log p_{\text{true class}}$
 
 ## BCE / LogLoss
 
+> classification loss
+
 Binary Cross-Entropy (aka Logarithmic Loss, LogLoss for binary classification tasks) is the binary case of CE. It is used when target is $y∈\{0,1\}$ and model outputs probability $p=P(y=1∣x)$. It heavily penalizes being confidently wrong in binary classification, while creating a smooth (difentiable) curve. It treat every training example equally. For multi-label classification (several can be 1) we use independent BCE per label.
 
 $$
@@ -570,6 +735,8 @@ $$
 
 
 ## Weighted BCE
+
+> classification loss, imbalance
 
 Weighted Binary Cross-Entropy is a simple baseline used to counter class imbalance or asymmetric mistake costs. Weighted BCE says: “Mistakes on positives hurt more (or less), based on business need.” 
 
@@ -581,6 +748,8 @@ where $p$ is the predicted probability and label $y \in \{0, 1 \}$, $w_{\{1, 0\}
 
 ## Focal loss
 
+> classification loss, imbalance
+
 Focal loss is for heavy imbalance with many easy negatives (e.g., detection, rare-event classification). It says: “Stop spending so much effort on easy examples you already get right. Focus on hard ones.” Easy examples get down-weighted automatically. Hard/misclassified examples keep large influence.
 
 $$
@@ -591,6 +760,8 @@ where $p = yp + (1-y)(1-p)$ and $α = yα + (1-y)(1-α)$
 
 ## HitRate@K
 
+> retrieval metric
+
 HitRate@K is the probability of getting at least one hit in top-K. For each query, it checks whether at least one relevant item appears in top-K. Unlike Recall@K, it does not reward finding multiple relevant items once one hit is present.
 
 $$
@@ -599,12 +770,15 @@ $$
 
 whre $R_q$ is the set of relevant items for query $q \in Q$
 
-
 ## DPO
+
+> preference alignment loss
 
 Direct Preference Optimization trains a NN on preference pairs (chosen response y+ vs rejected response y- for same prompt x). Instead of token imitation, it optimizes relative preference so model scores chosen outputs higher than rejected ones. It aligns style/helpfulness/safety preferences better than SFT alone.
 
 ## MRR
+
+> ranking metric
 
 Mean Reciprocal Rank rewards getting at least one correct result very early, but it ony considers the first. For each query $q$, find the rank of the first relevant result, $\text{rank}$. Reciprocal rank is $1/\text{rank}_q$ (or 0 if no relevant item found).
 
@@ -618,6 +792,8 @@ Issues:
 * only considers the first relevant result
 
 ## mAP
+
+> ranking metric
 
 Mean Average Precision is used for ranking/retrieval/detection quality. $mAP$ rewards putting true positives early in the ranked list, not just finding them eventually
 
@@ -638,6 +814,8 @@ Issues:
 * designed for binary relevances
 
 ## nDCG
+
+> ranking metric
 
 Normalized Discounted Cumulative Gain handles graded relevance (not just relevant/irrelevant), and discounts lower positions. Range is [0, 1]. 
 
@@ -662,6 +840,8 @@ $$
 
 ## Catalog Coverage
 
+> recommendation metric
+
 Catalog coverage is a recommendation metric that measures how much of the item catalog your system actually exposes in its recommendations.
 
 Intuition:
@@ -677,6 +857,8 @@ $$
 where $U$ is the user set, $Rec^{@K}_{u}$ is the top-K items recommended to user $u$, $I$ is the full item catalog.
 
 ## Softmax
+
+> activation function
 
 Softmax converts logits $z_1, ... z_K$ into a probability distribution over $K$ classes:
 
@@ -694,25 +876,31 @@ Sampled softmax is an approximation of full softmax over a huge catalog. Instead
 
 ## InfoNCE
 
+> contrastive loss
+
 InfoNCE treats retrieval as a classification problem: pick the true item among distractors. In-batch negatives are commonly used for efficiency. It is a strong default for two-tower retrieval. It helps models learn to distinguish between positive and negative samples by estimating mutual information.
 
 $$
-L_{\text{InfoNCE}} = - \log \frac{e ^ {s(q,i^+)/\tau}}{e^{s(q, i^+) / \tau} + \sum e^{s(q,i^-)/\tau}}
+\mathcal{L}_{\text{InfoNCE}} = - \log \frac{e ^ {s(q,i^+)/\tau}}{e^{s(q, i^+) / \tau} + \sum e^{s(q,i^-)/\tau}}
 $$
 
 where $q$ is query embedding, $i^+$ is positive item, $i^-$ is negative, $s(.,.)$ is similarity and $\tau$ is temperature.
 
 ## Triplet loss
 
+> contrastive loss
+
 Triplet enforces ordering: positive must be closer than negative by at least margin m. It works best with hard or semi-hard negative mining. Used for metric-learning setups with explicit margin constraints.
 
 $$
-L_{\text{triplet}} = \max (0, m + d(q,i^+) - d(q,i^-))
+\mathcal{L}_{\text{triplet}} = \max (0, m + d(q,i^+) - d(q,i^-))
 $$
 
 where $q$ is the query, $i^+$ is positive, $i^-$ is negative, $d(.,.)$ is distance, and $m$ is margin.
 
 ## Weighted sum of losses
+
+> multi-task training technique
 
 The training loss is a weighted combination of several loss functions. Used to align model training with business value, and prevent one task/aspect dominating gradients. To choose weight use one of:
 1. manual business priors,
@@ -720,16 +908,20 @@ The training loss is a weighted combination of several loss functions. Used to a
 3. dynamic wighting methods (uncertainty weighting, GradNorm)
 
 $$
-L_{\text{total}} = \sum w L
+\mathcal{L}_{\text{total}} = \sum w L
 $$
 
 where $L$ is a loss function, $w$ is weight controlling importance
 
 ## ROUGE
 
+> generative text metric
+
 recall oriented for summarization
 
 ## RAGAS metrics
+
+> generative text metric (RAG)
 
 LLM-judge + human
 
@@ -743,12 +935,126 @@ language fluency,
 
 ## Safety rates
 
+> generative safety metric
+
 self-harm content, hateful or unfair content, violent content, sexual content, protected material, indirect attack/jailbreak
 
 ## Perplexity
+
+> generative text metric
 
 Perplexity measures how well the model predicts the reference next tokens. It is roughly the model's average branching uncertainty per token. Good for fluency/fit to reference text, but not enought for usefulness or safety. Likelihood-based, token-level fit.
 
 ## Judge Win-Rate
 
+> generative text metric
+
 Judge Win-Rate compares model outputs head-to-head. Captures preference-quality dimensions (helpfulness, relevance, style, safety) better than perplexity. Depends on judge quality, rubic, and pairwise protocol. Preference-based, outcome quality on tasks.
+
+## Pairwise Accuracy
+
+> pairwise ranking metric
+
+Pairwise Accuracy is the fraction of pairs that are ordered correctly. Pairwise accuracy is threshold-free only in the sense of direct comparison inside each pair.
+
+$$
+\text{PairwiseAcc} = \frac{1}{N} \sum 1(s(q,d^+)>s(q,d^-))
+$$
+
+where $s(q,d)$ is the score of doc $d$ given query $q$.
+
+## ROC-AUC on ordered pairs
+
+> pairwise ranking metric
+
+Treat pairwise ranking as a binary classification problem:
+* positive pair if the ordering is correct
+* negative pair if reversed
+
+Then ROC-AUC measures how well these pair scores separate correctly ordered from incorrectly ordered pairs across all thresholds.
+
+ROC-AUC for pairwise ranking is the probability that a randomly chosen positive ordered pair gets a larger margin than a randomly chosen negative ordered pair.
+
+Interpretation:
+
+*  1.0: every preferred document gets a higher score than the non-preferred 
+* 0.5: random ordering.
+Higher is better.
+
+ROC-AUC is smooth and ranking-oriented across the full margin distribution, it is often robust for model comparison.
+
+## Pairwise logistic loss
+
+> pairwise ranking loss
+
+Pairwise logistic loss (RankNet) turns the score gap into a probability that the preferred doc is above the other. It uses BCE on this pariwise probability. It has a smooth penalty; still gives gradient even when ordering is already correct, but smaller as margin grows. It is probabilistic, smooth, usually easy optimization.
+
+$$
+\Delta = s(q,d^+) - s(q,d^-)
+$$
+
+where $q$ is query, $d^+$ is preferred doc, $d^-$ is less-preferred doc, model score is $s(q,d)$.
+
+$$
+P = \sigma(\Delta)=\frac{1}{1+e^{-\Delta}}
+$$
+
+$$
+\mathcal{L}_{\text{RankNet}} = - \log \sigma (\Delta) = \log (1+e^{-\Delta})
+$$
+
+## Hinge ranking loss
+
+> pairwise ranking loss
+
+Hinge ranking loss enforces a margin $m>0$ between preferred and non-preferred scores. It is more “hard-margin” style than RankNet. It is margin-based, focuses on violations only.
+
+$$
+\Delta = s(q,d^+) - s(q,d^-)
+$$
+
+where $q$ is query, $d^+$ is preferred doc, $d^-$ is less-preferred doc, model score is $s(q,d)$.
+
+$$
+\mathcal{L}_{\text{hinge}} = \max (0, m-\Delta)
+$$
+
+If $\Delta ≥ m$, loss is 0, else
+$\Delta < m$ penalize linearly until margin is met.
+
+## ListNet
+
+> listwise ranking loss
+
+ListNet turns each of the ground-truth and predicted ranked lists into a probability distribution over "which item is top-1" — once from the true relevance labels, once from the model scores — then minimizes the divergence between the two. It considers the whole list at once, not just pairs.
+
+Top-one probability for item $i$ among $k$ items:
+
+$$
+P(i) = \frac{e^{s_i}}{\sum_j e^{s_j}}
+$$
+
+Loss is CE between the true top-one distribution $P^y$ (from ground-truth relevance $y$) and predicted $P^s$ (from scores $s$):
+
+$$
+\mathcal{L}_{\text{ListNet}} = - \sum_i P^y(i) \log P^s(i)
+$$
+
+## LambdaRank
+
+> listwise ranking loss
+
+LambdaRank extends [Pairwise logistic loss](#pairwise-logistic-loss) (RankNet) to optimize listwise ranking metrics directly. Since metrics like [nDCG](#ndcg) are computed on sorted ranks, they're flat almost everywhere and non-differentiable — so LambdaRank scales each pair's RankNet gradient by the change in nDCG that swapping that pair would cause, $|\Delta nDCG|$. Pairs whose swap would hurt nDCG a lot get pushed apart harder.
+
+$$
+\lambda_{ij} = \frac{\partial \mathcal{L}_{\text{RankNet}}}{\partial s_i} \times |\Delta nDCG_{ij}|
+$$
+
+where $s_i$ is the score of item $i$, and $\Delta nDCG_{ij}$ is the change in nDCG from swapping items $i$ and $j$ in the ranked list.
+Technically a gradient heuristic rather than a loss with an explicit closed form.
+
+## LambdaMART
+
+> listwise ranking model + loss
+
+LambdaMART is [LambdaRank](#lambdarank)'s $\lambda$ gradients used as pseudo-residuals to fit gradient-boosted regression trees (MART) instead of a neural net. It's the standard production learning-to-rank algorithm (LightGBM/XGBoost ranking objectives), combining metric-aware gradients with the strength of tree ensembles. It's LambdaRank's gradients applied to gradient-boosted trees (MART), so it's the model/algorithm, not just a loss.
