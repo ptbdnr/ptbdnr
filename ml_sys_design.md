@@ -988,22 +988,22 @@ Correlates better with human judgment at the sentence level than BLEU (recall is
 Answer Relevancy \ Repeatability checks whether the answer truly addresses the question. LLM generates paraphrases of the question and measures semantic alignment.
 
 $$
-\text{Answer Relevancy} = sim(\text{Answer}, \text{Answer to Paraphased Query})
+\text{Answer Relevancy} = sim(\text{Answer}, \text{Answer to Paraphased Q})
 $$
 
 Context Utilization (similar to BLEU) measures how much of the retrieved context is actually used. LLM detects which context portions were used or ignored. High utilization indicates strong grounding; low means hallucination.
 
 $$
-\text{Context Utilization} = \frac{|\text{n-grams present in context}|}{|\text{n-grams in answer}|}
+\text{Context Utilization} = \frac{|\text{n-grams present in context}|}{|\text{n-grams in Answer}|}
 $$
 
 Faithfulnessm (similar to BLEU) easures factual consistency between generated answer and retrieved context. LLM extracts claims and checks if evidence exists in context.
 
 $$
-\text{Faithfulness} = \frac{\text{Nb. Supported Claims}}{\text{Nb. Total Claims}}
+\text{Faithfulness} = \frac{|\text{claims present in context}|}{|\text{claims in Answer}|}
 $$
 
-Noise Sensitivity tests robustness — how much output degrades when irrelevant text is added. LLM re-evaluates under noisy and clean contexts to detect sensitivity.
+Noise Sensitivity (similar to Recall) tests robustness — how much output degrades when irrelevant text is added. LLM re-evaluates under noisy and clean contexts to detect sensitivity.
 
 $$
 \text{Noise Sensitivity} = 1 − \frac{\text{Faithfulness}_{noisy}}{\text{Faithfulness}_{clean}}
