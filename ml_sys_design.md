@@ -9,7 +9,7 @@ Org certificate:
 
 ## Outline
 
-This outline  (4 + 2x4 blocks) is very high level and incomplete. The `: x%` aims to approximate the weight / importance of the component. Instead of a waterfall, an agile approach is recommended. Of course, we need to add security, pipelines, monitoring, etc. Normal to return to previous stages and adjust the direction.
+This outline  (4 + 2x4 blocks) is very high level and incomplete. The `: x%` is the estimated time spent on the component. Instead of a waterfall, an agile approach is recommended. Of course, we need to add security, pipelines, monitoring, etc. Normal to return to previous stages and adjust the direction.
 
 ```mermaid
 flowchart TD
