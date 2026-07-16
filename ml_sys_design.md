@@ -9,23 +9,23 @@ Org certificate:
 
 ## Outline
 
-This outline  (4 + 2x4 blocks) is very high level and incomplete. Instead of waterfall, agile approach is recommended. Of course, we need to add security, pipelines, monitoring, etc. Normal to return to previous stages and adjust the direction.
+This outline  (4 + 2x4 blocks) is very high level and incomplete. The `: x%` aims to approximate the weight / importance of the component. Instead of a waterfall, an agile approach is recommended. Of course, we need to add security, pipelines, monitoring, etc. Normal to return to previous stages and adjust the direction.
 
 ```mermaid
 flowchart TD
-    discover[**Goal, Req, Scope**]
-    b_metrics[**Business Metrics**]
-    subgraph sol_des[Solution Design]
-        api[I/O API]
-        ml_task[**ML Task & Eval**]
-        data[Data Engineering]
-        sec_by_des[Responsible ML]
+    discover[Goal, Req, Scope : 15%]
+    b_metrics[Business Metrics : 15%]
+    subgraph sol_des[Solution Design : 55%]
+        api[I/O API : 5%]
+        ml_task[ML Task & Eval : 40%]
+        data[Data Engineering : 5%]
+        sec_by_des[Responsible ML : 5%]
     end
-    subgraph tech_des[Technical Design]
-        feat_eng[Feature Engineering]
-        model[Model selection]
-        train[Training]
-        serve[Serving]
+    subgraph tech_des[Technical Design : 20%]
+        feat_eng[Feature Engineering : 5%]
+        model[Model selection : 5%]
+        train[Training : 5%]
+        serve[Serving : 5%]
     end
 
     discover --> b_metrics
