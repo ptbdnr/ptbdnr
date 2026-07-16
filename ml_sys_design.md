@@ -7,52 +7,63 @@ Org certificate:
 * [GCP Audit Manager](https://cloud.google.com/products/audit-manager?hl=en)
 * [ISO/IEC 42001](https://www.iso.org/standard/42001): [Azure ISO 42001](https://learn.microsoft.com/en-us/compliance/regulatory/offering-iso-42001); [AWS ISO 42001 FAQS](https://aws.amazon.com/compliance/iso-42001-faqs/); [GCP ISO 42001](https://cloud.google.com/security/compliance/iso-42001?hl=en)
 
-## Outline
+## Outline (4 + 2x4 blocks)
+
+This outline is very high level and incomplete. Instead of waterfall, agile approach is recommended. Of course, we need to add security, pipelines, monitoring, etc. Normal to return to previous stages and adjust the direction.
 
 ```mermaid
-flowchart LR
+flowchart TD
     discover[Goal, Req, Scope]
     b_metrics[Business Metrics]
-    subgraph TD sol_des[Solution Design]
+    subgraph sol_des[Solution Design]
         api[I/O API]
         ml_task[ML Task & Eval]
-        data[Data Eng]
-        sec_by_design[Responsible]
+        data[Data Engineering]
+        sec_by_des[Responsible ML]
     end
-    tech_arch[Ingest & Train / Serve]
+    subgraph tech_des[Technical Design]
+        feat_eng[Feature Engineering]
+        model[Model selection]
+        train[Training]
+        serve[Serving]
+    end
 
     discover --> b_metrics
-    discover --> api --> tech_arch
-    b_metrics --> ml_task --> tech_arch
-    discover --> data --> tech_arch
-    discover --> sec_by_design --> tech_arch
+    b_metrics & discover --> sol_des
+        ml_task --- data
+        api --- ml_task
+        api --- data
+        ml_task --- sec_by_des
+        data --- sec_by_des
+    sol_des --> tech_des
+        feat_eng --- train
+        feat_eng --- serve
+        model --- train
+        model --- serve
 ```
 
 ## Discover: Business Objective, Requirements, Scope
 
 Business Objective, vision & goal. What is success? KPIs:
 
-* annual recurring revenue ARR, net profit margin NPM
-* customer aquisition cost CAC, churn rate, conversion rate CVR
-* customer satisfaction score CSat, net promoter score NPS
-* output per FTE, cycle time per task, cost per task
-* average order value AOV, customer lifetime value CLtV
-* order fulfillment cycle time OFCT, inventory turnover COGS/avgINV
+* 💰: annual recurring revenue ARR, net profit margin NPM
+* 😊: customer aquisition cost CAC, churn rate, conversion rate CVR, customer lifetime value CLtV
+* ⭐: customer satisfaction score CSat, net promoter score NPS
+* 🚀: output per FTE, cost per task, cycle time per task
+* 📦: average order value AOV, order fulfillment cycle time OFCT, inventory turnover COGS/avgINV
  
 
-Functional Requirements: UX, features, session memory, continuous improvement
+Functional Requirements: UX, features, memory, continuous improvement
 
 Scale: Daily Active Users (DAU) x Click Per User / 100K = Query Per Second (QPS), ingestion vs query frequency, rate of growth, data volume of knowledge base,
 
 Constraints:
 
-* latency budget (time to first meaningful byte),
-* cost of data gathering (label) or storage
-* cost of processing on CPU/GPU/RAM
-* interpretability, explainability, and simplicity of baseline
-* build vs buy (cloud) vs reuse
-
-Data: source, size, type, ground truth
+* ⏰: latency budget (time to first meaningful byte),
+* 📖: cost of data gathering (label) or storage
+* 🔍: interpretability, explainability, and simplicity of baseline
+* 🖥️: processing on hardware (CPU, GPU, RAM, HD)
+* ☁️: build vs buy (cloud) vs reuse
 
 
 ## Business Metrics: Online, Responsible ML
@@ -80,18 +91,14 @@ Online metric:
     * expert confirm rate
 * Prevalence
 
-Resposible:
 
-* Guardrails: fairness and bias (age, gender, ethnicity) with constrastive evaluation
-
-
-## Solution Design: I/O API, ML Task Framing
+## Solution Design: I/O API, ML Task Framing, Data Engineering, Responsible ML
 
 I/O spec:
  
-* input entities → output type (continous value | (ordinal or categorical) class | ranked list | segment/structure | generated)
+* input → output schema {attr: data type}
 * at what granularity (user / item / pair / session),
-* what cadence (one-shot vs sequential).
+* what cadence (one-shot vs sequential)
 
 Label spec: exact positive definition, source (explicit / implicit / synthetic), proxy risks (eg. clickbait).
 
@@ -124,10 +131,15 @@ Non-ML baseline first: rules / popularity / heuristic. ML must beat this.
 | Pointwise ranking (for bid offer) | [ROC-AUC](#roc-auc), [nDCG](#ndcg)@k on sessions, [ECE](#calibration-ece) | (user, item, context, y∈{0,1}) | [sigmoid p(y)](#sigmoid-function) | [ROC-AUC](#roc-auc) / [BCE](#bce--logloss) | [BCE](#bce--logloss); multi-task [weighted sum of losses](#weighted-sum-of-losses)  |
 | Pairwise Ranking | [MRR](#mrr), [Pairwise Accuracy](#pairwise-accuracy), [ROC-AUC on ordered pairs](#roc-auc-on-ordered-pairs)  | (q, 2x scored d) | 2x scalar score s(q,d)  | [MRR](#mrr) | [Pairwise Logistic Loss](#pairwise-logistic-loss) / [Hinge ranking loss](#hinge-ranking-loss) |
 | Listwise Ranking | [mAP](#map), [nDCG](#ndcg) | (q, k scored d) | k scalar scores s(q,d) | [nDCG](#ndcg)@k | [ListNet](#listnet) / [LambdaRank](#lambdarank)-[LambdaMART](#lambdamart) |
-| Sequence / Image segmentation | text sequence pariwise F1/ARI, img obj boundary mAP@IOU, 1-vs-all recall, FPS | ? | ? | ? | ? |
-| Object detection | mAP@[.5:.95], per-class recall, FPS | (image, boxes + classes) | box regression + class scores + objectness | mAP@IoU 0.5 | composite: IoU/smooth-L1 + focal CE |
-| Generative seq2seq | [ROUGE](#rouge), [safety rates](#safety-rates), [RAGAS metrics](#ragas-metrics), seq2img ([Inception Score](#inception-score), [FID](#fid)) | (prompt, response); preference pairs (prompt, choosen response, rejected response) | [softmax](#softmax) over VOCAB | [perplexity](#perplexity) / [judge win-rate](#judge-win-rate) | next-token [CE](#ce) for supervised fine-tuning; [DPO](#DPO) on preferences |
-| Translation, STT, TTS | BLEU n-gram comparison for translation, METEOR extended BLEU, GLEU sentence-level BLEU, WER for STT/TTS | --- | --- | --- | --- |
+| Text named entity segmentation | text sequence pairwise [F1](#f1)/[ARI](#ari) | (token seq, per-token/span boundary labels) | per-token [softmax](#softmax) / CRF | pairwise [F1](#f1) | token-level [CE](#ce) or CRF-NLL |
+| Generate text2text | [ROUGE](#rouge), [safety rates](#safety-rates), [RAGAS metrics](#ragas-metrics) | (prompt, response); preference pairs (prompt, choosen response, rejected response) | [softmax](#softmax) over VOCAB | [perplexity](#perplexity) / [judge win-rate](#judge-win-rate) | next-token [CE](#ce) for supervised fine-tuning; [DPO](#DPO) on preferences |
+| Translation text2text | BLEU n-gram comparison for translation, METEOR extended BLEU, GLEU sentence-level BLEU | --- | --- | --- | --- |
+| Transscript/Dictate T2S/StT | WER for STT/TTS | --- | --- | --- | --- |
+| Image object localization |  |  | box regression + class scores + objectness | mAP@IoU 0.5 | composite: IoU/smooth-L1 + focal CE |
+| Image object detection | mAP@[.5:.95], per-class recall, FPS | (image, boxes + classes) | box regression + class scores + objectness | mAP@IoU 0.5 | composite: IoU/smooth-L1 + focal CE |
+| Image semantic segmentation |  | (image, list[pixel-wise mask with object class])  |  |  |  |
+| Image object segmentation | obj boundary [mAP](#map)@IOU, 1-vs-all recall, FPS | (image, list[pixel-wise mask with object id]) | per-pixel [softmax](#softmax), dense FCN/U-Net/Mask decoder | mIoU or mAP@IoU | per-pixel [CE](#ce) + Dice-IoU loss |
+| Generate text2img | [Inception Score](#inception-score), [FID](#fid) | (prompt, pixels) |  |  |  |
 | Strategy Development (RL) | --- | --- | --- | --- | --- |
 | Combinatorial optimisation | asymm costs | --- | --- | --- | --- |
 | Forecasting (time series) | wMAPE, MASE, interval coverage | (series history + covariates, horizon values) | per-horizon point / quantile outputs | rolling-origin wMAPE | MSE / pinball |
@@ -156,13 +168,13 @@ Data store:
 * Document: MongoDB, CouchDB
 * Graph: Neo4J
 
-### Risk & Safety:
+### Resposible ML
 
 * Failure modes
-* Misuse, fairness, human-in-the-loop
+* Guardrails: fairness and bias (age, gender, ethnicity) with constrastive evaluation, misuse, human-in-the-loop
 
 
-## Technical Architecture: Ingest & Train / Serve
+## Technical Design: Feature Engineering, Model selection, Training, Serving
 
 Realistic system: add complexity only if justified
 
