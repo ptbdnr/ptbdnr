@@ -7,17 +7,17 @@ Org certificate:
 * [GCP Audit Manager](https://cloud.google.com/products/audit-manager?hl=en)
 * [ISO/IEC 42001](https://www.iso.org/standard/42001): [Azure ISO 42001](https://learn.microsoft.com/en-us/compliance/regulatory/offering-iso-42001); [AWS ISO 42001 FAQS](https://aws.amazon.com/compliance/iso-42001-faqs/); [GCP ISO 42001](https://cloud.google.com/security/compliance/iso-42001?hl=en)
 
-## Outline (4 + 2x4 blocks)
+## Outline
 
-This outline is very high level and incomplete. Instead of waterfall, agile approach is recommended. Of course, we need to add security, pipelines, monitoring, etc. Normal to return to previous stages and adjust the direction.
+This outline  (4 + 2x4 blocks) is very high level and incomplete. Instead of waterfall, agile approach is recommended. Of course, we need to add security, pipelines, monitoring, etc. Normal to return to previous stages and adjust the direction.
 
 ```mermaid
 flowchart TD
-    discover[Goal, Req, Scope]
-    b_metrics[Business Metrics]
+    discover[**Goal, Req, Scope**]
+    b_metrics[**Business Metrics**]
     subgraph sol_des[Solution Design]
         api[I/O API]
-        ml_task[ML Task & Eval]
+        ml_task[**ML Task & Eval**]
         data[Data Engineering]
         sec_by_des[Responsible ML]
     end
@@ -42,7 +42,7 @@ flowchart TD
         model --- serve
 ```
 
-## Discover: Business Objective, Requirements, Scope
+## Discover: Business Objective, Requirements, Scope (20%)
 
 Business Objective, vision & goal. What is success? KPIs:
 
@@ -66,7 +66,7 @@ Constraints:
 * ☁️: build vs buy (cloud) vs reuse
 
 
-## Business (Online) Metrics
+## Business (Online) Metrics (20%)
 
 Note: business KPI ← online metric ← offline metric ← validation metric ← training loss. Each arrow is a surrogate relationship with a gap. Imperfect and comes with a risk.
 
@@ -80,7 +80,7 @@ Online metric:
 
 * User feedback
     * Explicit feedback: User likes, valid dislike/escalation/complain/appeal (hard negative), Perceptual Mean Opinion Score (MOS), appeal rate, overturn rate on appeals
-    * Implicit feedback: Click-through rate (CTR, clickbait risk), query reformulation rate, watch time, completed watch, successful clicks, retention A/B
+    * Implicit feedback: Click-through rate (CTR, clickbait risk), Repeated Purchase Rate (RPR), query reformulation rate, watch time, completed watch, successful clicks, retention A/B
 * Operational performance:
     * [self-service (deflection) rate](#self-service-deflection-rate) (no-escalation-trick risk)
     * time-to-process/detect, dwell time, stockout/overstock cost, 
@@ -95,7 +95,7 @@ Online metric:
 ## Solution Design: I/O API, ML Task Framing, Data Engineering, Responsible ML
 
 
-### I/O API
+### I/O API (5%)
 
 I/O spec:
  
@@ -116,7 +116,7 @@ API type:
 Non-ML baseline first: popularity / rules / heuristic. ML must beat this.
 
 
-###  ML Task Framing (business → ML) top 2 with rejection criteria:
+###  ML Task Framing (business → ML) (40%)
 
 1. Paradigm from label availability: supervised / self-supervised / unsupervised / RL.
 2. Candidate framings (2–3 of the SAME problem), e.g. recommendation sys as pointwise classification vs pairwise ranking vs retrieval+ranking.
@@ -127,7 +127,7 @@ Non-ML baseline first: popularity / rules / heuristic. ML must beat this.
 |---|---|---|---|---|---|
 | Regression | [MAE](#mae), [RMSE](#rmse), [wMAPE](#mape), [R²](#r); [interval coverage](#interval-coverage) | (x, y∈ℝ) | single scalar; [quantile heads for intervals](#quantile-heads-for-intervals) | [RMSE](#rmse) on [temporal val split](#temporal-val-split) | [MSE](#mse) / [Huber](#huber); [pinball for quantiles](#quantile-heads-for-intervals) |
 | Binary clf w/o imbalance / multi-task (K binary heads) | [P](#precision)/[R](#recall)/[Fβ](#f1)@(0..1), [P@fixed-FPR](#precision), [PR-AUC](#pr-auc), [ROC-AUC](#roc-auc), [ECE](#calibration-ece) | (x, y∈{0,1}) | [sigmoid p(y)](#sigmoid-function) | [PR-AUC](#pr-auc) | ([Weighted](#weighted-bce)) [BCE](#bce--logloss); [Focal loss](#focal-loss) |
-| Multi-class / multi-label clf | per-class/macro [P](#precision)/[R](#recall)/[Fβ](#f1), [Accuracy](#accuracy), [Hamming loss](#hamming-loss) | (x, y∈K) / (x, y⊆K) | [softmax](#softmax) over K; [sigmoid](#sigmoid-function) p(k) ∀k∈K| macro-[F1](#f1) | [CE](#ce); per-label [weighted BCE](#weighted-bce); [KL-divergence](#kl-divergence) |
+| Multi-class / multi-label clf | per-class/macro [P](#precision)/[R](#recall)/[Fβ](#f1), [Accuracy](#accuracy), [Hamming loss](#hamming-loss) | (x, y∈K) / (x, Y⊆K) | [softmax](#softmax) over K; [sigmoid](#sigmoid-function) p(k) ∀k∈K| macro-[F1](#f1) | [CE](#ce); per-label [weighted BCE](#weighted-bce); [KL-divergence](#kl-divergence) |
 | Clustering | [Silhouette](#silhouette), [Davies-Bouldin](#davies-bouldin), [Calinski-Harabasz](#calinski-harabasz), labels exist:[ARI](#ari) or [NMI](#nmi) | (x∈ℝ) / G=(V,E) + similarity for (i,j)∈E| p(x∈K) / centroid or prototype | [Silhouette](#silhouette) + stability across samples | [K-means with SSE](#k-means-inertia--sse) / [GMM with negative log-likelihood](#gmm-negative-log-likelihood) / [DEC with KL loss](#dec-with-kl-loss) |
 | Representation Learning / Encoding | [R](#recall)@K, [MRR](#mrr), [Silhouette](#silhouette), [Davies-Bouldin](#davies-bouldin), [Linear probe](#linear-probe) | (x, 1x similar, n-1 dissimilar) | embedding vector | [InfoNCE](#infonce) / [triplet loss](#triplet-loss) + [R](#recall)@K | [CE](#ce) / [InfoNCE](#infonce) / [triplet loss](#triplet-loss) |
 | Info Retrieval | [HitRate](#hitratek)@K, [R](#recall)/[P](#precision)@k, [MRR](#mrr), [catalog coverage](#catalog-coverage), ANN latency | (q, TPs, sample TNs) | dot/cosine (of 2 embeddings) | [recall](#recall)@k | [InfoNCE](#infonce) / sampled [softmax](#softmax) / [triplet loss](#triplet-loss) |
@@ -135,7 +135,8 @@ Non-ML baseline first: popularity / rules / heuristic. ML must beat this.
 | Pairwise Ranking | [MRR](#mrr), [Pairwise Accuracy](#pairwise-accuracy), [ROC-AUC on ordered pairs](#roc-auc-on-ordered-pairs)  | (q, 2x scored d) | 2x scalar score s(q,d)  | [MRR](#mrr) | [Pairwise Logistic Loss](#pairwise-logistic-loss) / [Hinge ranking loss](#hinge-ranking-loss) |
 | Listwise Ranking | [mAP](#map), [nDCG](#ndcg) | (q, k scored d) | k scalar scores s(q,d) | [nDCG](#ndcg)@k | [ListNet](#listnet) / [LambdaRank](#lambdarank)-[LambdaMART](#lambdamart) |
 | Text named entity segmentation | text sequence pairwise [F1](#f1)/[ARI](#ari) | (token seq, per-token/span boundary labels) | per-token [softmax](#softmax) / CRF | pairwise [F1](#f1) | token-level [CE](#ce) or CRF-NLL |
-| Generate text2text | [BLEU](#bleu), [ROUGE](#rouge), [METEOR](#meteor),  [RAGAS metrics](#ragas-metrics), [safety rates](#safety-rates) | (prompt, response); preference pairs (prompt, choosen response, rejected response) | [softmax](#softmax) over VOCAB | [perplexity](#perplexity) / [judge win-rate](#judge-win-rate) | next-token [CE](#ce) for supervised fine-tuning; [DPO](#DPO) on preferences |
+| Generate text2text | [BLEU](#bleu), GLEU, [METEOR](#meteor), [ROUGE](#rouge), [RAGAS metrics](#ragas-metrics), [safety rates](#safety-rates) | (prompt, response); preference pairs (prompt, choosen response, rejected response) | [softmax](#softmax) over VOCAB | [perplexity](#perplexity) / [judge win-rate](#judge-win-rate) | next-token [CE](#ce) for supervised fine-tuning; [DPO](#DPO) on preferences |
+| Reinforcement Learning | --- | --- | --- | --- | --- |
 | Translation text2text | BLEU n-gram comparison for translation, METEOR extended BLEU, GLEU sentence-level BLEU | --- | --- | --- | --- |
 | Transscript/Dictate T2S/StT | WER for STT/TTS | --- | --- | --- | --- |
 | Image object localization |  |  | box regression + class scores + objectness | mAP@IoU 0.5 | composite: IoU/smooth-L1 + focal CE |
@@ -149,7 +150,7 @@ Non-ML baseline first: popularity / rules / heuristic. ML must beat this.
 | Anomaly detection | precision@k alerts, PR-AUC, alert volume | unlabeled x + few labeled anomalies | anomaly score | PR-AUC on labeled slice | reconstruction error / one-class objective |
 
 
-### Data Engineering
+### Data Engineering (5%)
 
 Clarification: Data source, size, type, ground truth labels
 
@@ -172,7 +173,7 @@ Data store:
 * Document: MongoDB, CouchDB
 * Graph: Neo4J
 
-### Resposible ML
+### Resposible ML (5%)
 
 * Failure modes, misuse
 * Guardrails: fairness and bias (age, gender, ethnicity) with constrastive evaluation
@@ -680,7 +681,7 @@ Interpretation:
 
 It measures ranking quality, not calibration. Two models can have the same ROC-AUC but very different predicted probabilities.
 
-<img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fdeepchecks.com%2Fwp-content%2Fuploads%2F2023%2F04%2Fimg-roc-auc-graph.jpg&f=1&nofb=1&ipt=648913c7ca9601775f6dc8cecf9467515a774df82266a932d66c41c556147003" alt="ROC-AUC" style="max-width:300px;"/>
+<img src="https://deepchecks.com/wp-content/uploads/2023/04/img-roc-auc-graph.jpg" alt="ROC-AUC" style="max-width:300px;"/>
 
 ## Calibration (ECE)
 
