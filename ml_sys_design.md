@@ -127,7 +127,7 @@ Non-ML baseline first: popularity / rules / heuristic. ML must beat this.
 |---|---|---|---|---|---|
 | Regression | [MAE](#mae), [RMSE](#rmse), [wMAPE](#mape), [R²](#r); [interval coverage](#interval-coverage) | (x, y∈ℝ) | single scalar; [quantile heads for intervals](#quantile-heads-for-intervals) | [RMSE](#rmse) on [temporal val split](#temporal-val-split) | [MSE](#mse) / [Huber](#huber); [pinball for quantiles](#quantile-heads-for-intervals) |
 | Binary clf w/o imbalance / multi-task (K binary heads) | [P](#precision)/[R](#recall)/[Fβ](#f1)@(0..1), [P@fixed-FPR](#precision), [PR-AUC](#pr-auc), [ROC-AUC](#roc-auc), [ECE](#calibration-ece) | (x, y∈{0,1}) | [sigmoid p(y)](#sigmoid-function) | [PR-AUC](#pr-auc) | ([Weighted](#weighted-bce)) [BCE](#bce--logloss); [Focal loss](#focal-loss) |
-| Multi-class / multi-label clf | per-class/macro [P](#precision)/[R](#recall)/[Fβ](#f1), [Accuracy](#accuracy), [Hamming loss](#hamming-loss) | (x, y∈K$) / (x, y⊆K) | [softmax](#softmax) over K; [sigmoid](#sigmoid-function) p(k) ∀k∈K| macro-[F1](#f1) | [CE](#ce); per-label [weighted BCE](#weighted-bce); [KL-divergence](#kl-divergence) |
+| Multi-class / multi-label clf | per-class/macro [P](#precision)/[R](#recall)/[Fβ](#f1), [Accuracy](#accuracy), [Hamming loss](#hamming-loss) | (x, y∈K) / (x, y⊆K) | [softmax](#softmax) over K; [sigmoid](#sigmoid-function) p(k) ∀k∈K| macro-[F1](#f1) | [CE](#ce); per-label [weighted BCE](#weighted-bce); [KL-divergence](#kl-divergence) |
 | Clustering | [Silhouette](#silhouette), [Davies-Bouldin](#davies-bouldin), [Calinski-Harabasz](#calinski-harabasz), labels exist:[ARI](#ari) or [NMI](#nmi) | (x∈ℝ) / G=(V,E) + similarity for (i,j)∈E| p(x∈K) / centroid or prototype | [Silhouette](#silhouette) + stability across samples | [K-means with SSE](#k-means-inertia--sse) / [GMM with negative log-likelihood](#gmm-negative-log-likelihood) / [DEC with KL loss](#dec-with-kl-loss) |
 | Representation Learning / Encoding | [R](#recall)@K, [MRR](#mrr), [Silhouette](#silhouette), [Davies-Bouldin](#davies-bouldin), [Linear probe](#linear-probe) | (x, 1x similar, n-1 dissimilar) | embedding vector | [InfoNCE](#infonce) / [triplet loss](#triplet-loss) + [R](#recall)@K | [CE](#ce) / [InfoNCE](#infonce) / [triplet loss](#triplet-loss) |
 | Info Retrieval | [HitRate](#hitratek)@K, [R](#recall)/[P](#precision)@k, [MRR](#mrr), [catalog coverage](#catalog-coverage), ANN latency | (q, TPs, sample TNs) | dot/cosine (of 2 embeddings) | [recall](#recall)@k | [InfoNCE](#infonce) / sampled [softmax](#softmax) / [triplet loss](#triplet-loss) |
@@ -135,7 +135,7 @@ Non-ML baseline first: popularity / rules / heuristic. ML must beat this.
 | Pairwise Ranking | [MRR](#mrr), [Pairwise Accuracy](#pairwise-accuracy), [ROC-AUC on ordered pairs](#roc-auc-on-ordered-pairs)  | (q, 2x scored d) | 2x scalar score s(q,d)  | [MRR](#mrr) | [Pairwise Logistic Loss](#pairwise-logistic-loss) / [Hinge ranking loss](#hinge-ranking-loss) |
 | Listwise Ranking | [mAP](#map), [nDCG](#ndcg) | (q, k scored d) | k scalar scores s(q,d) | [nDCG](#ndcg)@k | [ListNet](#listnet) / [LambdaRank](#lambdarank)-[LambdaMART](#lambdamart) |
 | Text named entity segmentation | text sequence pairwise [F1](#f1)/[ARI](#ari) | (token seq, per-token/span boundary labels) | per-token [softmax](#softmax) / CRF | pairwise [F1](#f1) | token-level [CE](#ce) or CRF-NLL |
-| Generate text2text | [ROUGE](#rouge), [safety rates](#safety-rates), [RAGAS metrics](#ragas-metrics) | (prompt, response); preference pairs (prompt, choosen response, rejected response) | [softmax](#softmax) over VOCAB | [perplexity](#perplexity) / [judge win-rate](#judge-win-rate) | next-token [CE](#ce) for supervised fine-tuning; [DPO](#DPO) on preferences |
+| Generate text2text | [BLEU](#bleu), [ROUGE](#rouge), [METEOR](#meteor),  [RAGAS metrics](#ragas-metrics), [safety rates](#safety-rates) | (prompt, response); preference pairs (prompt, choosen response, rejected response) | [softmax](#softmax) over VOCAB | [perplexity](#perplexity) / [judge win-rate](#judge-win-rate) | next-token [CE](#ce) for supervised fine-tuning; [DPO](#DPO) on preferences |
 | Translation text2text | BLEU n-gram comparison for translation, METEOR extended BLEU, GLEU sentence-level BLEU | --- | --- | --- | --- |
 | Transscript/Dictate T2S/StT | WER for STT/TTS | --- | --- | --- | --- |
 | Image object localization |  |  | box regression + class scores + objectness | mAP@IoU 0.5 | composite: IoU/smooth-L1 + focal CE |
@@ -183,7 +183,7 @@ Data store:
 
 Realistic system: add complexity only if justified
 
-Feature Engineering: 
+# Feature Engineering
 
 * balance dataset (over vs under sampling),
 * handle missing values (deletion, imputation)
@@ -194,7 +194,8 @@ Feature Engineering:
     * image: resize, crop, rotate, color shift, color mode (RGB/CMYK)
     * audio: ?
 
-Modeling craft (task → models → pitfalls)
+
+# Model Selection: (task → models → pitfalls)
 
 | Recommendation: rule-based, content-based (similar content), collaborative (similar client), hybrid sequential or parallel, two-stage retrieval + ranking | precision @ k, mAP, diversity (Avg pair-wise embedding distance) 
 
@@ -652,6 +653,9 @@ $$
 
 where $P(R)$ is precision as a function of recall.
 
+
+<img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fsubstackcdn.com%2Fimage%2Ffetch%2F%24s_!Cxh9!%2Cf_auto%2Cq_auto%3Agood%2Cfl_progressive%3Asteep%2Fhttps%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F8ff2787e-87e2-449e-8794-58d51c3b1231_1500x1500.png&f=1&nofb=1&ipt=e585515ebfe3988ea5f33222c1a8fd51c8b38bbc7b48df4e363a657113a1c282" alt="PR-AUC" style="max-width:300px;"/>
+
 ## ROC-AUC
 
 > classification metric, threshold-free
@@ -675,6 +679,8 @@ Interpretation:
 * Probability view: ROC-AUC equals the probability a random positive gets a higher score than a random negative.
 
 It measures ranking quality, not calibration. Two models can have the same ROC-AUC but very different predicted probabilities.
+
+<img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fdeepchecks.com%2Fwp-content%2Fuploads%2F2023%2F04%2Fimg-roc-auc-graph.jpg&f=1&nofb=1&ipt=648913c7ca9601775f6dc8cecf9467515a774df82266a932d66c41c556147003" alt="ROC-AUC" style="max-width:300px;"/>
 
 ## Calibration (ECE)
 
@@ -974,7 +980,11 @@ Issues:
 Metric for Evaluation of Translation with Explicit ORdering. Extends BLEU by aligning candidate/reference words through exact, stem, synonym (WordNet), and paraphrase matches, then combines precision and recall (weighted toward recall) with a fragmentation penalty for word-order mismatch.
 
 $$
-F_{\text{mean}} = \frac{P \cdot R}{\alpha P + (1-\alpha) R}, \qquad \text{METEOR} = F_{\text{mean}} \cdot (1 - \text{Penalty})
+F_{\text{mean}} = \frac{P \cdot R}{\alpha P + (1-\alpha) R}
+$$
+
+$$
+\text{METEOR} = F_{\text{mean}} \cdot (1 - \text{Penalty})
 $$
 
 where the Penalty grows with the number of non-contiguous matched chunks (more fragmentation → larger penalty).
