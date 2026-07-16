@@ -934,25 +934,81 @@ $$
 
 where $L$ is a loss function, $w$ is weight controlling importance
 
+## BLEU
+
+> generative text metric
+
+BLEU (Bilingual Evaluation Understudy) is a precision-oriented metric for translation/generation: it measures how many n-grams in the candidate also appear in the reference(s), then applies a brevity penalty so a model can't game precision by outputting very short text.
+
+$$
+\text{BLEU} = BP \cdot \exp\left(\sum_{n=1}^{N} w_n \log p_n\right)
+$$
+
+where $p_n$ is modified n-gram precision (clipped at reference n-gram counts) and $BP = \min(1, e^{1 - r/c})$ is the brevity penalty, with $c$ = candidate length, $r$ = reference length.
+
+Issues:
+* candidate-anchored (precision only) — says nothing about recall/coverage of the reference
+* exact n-gram match only, so synonyms/paraphrases are penalized like errors
+* designed for corpus-level aggregation; noisy at the single-sentence level
+
 ## ROUGE
 
 > generative text metric
 
-recall oriented for summarization
+Recall-Oriented Understudy for Gisting Evaluation. Reference-anchored counterpart to [BLEU](#bleu): measures how much of the *reference* n-gram content is recovered by the candidate, so it fits summarization better (did the summary keep the key content?) than translation.
+
+$$
+\text{ROUGE-N} = \frac{\sum_{\text{ref n-grams}} \text{count}_{\text{match}}(n\text{-gram})}{\sum_{\text{ref n-grams}} \text{count}(n\text{-gram})}
+$$
+
+ROUGE-L uses longest common subsequence instead of fixed n-grams, so it tolerates word reordering/insertions better than ROUGE-N.
+
+Issues:
+* recall-only bias — a candidate that copies the entire reference scores well regardless of conciseness (usually reported alongside an F-measure or length constraint to offset this)
+* same exact-match blindness to synonyms/paraphrase as BLEU
+
+## METEOR
+
+> generative text metric
+
+Metric for Evaluation of Translation with Explicit ORdering. Extends BLEU by aligning candidate/reference words through exact, stem, synonym (WordNet), and paraphrase matches, then combines precision and recall (weighted toward recall) with a fragmentation penalty for word-order mismatch.
+
+$$
+F_{\text{mean}} = \frac{P \cdot R}{\alpha P + (1-\alpha) R}, \qquad \text{METEOR} = F_{\text{mean}} \cdot (1 - \text{Penalty})
+$$
+
+where the Penalty grows with the number of non-contiguous matched chunks (more fragmentation → larger penalty).
+
+Correlates better with human judgment at the sentence level than BLEU (recall is included, and synonymy is credited), at the cost of needing language resources (e.g. WordNet) and being slower to compute.
 
 ## RAGAS metrics
 
 > generative text metric (RAG)
 
-LLM-judge + human
+Answer Relevancy \ Repeatability checks whether the answer truly addresses the question. LLM generates paraphrases of the question and measures semantic alignment.
 
-groundedness,
-faithfulness,
-answer relevancy,
-context precision/recall, utilisation,
-coherence in logical flow,
-consistency,
-language fluency,
+$$
+\text{Answer Relevancy} = sim(\text{Answer}, \text{Answer to Paraphased Query})
+$$
+
+Context Utilization (similar to BLEU) measures how much of the retrieved context is actually used. LLM detects which context portions were used or ignored. High utilization indicates strong grounding; low means hallucination.
+
+$$
+\text{Context Utilization} = \frac{|\text{n-grams present in context}|}{|\text{n-grams in answer}|}
+$$
+
+Faithfulnessm (similar to BLEU) easures factual consistency between generated answer and retrieved context. LLM extracts claims and checks if evidence exists in context.
+
+$$
+\text{Faithfulness} = \frac{\text{Nb. Supported Claims}}{\text{Nb. Total Claims}}
+$$
+
+Noise Sensitivity tests robustness — how much output degrades when irrelevant text is added. LLM re-evaluates under noisy and clean contexts to detect sensitivity.
+
+$$
+\text{Noise Sensitivity} = 1 − \frac{\text{Faithfulness}_{noisy}}{\text{Faithfulness}_{clean}}
+$$
+
 
 ## Safety rates
 
