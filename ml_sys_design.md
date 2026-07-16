@@ -13,11 +13,11 @@ This outline  (4 + 2x4 blocks) is very high level and incomplete. The `: x%` aim
 
 ```mermaid
 flowchart TD
-    discover[Goal, Req, Scope : 15%]
-    b_metrics[Business Metrics : 15%]
+    discover[**Goal, Req, Scope** : 15%]
+    b_metrics[**Business Metrics** : 15%]
     subgraph sol_des[Solution Design : 55%]
         api[I/O API : 5%]
-        ml_task[ML Task & Eval : 40%]
+        ml_task[**ML Task & Eval** : 40%]
         data[Data Engineering : 5%]
         sec_by_des[Responsible ML : 5%]
     end
