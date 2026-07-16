@@ -80,11 +80,11 @@ Online metric:
 
 * User feedback
     * Explicit feedback: User likes, valid dislike/escalation/complain/appeal (hard negative), Perceptual Mean Opinion Score (MOS), appeal rate, overturn rate on appeals
-    * Implicit feedback: glance view (impression), query reformulation rate, Click-Through Rate (CTR, risk clickbait), watch time, completed watch, successful clicks, retention A/B
+    * Implicit feedback: Click-through rate (CTR, clickbait risk), query reformulation rate, watch time, completed watch, successful clicks, retention A/B
 * Operational performance:
-    * time-to-detect/process, dwell time, stockout / overstock cost, ETA
+    * [self-service (deflection) rate](#self-service-deflection-rate) (no-escalation-trick risk)
+    * time-to-process/detect, dwell time, stockout/overstock cost, 
     * SLA breach rate, fraud $ prevented, revenue error
-    * self-service (deflection) rate
 * Safety
     * field incident / miss rate
 * HITL:
@@ -94,13 +94,16 @@ Online metric:
 
 ## Solution Design: I/O API, ML Task Framing, Data Engineering, Responsible ML
 
+
+### I/O API
+
 I/O spec:
  
 * input → output schema {attr: data type}
 * at what granularity (user / item / pair / session),
 * what cadence (one-shot vs sequential)
 
-Label spec: exact positive definition, source (explicit / implicit / synthetic), proxy risks (eg. clickbait).
+Label spec: exact positive definition, source (explicit / implicit / synthetic), proxy risks
 
 API type: 
 
@@ -110,7 +113,7 @@ API type:
 * SOAP (secure XML),
 * gRPC (high-speed service-to-service)
 
-Non-ML baseline first: rules / popularity / heuristic. ML must beat this.
+Non-ML baseline first: popularity / rules / heuristic. ML must beat this.
 
 
 ###  ML Task Framing (business → ML) top 2 with rejection criteria:
@@ -156,22 +159,24 @@ Data Gathering and Cost:
 
 * hand labeling (explicit feedback, human judge, select or order)
 * natural labeling (implicit feedback, interactions, results, if applicable)
-* synthetic data (RLHF)
+* synthetic data
 
 Data schema: field name, data type (numerical discrete vs continuous, categorical ordinal vs nominal), is pkey, is nullable, foreign key.
 
 Data store:
 
-* SQL: RDBS
-* Column-based: RedShift, Cassandra, HBase
+* Blob: Bucket in S3/GCS, Azure SA Container
+* Tabular row-based: RDBS, MySQL, PostgreSQL
+* Column-based: Cassandra, HBase, RedShift
 * Key/Value: Redis, DynamoDB, CosmosDB
 * Document: MongoDB, CouchDB
 * Graph: Neo4J
 
 ### Resposible ML
 
-* Failure modes
-* Guardrails: fairness and bias (age, gender, ethnicity) with constrastive evaluation, misuse, human-in-the-loop
+* Failure modes, misuse
+* Guardrails: fairness and bias (age, gender, ethnicity) with constrastive evaluation
+* HITL
 
 
 ## Technical Design: Feature Engineering, Model selection, Training, Serving
@@ -260,6 +265,10 @@ Inference Serving:
 
 
 # Definitions
+
+## Self-service (deflection) rate
+
+Self-service (deflection) rate is the percentage of customer issues resolved entirely through automated/self-serve channels (chatbot, help center, FAQ, IVR menu) without ever reaching a human agent. It's called "deflection" because the goal is to divert (deflect) volume away from costly human support.
 
 ## Accuracy
 
