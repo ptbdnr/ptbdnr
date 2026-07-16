@@ -66,7 +66,7 @@ Constraints:
 * ☁️: build vs buy (cloud) vs reuse
 
 
-## Business Metrics: Online, Responsible ML
+## Business (Online) Metrics
 
 Note: business KPI ← online metric ← offline metric ← validation metric ← training loss. Each arrow is a surrogate relationship with a gap. Imperfect and comes with a risk.
 
