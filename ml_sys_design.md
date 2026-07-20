@@ -268,6 +268,52 @@ Inference Serving:
 * What to delegate to others
 
 
+# Simple Architecture
+
+```mermaid
+flowchart TD
+    subgraph ingest["Ingestion Pipeline"]
+        src[**Data Sources**<br/>docs, PDFs, wikis, DBs, APIs]
+        load[Loader / Parser]
+        clean[Clean & Normalize<br/>dedup, PII scrub]
+        chunk[**Chunking**<br/>size + overlap, semantic vs fixed]
+        meta[Metadata Extraction<br/>source, timestamp, ACL/permissions]
+        embed_i[Embedding Model]
+        index[("Vector Index<br/>ANN: HNSW/ScaNN")]
+        mstore[("Metadata / KV Store")]
+
+        src --> load --> clean --> chunk
+        chunk --> meta --> mstore
+        chunk --> embed_i --> index
+    end
+
+    subgraph infer["Inference Pipeline"]
+        query[User Query]
+        rewrite[Query Rewrite/Expansion<br/>HyDE, multi-query]
+        embed_q[Query Embedding]
+        cache{Semantic<br/>Cache Hit?}
+        retrieve[**Retrieve top-K**<br/>ANN search + metadata filters]
+        rerank[Re-rank<br/>cross-encoder]
+        assemble[Context Assembly<br/>prompt template + citations]
+        llm[**LLM Generation**]
+        guard[Guardrails<br/>safety, groundedness check]
+        resp[Response + Citations]
+
+        query --> rewrite --> embed_q --> cache
+        cache -- hit --> assemble
+        cache -- miss --> retrieve --> rerank --> assemble
+        assemble --> llm --> guard --> resp
+    end
+
+    index -.retrieve.-> retrieve
+    mstore -.filter.-> retrieve
+
+    resp --> logs[Logs / Feedback]
+    logs -.-> eval[Eval: RAGAS - faithfulness,<br/>context utilization, relevancy]
+    logs -.-> refresh[Re-index cadence /<br/>incremental update trigger]
+    refresh -.-> src
+```
+
 # Definitions
 
 ## Self-service (deflection) rate
@@ -594,7 +640,7 @@ If you cap $FPR$ at 0.5%, and precision there is 40%, then about 4 in 10 selecte
 Issues:
 
 * does not consider raking quality
-* $P@K = \frac{TP@K}{K}$ but if Positive count is low (< K), then P@K has upper bound, P@K can be punished for low K
+* ceiling effect: $P@K = \frac{TP@K}{K}$ but if Positive count is low (< K), then P@K has upper bound, P@K can be punished for low K
 
 ## Recall
 
@@ -609,7 +655,7 @@ $$
 Issues:
 
 * Does not consider raking quality
-* $R@K = \frac{TP@K}{|Positives|}$ but if Positive count is large (>K), then R@K is punished for low K
+* ceiling effect: $R@K = \frac{TP@K}{|Positives|}$ but if Positive count is large (>K), then R@K is punished for low K
 
 ## F1
 
@@ -826,7 +872,7 @@ Issues:
 
 > ranking metric
 
-Mean Average Precision is used for ranking/retrieval/detection quality. $mAP$ rewards putting true positives early in the ranked list, not just finding them eventually
+Mean Average Precision is used for ranking, retrieval, or detection quality. $mAP$ rewards putting true positives early in the ranked list, not just finding them eventually
 
 For one query or one class, Average Precision (AP):
 
@@ -843,6 +889,7 @@ $$
 Issues:
 
 * designed for binary relevances
+* cailing effect: for $mAP@K$ when True count is high > K, then same as R@K ceiling issue
 
 ## nDCG
 
