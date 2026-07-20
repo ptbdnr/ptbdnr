@@ -51,11 +51,12 @@ Business Objective, vision & goal. What is success? KPIs:
 * ⭐: customer satisfaction score CSat, net promoter score NPS
 * 🚀: output per FTE, cost per task, cycle time per task
 * 📦: average order value AOV, order fulfillment cycle time OFCT, inventory turnover COGS/avgINV
+* 🔑: incident/breach count, data subject access request (DSAR) response time, mean time to detect/respond MTTD/MTTR
  
 
-Functional Requirements: UX, features, memory, continuous improvement
+Functional Requirements: UX, user journey, features, memory requirement, input/output modality, language requirement, continuous improvement
 
-Scale: Daily Active Users (DAU) x Click Per User / 100K = Query Per Second (QPS), ingestion vs query frequency, rate of growth, data volume of knowledge base,
+Scale: Daily Active Users (DAU) x Click Per User / 100K = Query Per Second (QPS), ingestion vs query frequency, rate of growth, data volume of knowledge base
 
 Constraints:
 
@@ -68,12 +69,11 @@ Constraints:
 
 ## Business (Online) Metrics (20%)
 
-Note: business KPI ← online metric ← offline metric ← validation metric ← training loss. Each arrow is a surrogate relationship with a gap. Imperfect and comes with a risk.
+Note: business KPI ← online metric ← offline metric ← training loss. Each arrow is a surrogate relationship with a gap. Imperfect and comes with a risk.
 
 * Business KPI: the bottom line metric to improve
 * Online metric: the real impact number to optimize for
-* Offline metrics: the complete holdout report performance
-* Validation metric: the single number to early-stop and model-select on
+* Offline metrics: the performance on the holdout test dataset 
 * Training loss: the model's loss on the training data
 
 Online metric:
@@ -123,31 +123,33 @@ Non-ML baseline first: popularity / rules / heuristic. ML must beat this.
 3. Pick one; reject runner-up against: label cost, metric alignment, latency, data volume, interpretability.
 
 
-| Task framing | Offline test metrics | Data object (training example) | Output head | Validation metric (select/stop) | Training loss |
+| Task framing | Mapping | Offline test metrics | Data object (training example) | Output head | Training loss |
 |---|---|---|---|---|---|
-| Regression | [MAE](#mae), [RMSE](#rmse), [wMAPE](#mape), [R²](#r); [interval coverage](#interval-coverage) | (x, y∈ℝ) | single scalar; [quantile heads for intervals](#quantile-heads-for-intervals) | [RMSE](#rmse) on [temporal val split](#temporal-val-split) | [MSE](#mse) / [Huber](#huber); [pinball for quantiles](#quantile-heads-for-intervals) |
-| Binary clf w/o imbalance / multi-task (K binary heads) | [P](#precision)/[R](#recall)/[Fβ](#f1)@(0..1), [P@fixed-FPR](#precision), [PR-AUC](#pr-auc), [ROC-AUC](#roc-auc), [ECE](#calibration-ece) | (x, y∈{0,1}) | [sigmoid p(y)](#sigmoid-function) | [PR-AUC](#pr-auc) | ([Weighted](#weighted-bce)) [BCE](#bce--logloss); [Focal loss](#focal-loss) |
-| Multi-class / multi-label clf | per-class/macro [P](#precision)/[R](#recall)/[Fβ](#f1), [Accuracy](#accuracy), [Hamming loss](#hamming-loss) | (x, y∈K) / (x, Y⊆K) | [softmax](#softmax) over K; [sigmoid](#sigmoid-function) p(k) ∀k∈K| macro-[F1](#f1) | [CE](#ce); per-label [weighted BCE](#weighted-bce); [KL-divergence](#kl-divergence) |
-| Clustering | [Silhouette](#silhouette), [Davies-Bouldin](#davies-bouldin), [Calinski-Harabasz](#calinski-harabasz), labels exist:[ARI](#ari) or [NMI](#nmi) | (x∈ℝ) / G=(V,E) + similarity for (i,j)∈E| p(x∈K) / centroid or prototype | [Silhouette](#silhouette) + stability across samples | [K-means with SSE](#k-means-inertia--sse) / [GMM with negative log-likelihood](#gmm-negative-log-likelihood) / [DEC with KL loss](#dec-with-kl-loss) |
-| Representation Learning / Encoding | [R](#recall)@K, [MRR](#mrr), [Silhouette](#silhouette), [Davies-Bouldin](#davies-bouldin), [Linear probe](#linear-probe) | (x, 1x similar, n-1 dissimilar) | embedding vector | [InfoNCE](#infonce) / [triplet loss](#triplet-loss) + [R](#recall)@K | [CE](#ce) / [InfoNCE](#infonce) / [triplet loss](#triplet-loss) |
-| Info Retrieval | [HitRate](#hitratek)@K, [R](#recall)/[P](#precision)@k, [MRR](#mrr), [catalog coverage](#catalog-coverage), ANN latency | (q, TPs, sample TNs) | dot/cosine (of 2 embeddings) | [recall](#recall)@k | [InfoNCE](#infonce) / sampled [softmax](#softmax) / [triplet loss](#triplet-loss) |
-| Pointwise ranking (for bid offer) | [ROC-AUC](#roc-auc), [nDCG](#ndcg)@k on sessions, [ECE](#calibration-ece) | (user, item, context, y∈{0,1}) | [sigmoid p(y)](#sigmoid-function) | [ROC-AUC](#roc-auc) / [BCE](#bce--logloss) | [BCE](#bce--logloss); multi-task [weighted sum of losses](#weighted-sum-of-losses)  |
-| Pairwise Ranking | [MRR](#mrr), [Pairwise Accuracy](#pairwise-accuracy), [ROC-AUC on ordered pairs](#roc-auc-on-ordered-pairs)  | (q, 2x scored d) | 2x scalar score s(q,d)  | [MRR](#mrr) | [Pairwise Logistic Loss](#pairwise-logistic-loss) / [Hinge ranking loss](#hinge-ranking-loss) |
-| Listwise Ranking | [mAP](#map), [nDCG](#ndcg) | (q, k scored d) | k scalar scores s(q,d) | [nDCG](#ndcg)@k | [ListNet](#listnet) / [LambdaRank](#lambdarank)-[LambdaMART](#lambdamart) |
-| Text named entity segmentation | text sequence pairwise [F1](#f1)/[ARI](#ari) | (token seq, per-token/span boundary labels) | per-token [softmax](#softmax) / CRF | pairwise [F1](#f1) | token-level [CE](#ce) or CRF-NLL |
-| Generate text2text | [BLEU](#bleu), GLEU, [METEOR](#meteor), [ROUGE](#rouge), [RAGAS metrics](#ragas-metrics), [safety rates](#safety-rates) | (prompt, response); preference pairs (prompt, choosen response, rejected response) | [softmax](#softmax) over VOCAB | [perplexity](#perplexity) / [judge win-rate](#judge-win-rate) | next-token [CE](#ce) for supervised fine-tuning; [DPO](#DPO) on preferences |
-| Reinforcement Learning | --- | --- | --- | --- | --- |
-| Translation text2text | BLEU n-gram comparison for translation, METEOR extended BLEU, GLEU sentence-level BLEU | --- | --- | --- | --- |
-| Transscript/Dictate T2S/StT | WER for STT/TTS | --- | --- | --- | --- |
+| Regression | $x → y∈ℝ$ | [MAE](#mae), [RMSE](#rmse), [wMAPE](#mape), [R²](#r) ... on [temporal val split](#temporal-val-split) | (x, y∈ℝ) | single scalar | [MSE](#mse) / [Huber](#huber) |
+| Interval Regression | $x → (y^-,y^+)∈ℝ$ | [interval coverage](#interval-coverage) | $(x, (y^-,y^+∈ℝ)$ | [quantile heads for intervals](#quantile-heads-for-intervals) | [RMSE](#rmse) on [temporal val split](#temporal-val-split) | [pinball for quantiles](#quantile-heads-for-intervals) |
+| Binary clf w/o imbalance / multi-task (K binary heads) / Bidding | $x → \{0,1\}$ | [P](#precision)/[R](#recall)/[Fβ](#f1)@(0..1), [P@fixed-FPR](#precision), [PR-AUC](#pr-auc), [ROC-AUC](#roc-auc), [ECE](#calibration-ece) | (x, y∈{0,1}) | [sigmoid p(y)](#sigmoid-function) | ([Weighted](#weighted-bce)) [BCE](#bce--logloss); [Focal loss](#focal-loss), multi-task [weighted sum of losses](#weighted-sum-of-losses) |
+| Multi-class clf | $x → y∈K$ | per-class/macro [P](#precision)/[R](#recall)/[Fβ](#f1), [Accuracy](#accuracy), [Hamming loss](#hamming-loss) | (x, y∈K) | [softmax](#softmax) over K | [CE](#ce); [KL-divergence](#kl-divergence) |
+| Multi-label clf | $x → Y⊆K$ | per-class/macro [P](#precision)/[R](#recall)/[Fβ](#f1), [Accuracy](#accuracy), [Hamming loss](#hamming-loss) | (x, Y⊆K)| [sigmoid](#sigmoid-function) p(k) ∀k∈K | per-label [weighted BCE](#weighted-bce) |
+| Clustering | $x → x∈K$| [Silhouette](#silhouette), [Davies-Bouldin](#davies-bouldin), [Calinski-Harabasz](#calinski-harabasz), + stability across samples, labels exist:[ARI](#ari) or [NMI](#nmi) | (x∈ℝ) / G=(V,E) + similarity for (i,j)∈E| p(x∈K) / centroid or prototype | [K-means with SSE](#k-means-inertia--sse) / [GMM with negative log-likelihood](#gmm-negative-log-likelihood) / [DEC with KL loss](#dec-with-kl-loss) |
+| Representation Learning / Encoding | $x → x'$ | [R](#recall)@K, [MRR](#mrr), [Silhouette](#silhouette), [Davies-Bouldin](#davies-bouldin), [Linear probe](#linear-probe) | (x, 1x similar, n-1 dissimilar) | embedding vector | [CE](#ce) / [InfoNCE](#infonce) / [triplet loss](#triplet-loss) |
+| Retrieval | $q → Y⊆K$| [HitRate](#hitratek)@K, [R](#recall)/[P](#precision)@k, [MRR](#mrr), [catalog coverage](#catalog-coverage) | (q, TPs, sample TNs) | dot/cosine (of 2 embeddings) | [InfoNCE](#infonce) / sampled [softmax](#softmax) / [triplet loss](#triplet-loss) |
+| Pair Ranking | $q → d^{-}<d^{+}$ | [MRR](#mrr), [Pairwise Accuracy](#pairwise-accuracy), [ROC-AUC on ordered pairs](#roc-auc-on-ordered-pairs)  | (q, 2x scored d) | 2x scalar score s(q,d)  | [Pairwise Logistic Loss](#pairwise-logistic-loss) / [Hinge ranking loss](#hinge-ranking-loss) |
+| List Ranking | $q → sorted(D)$| [mAP](#map), [nDCG](#ndcg)@k | (q, k scored d) | k scalar scores s(q,d) | [ListNet](#listnet) / [LambdaRank](#lambdarank)-[LambdaMART](#lambdamart) |
+| Text named entity segmentation |  | text sequence pairwise [F1](#f1)/[ARI](#ari) | (token seq, per-token/span boundary labels) | per-token [softmax](#softmax) / CRF | token-level [CE](#ce) or CRF-NLL |
+| Generate text2text | $t → t$ | [BLEU](#bleu), GLEU, [METEOR](#meteor), [ROUGE](#rouge), [RAGAS metrics](#ragas-metrics), [safety rates](#safety-rates), [perplexity](#perplexity) / [judge win-rate](#judge-win-rate) | (prompt, response); preference pairs (prompt, choosen response, rejected response) | [softmax](#softmax) over VOCAB | next-token [CE](#ce) for supervised fine-tuning; [DPO](#DPO) on preferences |
+| Reinforcement Learning | | | | | | |
+| Translation text2text | $t → t'$ | BLEU n-gram comparison for translation, METEOR extended BLEU, GLEU sentence-level BLEU | | |
+| Transscript/Dictate T2S/StT | | WER for STT/TTS | | | |
 | Image object localization |  |  | box regression + class scores + objectness | mAP@IoU 0.5 | composite: IoU/smooth-L1 + focal CE |
-| Image object detection | mAP@[.5:.95], per-class recall, FPS | (image, boxes + classes) | box regression + class scores + objectness | mAP@IoU 0.5 | composite: IoU/smooth-L1 + focal CE |
+| Image object detection | | mAP@[.5:.95], mAP@IoU, per-class recall, FPS | (image, boxes + classes) | box regression + class scores + objectness | composite: IoU/smooth-L1 + focal CE |
 | Image semantic segmentation |  | (image, list[pixel-wise mask with object class])  |  |  |  |
-| Image object segmentation | obj boundary [mAP](#map)@IOU, 1-vs-all recall, FPS | (image, list[pixel-wise mask with object id]) | per-pixel [softmax](#softmax), dense FCN/U-Net/Mask decoder | mIoU or mAP@IoU | per-pixel [CE](#ce) + Dice-IoU loss |
-| Generate text2img | [Inception Score](#inception-score), [FID](#fid) | (prompt, pixels) |  |  |  |
-| Strategy Development (RL) | --- | --- | --- | --- | --- |
-| Combinatorial optimisation | asymm costs | --- | --- | --- | --- |
-| Forecasting (time series) | wMAPE, MASE, interval coverage | (series history + covariates, horizon values) | per-horizon point / quantile outputs | rolling-origin wMAPE | MSE / pinball |
-| Anomaly detection | precision@k alerts, PR-AUC, alert volume | unlabeled x + few labeled anomalies | anomaly score | PR-AUC on labeled slice | reconstruction error / one-class objective |
+| Image object segmentation | | mIoU, obj boundary [mAP](#map)@IOU, 1-vs-all recall, FPS | (image, list[pixel-wise mask with object id]) | per-pixel [softmax](#softmax), dense FCN/U-Net/Mask decoder | per-pixel [CE](#ce) + Dice-IoU loss |
+| Generate text2img | | [Inception Score](#inception-score), [FID](#fid) | (prompt, pixels) |  |  |
+| Strategy Development (RL) | | | | | |
+| Combinatorial optimisation | $(f(x)≤C, z(x)) → x$| asymm costs | | | |
+| Forecasting (time series) | | rolling-origin wMAPE, MASE, interval coverage | (series history + covariates, horizon values) | per-horizon point / quantile outputs | MSE / pinball |
+| Anomaly detection | | precision@k alerts, PR-AUC on labeled slice, alert volume | unlabeled x + few labeled anomalies | anomaly score | reconstruction error / one-class objective |
+| Causal effect | | | | | |
 
 
 ### Data Engineering (5%)
@@ -592,6 +594,7 @@ If you cap $FPR$ at 0.5%, and precision there is 40%, then about 4 in 10 selecte
 Issues:
 
 * does not consider raking quality
+* $P@K = \frac{TP@K}{K}$ but if Positive count is low (< K), then P@K has upper bound, P@K can be punished for low K
 
 ## Recall
 
@@ -600,13 +603,13 @@ Issues:
 Recall answers: “Of all truly positive items, how many did we catch?” It is the true positive rate. High recall means few misses.
 
 $$
-R = \frac{TP}{TP+FN}
+R = \frac{TP}{TP+FN} = \frac{TP}{|\text{Positives}|}
 $$
 
 Issues:
 
 * Does not consider raking quality
-* if the total positive item count is large (denominator is large) and we truncate to first $k$ then this has a negative effect.
+* $R@K = \frac{TP@K}{|Positives|}$ but if Positive count is large (>K), then R@K is punished for low K
 
 ## F1
 
