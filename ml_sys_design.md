@@ -46,6 +46,8 @@ flowchart TD
 
 ## Discover: Business Objective, Requirements, Scope (20%)
 
+TL;DR: 1x KPI, DAU, QPS, Latency
+
 Business Objective, vision & goal. What is success? KPIs:
 
 * 💰: annual recurring revenue ARR, net profit margin NPM
@@ -62,7 +64,7 @@ Scale: Daily Active Users (DAU) x Click Per User / 100K ≈ Query Per Second (QP
 
 Constraints:
 
-* ⏰: latency budget (time to first meaningful byte),
+* ⏰: latency budget (time to first meaningful byte, batch/real-time/stream),
 * 📖: cost of data gathering (labelling) or storage
 * 🖥️: processing on hardware (max RAM? available GPU?)
 * 🔍: interpretability, explainability, and simplicity of baseline
