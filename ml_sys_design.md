@@ -63,9 +63,9 @@ Scale: Daily Active Users (DAU) x Click Per User / 100K ≈ Query Per Second (QP
 Constraints:
 
 * ⏰: latency budget (time to first meaningful byte),
-* 📖: cost of data gathering (label) or storage
+* 📖: cost of data gathering (labelling) or storage
+* 🖥️: processing on hardware (max RAM? available GPU?)
 * 🔍: interpretability, explainability, and simplicity of baseline
-* 🖥️: processing on hardware (CPU, GPU, RAM, HD)
 * ☁️: build vs buy (cloud) vs reuse
 
 
