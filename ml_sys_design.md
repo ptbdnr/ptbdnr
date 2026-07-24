@@ -49,7 +49,7 @@ flowchart TD
 Business Objective, vision & goal. What is success? KPIs:
 
 * 💰: annual recurring revenue ARR, net profit margin NPM
-* 😊: customer aquisition cost CAC, churn rate, conversion rate CVR, customer lifetime value CLtV
+* 😊: customer acquisition cost CAC, churn rate, conversion rate CVR, customer lifetime value CLtV
 * ⭐: customer satisfaction score CSat, net promoter score NPS
 * 🚀: output per FTE, cost per task, cycle time per task
 * 📦: average order value AOV, order fulfillment cycle time OFCT, inventory turnover COGS/avgINV
@@ -58,7 +58,7 @@ Business Objective, vision & goal. What is success? KPIs:
 
 Functional Requirements: UX, user journey, features, memory requirement, input/output modality, language requirement, continuous improvement
 
-Scale: Daily Active Users (DAU) x Click Per User / 100K = Query Per Second (QPS), ingestion vs query frequency, rate of growth, data volume of knowledge base
+Scale: Daily Active Users (DAU) x Click Per User / 100K ≈ Query Per Second (QPS), ingestion vs query frequency, rate of growth, data volume of knowledge base
 
 Constraints:
 
@@ -136,7 +136,7 @@ Task from label availability: supervised / self-supervised / unsupervised / RL.
 | Pair Ranking | $q → d^{-}<d^{+}$ | (q, 2x scored d) |[MRR](#mrr), [Pairwise Accuracy](#pairwise-accuracy), [ROC-AUC on ordered pairs](#roc-auc-on-ordered-pairs) |
 | List Ranking | $q → sorted(D)$| (q, k scored d) | [mAP](#map), [nDCG](#ndcg)@k |
 | Text named entity segmentation | ? | (token seq, per-token/span boundary labels) | text sequence pairwise [F1](#f1)/[ARI](#ari) |
-| Generate text2text | $t → \hat{t}$ | $(t, \hat{t})$; preference pairs $(t, \hat{t}^+, \hat{t}^-)$ | [BLEU](#bleu), GLEU, [METEOR](#meteor), [ROUGE](#rouge), [RAGAS metrics](#ragas-metrics), [safety rates](#safety-rates), [perplexity](#perplexity) / [judge win-rate](#judge-win-rate) |
+| Generate text2text | $t → \hat{t}$ | $(t, \hat{t})$; preference pairs $(t, \hat{t}^+, \hat{t}^-)$ | [BLEU](#bleu), GLEU, [METEOR](#meteor), [ROUGE](#rouge), [RAGAS metrics](#ragas-metrics), [safety rates](#safety-rates), [perplexity](#perplexity) |
 | Reinforcement Learning | | | | |
 | Translation text2text | $t → t'$ | BLEU n-gram comparison for translation, METEOR extended BLEU, GLEU sentence-level BLEU |
 | Transscript/Dictate T2S/StT | | WER for STT/TTS | |
@@ -177,11 +177,11 @@ Data store:
 ### Responsible ML (5%)
 
 * Failure modes, misuse
-* Guardrails: fairness and bias (age, gender, ethnicity) with constrastive evaluation
 * HITL
+* Guardrails: api, intent classification, GenAI alignment with RLHF, output classification
+* Fairness and bias (age, gender, ethnicity) with contrastive evaluation
 * Watermarking (Coalition for Content Provenance and Authenticity, C2PA)
 * [PUPPET](#puppet)
-
 
 
 # High Level Design (20%)
@@ -391,7 +391,7 @@ Model training/fitting:
 * dataset: data split to training, validation (k-fold), test (hold-out)
 
 * approach: forward feed (layers, bias, activation function, softmax) and backward propagation, contrastive training (feature= query + n objects, label = idx of object among n with highest similarity)
-* distributed training: PyTorch Distributed Data Parallel (copy model, forward minibatch, aggregate loss, sync gradients, updata all)
+* distributed training: PyTorch Distributed Data Parallel (copy model, forward minibatch, aggregate loss, sync gradients, update all)
 * Optimisation: stochastic gradient descent, weighted alternating least squares
 
 Inference Serving:
@@ -414,7 +414,7 @@ Inference Serving:
 
 # TODO
 
-* ensemble: begging vs boosting
+* ensemble: bagging vs boosting
 * decision tree with boosted gradients?
 * convolutional NN CNN
 
@@ -444,15 +444,19 @@ $$
 
 ## Hamming loss
 
-> classification metric (multi-label)
+> classification metric
 
-Hamming loss is the fraction of all predictions that are wrong. It counts mistakes. In a binary setting it is:
+The Hamming loss is the fraction of labels that are incorrectly predicted. It counts mistakes. 
+
+In a binary setting it is:
 
 $$
 \text{Hamming loss} = \frac{FP+FN}{n} = 1 - \text{Accuracy}
 $$
 
-In multi-label tasks, Hamming loss is often preferred over Accuracy because it measures per-label error rate across all label decisions.
+In multiclass classification, the Hamming loss corresponds to the Hamming distance between $y$ and $\hat{y}$. which is equivalent to the subset $zero_one_loss$ function, when normalize parameter is set to True.
+
+In multi-label classification, Hamming loss is more forgiving than the subset zero-one loss in that it penalizes only the individual labels.
 
 ## MAE
 
@@ -468,7 +472,7 @@ $$
 
 > regression loss
 
-Mean Squared Error: quares the error, so large mistakes get penalized heavily. But it is sensitive to outliers.
+Mean Squared Error: squares the error, so large mistakes get penalized heavily. But it is sensitive to outliers.
 
 $$
 MSE=\frac{1}{n}∑(y−\hat{y})^2
@@ -689,7 +693,7 @@ Steps:
 
 Adjusted Rand Index compares pairwise agreement between predicted clusters and true labels. Adjusted for chance. Range is roughly [−1,1], where 1 is perfect, 0 is random-like.
 
-Requires: gound-truth labels
+Requires: ground truth labels
 
 ## NMI
 
@@ -751,7 +755,7 @@ If you cap $FPR$ at 0.5%, and precision there is 40%, then about 4 in 10 selecte
 
 Issues:
 
-* does not consider raking quality
+* does not consider ranking quality
 * ceiling effect: $P@k = \frac{TP@k}{K}$ but if Positive count is low ($< k$), then P@k has upper bound, P@k can be punished for low $k$
 
 ## Recall
@@ -766,7 +770,7 @@ $$
 
 Issues:
 
-* Does not consider raking quality
+* Does not consider ranking quality
 * ceiling effect: $R@k = \frac{TP@k}{|Positives|}$ but if Positive count is large ($> k$), then R@k is punished for low k
 
 ## F1
@@ -860,7 +864,7 @@ Reliability curves (aka calibration plots): $y=z$: perfect calibration on the di
 
 Platt scaling: post-hoc calibration method, mainly for binary classification, fits a logistic mapping from model score $s$ to calibrated probability: $\hat{p}=σ(As+B)=\frac{1}{1+e^{-(As+B)}}$ where $A$, $B$ is learned on validation set.
 
-Isotomic regression: post-hoc non-parametric calibration method for binary classification, requires large calibration dataset. Learns a monotonic function $f$ such that $\hat{p}=f(s)$, where $f$ is non-decreasing. More flexible than Platt scaling, it can fit complex shapes, but can overfit with small calibration data.
+Isotonic regression: post-hoc non-parametric calibration method for binary classification, requires large calibration dataset. Learns a monotonic function $f$ such that $\hat{p}=f(s)$, where $f$ is non-decreasing. More flexible than Platt scaling, it can fit complex shapes, but can overfit with small calibration data.
 
 Temperature scaling: post-hoc calibration method for multi-class NN. Divides logits by temperature $T > 0$ before softmax: $\hat{p} = \frac{e^{z/T}}{\sum e ^{z/T}}$. Fir one scalar T on validation data. $1<T$ softens overconfident predictions, $0<T<1$ sharpens. Preserves class ranking (argmax usually unchanged), mainly fixed confidence values.
 
@@ -916,7 +920,7 @@ $− \log p_{\text{true class}}$
 
 > classification loss
 
-Binary Cross-Entropy (aka Logarithmic Loss, LogLoss for binary classification tasks) is the binary case of CE. It is used when target is $y∈\{0,1\}$ and model outputs probability $p=P(y=1∣x)$. It heavily penalizes being confidently wrong in binary classification, while creating a smooth (difentiable) curve. It treat every training example equally. For multi-label classification (several can be 1) we use independent BCE per label.
+Binary Cross-Entropy (aka Logarithmic Loss, LogLoss for binary classification tasks) is the binary case of CE. It is used when target is $y∈\{0,1\}$ and model outputs probability $p=P(y=1∣x)$. It heavily penalizes being confidently wrong in binary classification, while creating a smooth (differentiable) curve. It treat every training example equally. For multi-label classification (several can be 1) we use independent BCE per label.
 
 $$
 \text{BCE} = \text{LogLoss} = - \frac{1}{n} \sum [y \log p + (1-y) \log (1-p)]
@@ -941,11 +945,12 @@ where $p$ is the predicted probability and label $y \in \{0, 1 \}$, $w_{\{1, 0\}
 
 Focal loss is for heavy imbalance with many easy negatives (e.g., detection, rare-event classification). It says: “Stop spending so much effort on easy examples you already get right. Focus on hard ones.” Easy examples get down-weighted automatically. Hard/misclassified examples keep large influence.
 
+For binary classification:
 $$
-L_{\text{focal}} = - \frac{1}{n} \sum α (1-p)^{\gamma} \log (p)
+L_{\text{FL}} = - α (1-p_t)^{\gamma} \log (p_t)
 $$
 
-where $p = yp + (1-y)(1-p)$ and $α = yα + (1-y)(1-α)$
+where $p_t = p \text{ iff } y=1 \text{ else } 1-p$, $p$ is the model’s estimated probability, and $α$ is the balance parameter.
 
 ## HitRate@k
 
@@ -1073,7 +1078,7 @@ Properties:
 
 * output is in (0,1)
 * outputs sum to 1
-* larger logit → larget class probability
+* larger logit → largest class probability
 
 Sampled softmax is an approximation of full softmax over a huge catalog. Instead of normalizing over all items, use the true item plus a sampled negative set.
 
@@ -1183,7 +1188,7 @@ $$
 \text{Context Utilization} = \frac{|\text{n-grams present in context}|}{|\text{n-grams in Answer}|}
 $$
 
-Faithfulnessm (similar to BLEU) easures factual consistency between generated answer and retrieved context. LLM extracts claims and checks if evidence exists in context.
+Faithfulness measures (similar to BLEU) factual consistency between generated answer and retrieved context. LLM extracts claims and checks if evidence exists in context.
 
 $$
 \text{Faithfulness} = \frac{|\text{claims present in context}|}{|\text{claims in Answer}|}
@@ -1207,12 +1212,6 @@ self-harm content, hateful or unfair content, violent content, sexual content, p
 > generative text metric
 
 Perplexity measures how well the model predicts the reference next tokens. It is roughly the model's average branching uncertainty per token. Good for fluency/fit to reference text, but not enought for usefulness or safety. Likelihood-based, token-level fit.
-
-## Judge Win-Rate
-
-> generative text metric
-
-Judge Win-Rate compares model outputs head-to-head. Captures preference-quality dimensions (helpfulness, relevance, style, safety) better than perplexity. Depends on judge quality, rubic, and pairwise protocol. Preference-based, outcome quality on tasks.
 
 ## Pairwise Accuracy
 
@@ -1250,7 +1249,7 @@ ROC-AUC is smooth and ranking-oriented across the full margin distribution, it i
 
 > pairwise ranking method
 
-RankNet turns the score gap into a probability that the preferred doc is above the other. It uses BCE on this pariwise probability. It has a smooth penalty; still gives gradient even when ordering is already correct, but smaller as margin grows. It is probabilistic, smooth, usually easy optimization.
+RankNet turns the score gap into a probability that the preferred doc is above the other. It uses BCE on this pairwise probability. It has a smooth penalty; still gives gradient even when ordering is already correct, but smaller as margin grows. It is probabilistic, smooth, usually easy optimization.
 
 $$
 \Delta = s(q,d^+) - s(q,d^-)
@@ -1289,7 +1288,7 @@ $\Delta < m$ penalize linearly until margin is met.
 
 > listwise ranking loss
 
-ListNet turns each of the ground-truth and predicted ranked lists into a probability distribution over "which item is top-1" — once from the true relevance labels, once from the model scores — then minimizes the divergence between the two. It considers the whole list at once, not just pairs.
+ListNet turns each of the ground truth and predicted ranked lists into a probability distribution over "which item is top-1" — once from the true relevance labels, once from the model scores — then minimizes the divergence between the two. It considers the whole list at once, not just pairs.
 
 Top-one probability for item $i$ among $k$ items:
 
@@ -1297,7 +1296,7 @@ $$
 P(i) = \frac{e^{s_i}}{\sum_j e^{s_j}}
 $$
 
-Loss is CE between the true top-one distribution $P^y$ (from ground-truth relevance $y$) and predicted $P^s$ (from scores $s$):
+Loss is CE between the true top-one distribution $P^y$ (from ground truth relevance $y$) and predicted $P^s$ (from scores $s$):
 
 $$
 \mathcal{L}_{\text{ListNet}} = - \sum_i P^y(i) \log P^s(i)
@@ -1370,7 +1369,9 @@ approximate (tree and/or cluster based, locally sensitive hashing, ScaNN, DiscSc
 
 ## Apache Lucene
 
-Elasticsearch, Solr
+retrieval/serving solution
+
+implementations: Elasticsearch, Solr
 
 ## RPN
 
