@@ -401,7 +401,7 @@ Inference Serving:
 * Caching
 * Re-training cadence
 * host: cloud vs on-device
-* pipeline: stages, gates, release strategy (shadow = dual deployment, A/B testing, p-value)
+* pipeline: stages, gates
 * model compression: quantization, knowledge distillation, pruning
 * monitoring, hardware utilisation, requests/responses, drift in performance (model/data/context drift)
 
@@ -409,6 +409,7 @@ Inference Serving:
 # Roadmap & Summary
 
 * MVP to V1 to V2
+* release strategy: p-value, shadow deployment, canary release for bug focus, A/B testing quality focus
 * Priorities to de-risk
 * What to delegate to others
 
