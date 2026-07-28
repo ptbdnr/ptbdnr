@@ -199,7 +199,7 @@ legend:
 title: User Input Handling
 ---
 flowchart
-    user["user (init)"] --enter:query--> ui["UI (aggregate)"] --submit:payload--> api["API (validate, route)"] --insert:payload--> q[("queue (schedule, retry)")] --trigger:payload--> orch["orchestrator (sequence, aggregate, route)"] 
+    user["user (init)"] --enter:query--> ui["UI (aggregate)"] --submit:payload--> api["API (validate, route)"] --insert:payload--> q[("queue (schedule, retry)")] --trigger:payload--> orch["orchestrator (sequence, aggregate, event bus)"] 
     orch --search:features--> cache[(cache)]
     orch --request:features--> serve
 ```
@@ -211,7 +211,7 @@ title: System Trigger
 flowchart
     db[("datastore event (init)")] --trigger:payload--> orch
     cron["scheduled event (init)"] --trigger:payload--> orch
-    orch["orchestrator (sequence, aggregate, route)"]
+    orch["orchestrator (sequence, aggregate, event bus)"]
 ```
 
 ### Data Gathering
@@ -222,7 +222,7 @@ title: Retrieve and Index
 ---
 flowchart
     retr["retriever"]
-    idx["indexer (sequence,route)"]
+    idx["indexer (sequence, event bus)"]
     
     client["client (init)"] --trigger:query--> retr 
     retr --search:filters--> db[("data source")] --show:docs--> retr
@@ -239,7 +239,7 @@ flowchart
 title: Train ML Model
 ---
 flowchart TD
-    orch["orchestrator (feature eng, sequence, batch, route)"]
+    orch["orchestrator (feature eng, sequence, batch, event bus)"]
 
     client["client (init)"] --trigger:epoch params--> orch 
     orch --search:filters--> db[("dataset")] --show:docs--> orch 
