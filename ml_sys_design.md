@@ -11,10 +11,16 @@ Org certificate:
 
 This outline  (4 + 2x4 blocks) is very high level and incomplete. The `: x%` is the estimated time spent on the component. Instead of a waterfall, an agile approach is recommended. Of course, we need to add security, pipelines, monitoring, etc. Normal to return to previous stages and adjust the direction.
 
+> Business KPI ← online eval ← offline eval ← training loss. Between two is a surrogate relationship with a gap. Imperfect and comes with a risk: 
+> * Business KPI: the bottom line metric to improve
+> * Online eval: the real impact number to optimize for
+> * Offline eval: the performance on the holdout test dataset 
+> * Training loss: the model's loss on the training data
+
 ```mermaid
 flowchart TD
     discover[**Goal, Req, Scope** : 15%]
-    b_metrics[**Business Metrics** : 5%]
+    b_metrics[**Online Eval** : 5%]
     subgraph sol_des[Solution Design : 20%]
         api[I/O API : 5%]
         ml_task[**ML Task & Eval** : 5%]
@@ -46,7 +52,7 @@ flowchart TD
 
 ## Discover: Business Objective, Requirements, Scope (20%)
 
-TL;DR: 1x KPI, DAU, QPS, Latency
+TL;DR: KPI, QPS, Daily/Total Storage, Latency, Data Protection, Explainability
 
 Business Objective, vision & goal. What is success? KPIs:
 
@@ -56,44 +62,39 @@ Business Objective, vision & goal. What is success? KPIs:
 * 🚀: output per FTE, cost per task, cycle time per task
 * 📦: average order value AOV, order fulfillment cycle time OFCT, inventory turnover COGS/avgINV
 * 🔑: incident/breach count, data subject access request (DSAR) response time, mean time to detect/respond MTTD/MTTR
- 
 
-Functional Requirements: UX, user journey, features, memory requirement, input/output modality, language requirement, continuous improvement
+👍 Functional Requirements: UX, user journey, input/output modality, language requirement, continuous improvement, explainability
 
-Scale: Daily Active Users (DAU) x Click Per User / 100K ≈ Query Per Second (QPS), ingestion vs query frequency, rate of growth, data volume of knowledge base
+Scale:
+
+* 🫀 Usage frequency: Query Per Second ($QPS = \frac{\text{DAU} * \text{RequestCountPerUser}}{80K}$), ingestion vs query frequency, avg vs max
+* 🐘 Data Volume: Daily Storage ($\text{DAU} * \text{RequestCountPerUser} * \text{RequestSize}$), Total Storage ($\text{Retention Period} * \text{Daily Storage}$), rate of growth, avg vs max
 
 Constraints:
 
-* ⏰: latency budget (time to first meaningful byte, batch/real-time/stream),
-* 📖: cost of data gathering (labelling) or storage
+* ⏱️: latency budget (time to first meaningful byte, batch/real-time/stream),
+* 🔍: interpretability, explainability
+* ☁️: data protection, sovereignty, IP
+* 📖: cost of data gathering (labelling)
 * 🖥️: processing on hardware (max RAM? available GPU?)
-* 🔍: interpretability, explainability, and simplicity of baseline
-* ☁️: build vs buy (cloud) vs reuse
 
 
-## Business (Online) Metrics (20%)
+## Online eval (20%)
 
-Note: business KPI ← online metric ← offline metric ← training loss. Each arrow is a surrogate relationship with a gap. Imperfect and comes with a risk.
+Prevalence
 
-* Business KPI: the bottom line metric to improve
-* Online metric: the real impact number to optimize for
-* Offline metrics: the performance on the holdout test dataset 
-* Training loss: the model's loss on the training data
+User feedback
+  * Explicit feedback: User likes, valid dislike/escalation/complain/appeal (hard negative), Perceptual Mean Opinion Score (MOS)
+  * Implicit feedback: Click-through rate (CTR, clickbait risk), conversion rate (# conversion / # impressions), Repeated Purchase Rate (RPR), query reformulation rate, watch time, completed watch, successful clicks, retention A/B
 
-Online metric:
+Operational performance:
 
-* User feedback
-    * Explicit feedback: User likes, valid dislike/escalation/complain/appeal (hard negative), Perceptual Mean Opinion Score (MOS), appeal rate, overturn rate on appeals
-    * Implicit feedback: Click-through rate (CTR, clickbait risk), Repeated Purchase Rate (RPR), query reformulation rate, watch time, completed watch, successful clicks, retention A/B
-* Operational performance:
-    * [self-service (deflection) rate](#self-service-deflection-rate) (no-escalation-trick risk)
-    * time-to-process/detect, dwell time, stockout/overstock cost, 
-    * SLA breach rate, fraud $ prevented, revenue error
-* Safety
-    * field incident / miss rate
-* HITL:
-    * expert confirm rate
-* Prevalence
+  * [self-service (deflection) rate](#self-service-deflection-rate) (no-escalation-trick risk)
+  * time-to-process/detect, dwell time, stockout/overstock cost, 
+  * SLA breach rate, fraud $ prevented, revenue error
+
+Safety
+  * field incident / miss rate
 
 
 ## Solution Design: I/O API, ML Task Framing, Data Engineering, Responsible ML
@@ -117,35 +118,40 @@ API type:
 * SOAP (secure XML),
 * gRPC (high-speed service-to-service)
 
-Non-ML baseline first: popularity / rules / heuristic. ML must beat this.
-
 
 ###  ML Task Framing (business → ML) (5%)
 
 Task from label availability: supervised / self-supervised / unsupervised / RL.
 
-| Task framing | Mapping | Ground truth / Golden data | Offline test metrics |
+Idiosync
+* Point ranking is a binary clf problem where $x$ consists of query $q$ (eg. user) and doc $d$ (eg. ad), and $q$ and $d$ are from two different domains
+
+| Task framing | Mapping | Ground truth | Offline eval |
 |---|---|---|---|
 | Regression | $x → y∈ℝ$ | (x, y∈ℝ) | [MAE](#mae), [RMSE](#rmse), [wMAPE](#mape), [R²](#r) ... on [temporal split](#temporal-split) | 
-| Interval Regression | $x → (y^-,y^+)∈ℝ$ | $(x, (y^-,y^+∈ℝ)$ | [interval coverage](#interval-coverage) |
-| Time Series Forecast | $(...,x_{t-1}) → y_t∈ℝ$ | $(...,x_{t-1}, x_{t})$ + covariates, horizon values | wMAPE, MASE on [temporal split](#temporal-split), [interval coverage](#interval-coverage) | 
-| Binary clf w/o imbalance / multi-task (K binary heads) / Bidding | $x → \{0,1\}$ | (x, y∈{0,1}) | [P](#precision)/[R](#recall)/[Fβ](#f1)@(0..1), [P@fixed-FPR](#precision), [PR-AUC](#pr-auc), [ROC-AUC](#roc-auc), [ECE](#calibration-ece)  |
+| Interval Regression | $x → (y^-,y^+)∈ℝ$ | $(x, y^-,y^+)$ | [interval coverage](#interval-coverage) |
+| Time Series Forecast | $(...,x_{t-1}) → y_t∈ℝ$ | $(...,x_{t-1}, x_{t})$ + covariates, horizon values | wMAPE, [MASE](#mase) on [temporal split](#temporal-split), [interval coverage](#interval-coverage) | 
+| Binary clf w/o imbalance / multi-task (K binary heads) | $x → \{0,1\}$ | (x, y∈{0,1}) | [P](#precision)/[R](#recall)/[Fβ](#f1)@(0..1), [P@fixed-FPR](#precision), [PR-AUC](#pr-auc) w imbalance, [ROC-AUC](#roc-auc) w balance, [ECE](#calibration-ece)  |
+| Point ranking | $(q,d) → \{0,1\}$ | (q, d, {0,1}) |  |
 | Multi-class clf | $x → y∈K$ | (x, y∈K) | per-class/macro [P](#precision)/[R](#recall)/[Fβ](#f1), [Accuracy](#accuracy), [Hamming loss](#hamming-loss) | 
 | Multi-label clf | $x → Y⊆K$ | (x, Y⊆K) | per-class/macro [P](#precision)/[R](#recall)/[Fβ](#f1), [Accuracy](#accuracy), [Hamming loss](#hamming-loss) | 
 | Clustering | $x → x∈K/\text{Centroid}/\text{Prototype}$ / G=(X,E)+sim(i,j)∈E | x∈K ∀x∈X  | [Silhouette](#silhouette), [Davies-Bouldin](#davies-bouldin), [Calinski-Harabasz](#calinski-harabasz), + stability across samples, labels exist:[ARI](#ari) or [NMI](#nmi) | 
-| Representation Learning / Encoding | $x → \hat{x}$ | (x, 1x similar, n-1 dissimilar) | [R](#recall)@k, [MRR](#mrr), [Silhouette](#silhouette), [Davies-Bouldin](#davies-bouldin), [Linear probe](#linear-probe) |
+| Encoding | $x → \hat{x}$ | (x, 1x similar, n-1 dissimilar) | [R](#recall)@k, [MRR](#mrr), [Silhouette](#silhouette), [Davies-Bouldin](#davies-bouldin), [Linear probe](#linear-probe) |
 | Retrieval | $q → Y⊆K$| (q, TPs, sample TNs) | [HitRate](#hitratek)@k, [R](#recall)/[P](#precision)@k, [diversity](#diversity), [catalog coverage](#catalog-coverage), [TF-IDF](#tf-idf), [BM25](#bm25) |
 | Pair Ranking | $q → d^{-}<d^{+}$ | (q, 2x scored d) |[MRR](#mrr), [Pairwise Accuracy](#pairwise-accuracy), [ROC-AUC on ordered pairs](#roc-auc-on-ordered-pairs) |
 | List Ranking | $q → sorted(D)$| (q, k scored d) | [mAP](#map), [nDCG](#ndcg)@k |
-| Text named entity segmentation | ? | (token seq, per-token/span boundary labels) | text sequence pairwise [F1](#f1)/[ARI](#ari) |
-| Generate text2text | $t → \hat{t}$ | $(t, \hat{t})$; preference pairs $(t, \hat{t}^+, \hat{t}^-)$ | [BLEU](#bleu), GLEU, [METEOR](#meteor), [ROUGE](#rouge), [RAGAS metrics](#ragas-metrics), [safety rates](#safety-rates), [perplexity](#perplexity) |
+| Text sequence labeling | ? | (token seq, per-token/span boundary labels) | text sequence pairwise or span-level micro [F1](#f1)/[ARI](#ari) |
+| Generate text2text | $t → \hat{t}$ | $(t, \hat{t})$; preference pairs $(t, \hat{t}^+, \hat{t}^-)$ | [BLEU](#bleu), [GLEU](#gleu), [METEOR](#meteor), [ROUGE](#rouge), [RAGAS metrics](#ragas-metrics), [safety rates](#safety-rates), [perplexity](#perplexity) |
+
+| WIP Task framing | Mapping | Ground truth | Offline eval |
+|---|---|---|---|
 | Reinforcement Learning | | | | |
 | Translation text2text | $t → t'$ | BLEU n-gram comparison for translation, METEOR extended BLEU, GLEU sentence-level BLEU |
-| Transscript/Dictate T2S/StT | | WER for STT/TTS | |
+| Transscript/Dictate T2S/StT | | [WER](#wer) for STT/TTS | |
 | Image object localization |  |
-| Image object detection | | mAP@[.5:.95], mAP@IoU, per-class recall, FPS | (image, boxes + classes) |
-| Image semantic segmentation | img → set(bbox) | (img, set[pixel-wise mask with object class]) | [P](#precision)@IOU, [AP](#ap), [mAP](#map) | 
-| Image object segmentation | img → set(labelled bbox) | (image, set[pixel-wise mask with object id]) | mIoU, obj boundary [mAP](#map)@IOU, 1-vs-all recall, FPS |
+| Image object detection | | [mAP](#map)@[.5:.95], [mAP](#map)@[IoU](#iou), per-class recall, FPS | (image, boxes + classes) |
+| Image semantic segmentation | img → set(bbox) | (img, set[pixel-wise mask with object class]) | [P](#precision)@[IOU](#iou), [AP](#ap), [mAP](#map) | 
+| Image object segmentation | img → set(labelled bbox) | (image, set[pixel-wise mask with object id]) | mIoU, obj boundary [mAP](#map)@[IoU](#iou), 1-vs-all recall, FPS |
 | Generate text2img | t → img | (t, pixels) | [Inception Score](#inception-score), [FID](#fid) |
 | Strategy Development (RL) | | | |
 | Combinatorial optimisation | $(f(x)≤C, z(x)) → x$| asymm costs | |
@@ -351,25 +357,32 @@ Realistic system: add complexity only if justified
 
 ### Model Selection: (task → models → pitfalls) (5%)
 
-1. Candidate framings (2–3 of the SAME problem), e.g. recommendation sys as pointwise classification vs pairwise ranking vs retrieval+ranking.
-2. Pick one; reject runner-up against: label cost, metric alignment, latency, data volume, interpretability.
+1. Non-ML baseline first: popularity / rules / heuristic. ML must beat this.
+2. Candidate framings (2–3 of the SAME problem), e.g. recommendation sys as pairwise ranking vs retrieval+ranking.
+3. Pick one; reject runner-up against: label cost, metric alignment, latency, data volume, interpretability.
 
+Idiosync:
+* Time Series Forecast: leakage through future-known covariates; hierarchical reconciliation
+* Binary clf: class weights over naive oversampling; recalibrate after any resampling; threshold from cost matrix, not 0.5; label delay (chargebacks arrive weeks late) / multi-task (K binary heads)
+* Point rank: position bias (position feature at train, fixed at serve, or IPS); temporal split; negative downsampling then recalibrate
+* Multi-class clf (per-class thresholds; handle imbalance, taxonomy drift over time)
 
 | Task | Baseline | Advanced | ML head | ML loss | 
 |---|---|---|---|---|
-| Regression | (weighted) avg/median, linear regr, DT + beg/boost  | NN | single scalar | [MSE](#mse) / [Huber](#huber) |
+| Regression | (weighted) avg/median, linear regr, DT + beg/boost  | NN | single scalar | [MSE](#mse) / [Huber](#huber-loss) |
 | Interval Regression | segment P## | | [quantile heads for intervals](#quantile-heads-for-intervals) | [pinball for quantiles](#quantile-heads-for-intervals) |
-| Time Series Forecast (leakage through future-known covariates; hierarchical reconciliation) | segment (weighted) avg/median, Holt-Winter's method, ETS/ARIMA | GBDT on lag features, Prophet, DeepAR, TFT | per-horizon point / quantile outputs | MSE / pinball |
-| Binary clf w/o imbalance class weights over naive oversampling; recalibrate after any resampling; threshold from cost matrix, not 0.5; label delay (chargebacks arrive weeks late) / multi-task (K binary heads) / Bidding (position bias (position feature at train, fixed at serve, or IPS); temporal split; negative downsampling then recalibrate) | majority cls, rule based, log regr, DT + beg/boost | [Bert](#bert), DCN / DLRM | [sigmoid p(y)](#sigmoid-function) | ([Weighted](#weighted-bce)) [BCE](#bce--logloss); [Focal loss](#focal-loss), multi-task [weighted sum of losses](#weighted-sum-of-losses) |
-| Multi-class clf (per-class thresholds; handle imbalance, taxonomy drift over time) | majority cls, 1vsAll log regr, decision tree with bagging/boosting, random forest, naive bayes, SVM | [Bert](#bert), [CNN](#cnn) | [softmax](#softmax) over K | [CE](#ce); [KL-divergence](#kl-divergence) |
+| Time Series Forecast | segment (weighted) avg/median, Holt-Winter's method, ETS/ARIMA | GBDT on lag features, Prophet, DeepAR, TFT | per-horizon point / quantile outputs | MSE / pinball |
+| Binary clf w/o imbalance  | majority cls, rule based, log regr, DT + beg/boost | [Bert](#bert), DCN / DLRM | [sigmoid p(y)](#sigmoid-function) | ([Weighted](#weighted-bce)) [BCE](#bce--logloss); [Focal loss](#focal-loss), multi-task [weighted sum of losses](#weighted-sum-of-losses) |
+| Point ranking | | | | |
+| Multi-class clf | majority cls, 1vsAll log regr, decision tree with bagging/boosting, random forest, naive bayes, SVM | [Bert](#bert), [CNN](#cnn) | [softmax](#softmax) over K | [CE](#ce); [KL-divergence](#kl-divergence) |
 | Multi-label clf | majority cls | | [sigmoid](#sigmoid-function) p(k) ∀k∈K | per-label [weighted BCE](#weighted-bce) |
 | Clustering | K-means, GMM | DEC | [K-means with SSE](#k-means-inertia--sse) / [GMM with negative log-likelihood](#gmm-negative-log-likelihood) / [DEC with KL loss](#dec-with-kl-loss) | |
-| Representation Learning / Encoding | integer encoding, one-hot, [BoW](#bow), [Word2Vec](#word2vec) | Elmo, BERT, BLOOM, Contrastive Learning | embedding vector | [CE](#ce) / [InfoNCE](#infonce) / [triplet loss](#triplet-loss) |
+| Encoding | integer encoding, one-hot, [BoW](#bow), [Word2Vec](#word2vec) | Elmo, BERT, BLOOM, Contrastive Learning | embedding vector | [CE](#ce) / [InfoNCE](#infonce) / [triplet loss](#triplet-loss) |
 | Retrieval | [kNN](#knn), [Apache Lucene](#apache-lucene) | [ANN](#ann) | dot/cosine (of 2 embeddings) | [InfoNCE](#infonce) / sampled [softmax](#softmax) / [triplet loss](#triplet-loss) |
 | Pair Ranking (in-batch negatives + hard-negative mining; logQ sampling correction; cold-start via content features) | rule-based, embedding based, heuristic, log regr w/ feature crosses; GBDT | [matrix factorization](#matrix-factorization) with ALS, Two Towers + HNSW/ScaNN, [RankNet](#ranknet) | 2x scalar score s(q,d)  | [BCE](#bce--logloss) / [Hinge ranking loss](#hinge-ranking-loss) |
 | List Ranking (split by query, never by doc; click labels are biased vs human judgments) | rule-based, mbedding based, heuristic | content-based, collaborative filtering, cross-encoder re-ranker, [ListNet](#listnet) / [LambdaRank](#lambdarank)-[LambdaMART](#lambdamart) | k scalar scores s(q,d) | [CE](#ce) |
 | Text named entity segmentation | | |  per-token [softmax](#softmax) / CRF | token-level [CE](#ce) or CRF-NLL |
-| Generate text2text (hallucination guardrails) | prompt eng, composite (RAG) | PEFT, Transformer | [softmax](#softmax) over VOCAB | next-token [CE](#ce) for supervised fine-tuning; [DPO](#DPO) on preferences |
+| Generate text2text (hallucination guardrails) | prompt eng, composite (RAG) | PEFT, Transformer | [softmax](#softmax) over VOCAB | next-token [CE](#ce) for supervised fine-tuning; [DPO](#dpo) on preferences |
 | Image object detection (flip/crop/color augmentation; [NMS](#nms) and anchor tuning; small-object failure mode) | | YOLO family; Faster R-CNN; DETR, transfer-learn | box regression + class scores + objectness | composite: IoU/smooth-L1 + focal CE |
 | Image object localisation | | [RPN](#rpn), box regression + class scores + objectness | mAP@IoU 0.5 | composite: IoU/smooth-L1 + focal CE |
 | Image object segmentation | | ? + [NMS](#nms) | per-pixel [softmax](#softmax), dense FCN/U-Net/Mask decoder | per-pixel [CE](#ce) + Dice-IoU loss |
@@ -480,6 +493,10 @@ Mean Squared Error: squares the error, so large mistakes get penalized heavily. 
 $$
 MSE=\frac{1}{n}∑(y−\hat{y})^2
 $$
+
+## MASE
+
+TODO
 
 ## Huber loss
 
@@ -919,6 +936,8 @@ $$
 For one-hot labels, this simplifies to 
 $− \log p_{\text{true class}}$
 
+Normalised CE (NCE) is model CE over baseline model's CE where baseline model is simpler (e.g. majority class).
+
 ## BCE / LogLoss
 
 > classification loss
@@ -1141,6 +1160,10 @@ Issues:
 * exact n-gram match only, so synonyms/paraphrases are penalized like errors
 * designed for corpus-level aggregation; noisy at the single-sentence level
 
+## GLEU
+
+TODO
+
 ## ROUGE
 
 > generative text metric
@@ -1210,11 +1233,13 @@ $$
 
 self-harm content, hateful or unfair content, violent content, sexual content, protected material, indirect attack/jailbreak
 
+
 ## Perplexity
 
 > generative text metric
 
 Perplexity measures how well the model predicts the reference next tokens. It is roughly the model's average branching uncertainty per token. Good for fluency/fit to reference text, but not enought for usefulness or safety. Likelihood-based, token-level fit.
+
 
 ## Pairwise Accuracy
 
@@ -1227,6 +1252,7 @@ $$
 $$
 
 where $s(q,d)$ is the score of doc $d$ given query $q$.
+
 
 ## ROC-AUC on ordered pairs
 
@@ -1247,6 +1273,10 @@ Interpretation:
 Higher is better.
 
 ROC-AUC is smooth and ranking-oriented across the full margin distribution, it is often robust for model comparison.
+
+## IoU
+
+TODO
 
 ## RankNet
 
