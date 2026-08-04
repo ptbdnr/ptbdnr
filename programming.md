@@ -45,7 +45,17 @@ meaningful white space, comments
 # Data Stuctures
 
 inmutable: int, float, str, tuple
+
 mutable: set, list, hashmap
+
+operations: 
+* create, destroy
+* read at index/start/end
+* insert/update at index/end/start
+* delete at index/end/start
+* find by key
+* sort by key, reverse
+* size
 
 ## Hashmap
 
@@ -139,6 +149,7 @@ class TrieNode:
 * AVL
 * complete binary
 * full binary
+* trie
 
 ## Heap
 
@@ -193,6 +204,14 @@ def bfs(head: Node) -> set:
     return seen
 ```
 
-### Dijkstra
+### Dijkstra's algorithm
 
+topological sort
 
+### Kruskal's algorithm
+
+### Prim's algorithms
+
+### Tarjan's algorithm
+
+### Floyd-Warshall algorithm
