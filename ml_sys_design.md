@@ -52,7 +52,9 @@ flowchart TD
 
 ## Discover: Business Objective, Requirements, Scope (20%)
 
-TL;DR: KPI, QPS, Daily/Total Storage, Latency, Data Protection, Explainability
+TL;DR: Definitions, KPI, QPS, Daily/Total Storage, Latency, Data Protection, Explainability
+
+Definitions (similarity/personalized/engagement) in this business project context? Definition of success?
 
 Business Objective, vision & goal. What is success? KPIs:
 
@@ -76,25 +78,31 @@ Constraints:
 * 🔍: interpretability, explainability
 * ☁️: data protection/sovereignty, [CAP Theorem](#cap-theorem), redundancy (99.9% down 9hr/yr, 99.999% down 5min/yr)
 * 📖: cost of data gathering (labelling)
-* 🖥️: processing on hardware (max RAM? available GPU?)
+* 🖥️: deployment on hardware (edge device, server)
+
+Other:
+
+* Project history: existing baseline, new target
+* Existing data sources
 
 
 ## Online eval (20%)
 
 Prevalence
 
-User feedback
-  * Explicit feedback: User likes, valid dislike/escalation/complain/appeal (hard negative), Perceptual Mean Opinion Score (MOS)
-  * Implicit feedback: Click-through rate (CTR, clickbait risk), conversion rate (# conversion / # impressions), Repeated Purchase Rate (RPR), query reformulation rate, watch time, completed watch, successful clicks, retention A/B
+User feedback:
+  * Explicit feedback (strong signal but few): User likes, valid dislike/escalation/complaint (hard negative), Perceptual Mean Opinion Score (MOS)
+  * Implicit feedback (noisy signal but abundant): Click-through rate (CTR, clickbait risk), conversion rate (# conversions / # impressions), Repeated Purchase Rate (RPR), query reformulation rate, watch/dwell time, completed watch, successful clicks, share clicks
 
 Operational performance:
 
   * [self-service (deflection) rate](#self-service-deflection-rate) (no-escalation-trick risk)
-  * time-to-process/detect, dwell time, stockout/overstock cost, 
+  * time-to-process/detect, dwell time, stockout/overstock cost
   * SLA breach rate, fraud $ prevented, revenue error
 
-Safety
+Safety:
   * field incident / miss rate
+  * time to mitifave
 
 
 ## Solution Design: I/O API, ML Task Framing, Data Engineering, Responsible ML
