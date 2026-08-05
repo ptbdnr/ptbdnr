@@ -65,16 +65,16 @@ Business Objective, vision & goal. What is success? KPIs:
 
 👍 Functional Requirements: UX, user journey, input/output modality, language requirement, continuous improvement, explainability
 
-Scale:
+Scale of anticipated load:
 
-* 🫀 Usage frequency: Query Per Second ($QPS = \frac{\text{DAU} * \text{RequestCountPerUser}}{80K}$), ingestion vs query frequency, avg vs max
-* 🐘 Data Volume: Daily Storage ($\text{DAU} * \text{RequestCountPerUser} * \text{RequestSize}$), Total Storage ($\text{Retention Period} * \text{Daily Storage}$), rate of growth, avg vs max
+* 🫀 Traffic: Query Per Second ($\text{DAU} \times \text{RequestCountPerUser} \times \frac{1}{86.4K \text{sec/day}}$), ingestion vs query frequency, avg vs max (+20%)
+* 🐘 Data Volume: Daily Data Storage ($\text{DAU} \times \text{RequestCountPerUser} \times \text{RequestSize}$), Total Storage ($\text{Retention Period} \times \text{Daily Storage}$), rate of growth, avg vs max (+20%)
 
 Constraints:
 
-* ⏱️: latency budget (time to first meaningful byte, batch/real-time/stream),
+* ⏱️: latency budget (time to first meaningful byte, batch/real-time/stream), roundtrip EU-US: 150ms, within same datacentre 0.5ms
 * 🔍: interpretability, explainability
-* ☁️: data protection, sovereignty, IP
+* ☁️: data protection/sovereignty, [CAP Theorem](#cap-theorem), redundancy (99.9% down 9hr/yr, 99.999% down 5min/yr)
 * 📖: cost of data gathering (labelling)
 * 🖥️: processing on hardware (max RAM? available GPU?)
 
@@ -173,12 +173,12 @@ Data Gathering and Cost:
 
 Data schema: field name, data type (numerical discrete vs continuous, categorical ordinal vs nominal), is pkey, is nullable, foreign key.
 
-Data store:
+Data store: [CAP Theorem](#cap-theorem)
 
 * Blob: Bucket in S3/GCS, Azure SA Container
-* Tabular row-based: RDBS, MySQL, PostgreSQL
+* Tabular row-based: vertically scalable, reliability, [ACID](#acid), RDBS, MySQL, PostgreSQL
 * Column-based: Cassandra, HBase, RedShift
-* Key/Value: Redis, DynamoDB, CosmosDB
+* Key/Value: horizontally scalable, dynamic schema, Redis, DynamoDB, CosmosDB
 * Document: MongoDB, CouchDB
 * Graph: Neo4J
 
@@ -339,6 +339,16 @@ TODO
 
 TODO
 
+### TODO
+
+* load balance before VM/node
+* cache (memory is fast, disk is slow)
+* partitioning logic
+* indexing
+* proxy (edge node)
+* queue (priority, retry with dead letter)
+* redundancy & replication
+
 ## Technical Design: Feature Engineering, Model selection, Training, Serving (20%)
 
 Realistic system: add complexity only if justified
@@ -435,6 +445,15 @@ Inference Serving:
 * convolutional NN CNN
 
 # Definitions
+
+
+## CAP Theorem
+
+Consistency, Availabiltiy, Partition Tolerance. Partition Tolerance is required to scale the system, however, the three together is impossible, so chose CP for with some downtime, or AP with delayed consistency.
+
+## ACID
+
+Atomicity, Consistency, Isolation, Durability
 
 ## Self-service (deflection) rate
 
