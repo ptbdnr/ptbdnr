@@ -404,7 +404,7 @@ Idiosync:
 | Encoding | integer encoding, one-hot, [BoW](#bow), [Word2Vec](#word2vec) | Elmo, BERT, BLOOM, Contrastive Learning | embedding vector | [CE](#ce) / [InfoNCE](#infonce) / [triplet loss](#triplet-loss) |
 | Retrieval | [kNN](#knn), [Apache Lucene](#apache-lucene) | [ANN](#ann) | dot/cosine (of 2 embeddings) | [InfoNCE](#infonce) / sampled [softmax](#softmax) / [triplet loss](#triplet-loss) |
 | Pair Ranking (in-batch negatives + hard-negative mining; logQ sampling correction; cold-start via content features) | rule-based, embedding based, heuristic, log regr w/ feature crosses; GBDT | [matrix factorization](#matrix-factorization) with ALS, Two Towers + HNSW/ScaNN, [RankNet](#ranknet) | 2x scalar score s(q,d)  | [BCE](#bce--logloss) / [Hinge ranking loss](#hinge-ranking-loss) |
-| List Ranking (split by query, never by doc; click labels are biased vs human judgments) | rule-based, mbedding based, heuristic | content-based, collaborative filtering, cross-encoder re-ranker, [ListNet](#listnet) / [LambdaRank](#lambdarank)-[LambdaMART](#lambdamart) | k scalar scores s(q,d) | [CE](#ce) |
+| List Ranking (split by query, never by doc; click labels are biased vs human judgments) | rule-based, mbedding based, heuristic | content-based, collaborative filtering, cross-encoder re-ranker, [ListNet](#listnet), [LambdaRank](#lambdarank), [LambdaMART](#lambdamart) | k scalar scores s(q,d) | [CE](#ce) |
 | Text named entity segmentation | | |  per-token [softmax](#softmax) / CRF | token-level [CE](#ce) or CRF-NLL |
 | Generate text2text (hallucination guardrails) | prompt eng, composite (RAG) | PEFT, Transformer | [softmax](#softmax) over VOCAB | next-token [CE](#ce) for supervised fine-tuning; [DPO](#dpo) on preferences |
 | Image object detection (flip/crop/color augmentation; [NMS](#nms) and anchor tuning; small-object failure mode) | | YOLO family; Faster R-CNN; DETR, transfer-learn | box regression + class scores + objectness | composite: IoU/smooth-L1 + focal CE |
@@ -1352,7 +1352,7 @@ $\Delta < m$ penalize linearly until margin is met.
 
 ## ListNet
 
-> listwise ranking loss
+> listwise ranking method
 
 ListNet turns each of the ground truth and predicted ranked lists into a probability distribution over "which item is top-1" — once from the true relevance labels, once from the model scores — then minimizes the divergence between the two. It considers the whole list at once, not just pairs.
 
@@ -1362,15 +1362,11 @@ $$
 P(i) = \frac{e^{s_i}}{\sum_j e^{s_j}}
 $$
 
-Loss is CE between the true top-one distribution $P^y$ (from ground truth relevance $y$) and predicted $P^s$ (from scores $s$):
-
-$$
-\mathcal{L}_{\text{ListNet}} = - \sum_i P^y(i) \log P^s(i)
-$$
+CE is used as the loss function, computing the difference between the true top-one distribution $P^y$ (from ground truth relevance $y$) and predicted $P^s$ (from scores $s$).
 
 ## LambdaRank
 
-> listwise ranking loss
+> listwise ranking method
 
 LambdaRank extends [Pairwise logistic loss](#pairwise-logistic-loss) (RankNet) to optimize listwise ranking metrics directly. Since metrics like [nDCG](#ndcg) are computed on sorted ranks, they're flat almost everywhere and non-differentiable — so LambdaRank scales each pair's RankNet gradient by the change in nDCG that swapping that pair would cause, $|\Delta nDCG|$. Pairs whose swap would hurt nDCG a lot get pushed apart harder.
 
@@ -1379,11 +1375,11 @@ $$
 $$
 
 where $s_i$ is the score of item $i$, and $\Delta nDCG_{ij}$ is the change in nDCG from swapping items $i$ and $j$ in the ranked list.
-Technically a gradient heuristic rather than a loss with an explicit closed form.
+It is technically a gradient heuristic.
 
 ## LambdaMART
 
-> listwise ranking model + loss
+> listwise ranking method
 
 LambdaMART is [LambdaRank](#lambdarank)'s $\lambda$ gradients used as pseudo-residuals to fit gradient-boosted regression trees (MART) instead of a neural net. It's the standard production learning-to-rank algorithm (LightGBM/XGBoost ranking objectives), combining metric-aware gradients with the strength of tree ensembles. It's LambdaRank's gradients applied to gradient-boosted trees (MART), so it's the model/algorithm, not just a loss.
 
