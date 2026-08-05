@@ -19,7 +19,7 @@ This outline  (4 + 2x4 blocks) is very high level and incomplete. The `: x%` is 
 
 ```mermaid
 flowchart TD
-    discover[**Goal, Req, Scope** : 15%]
+    discover[**Discover: Goal, FReq, Scope, Constraints** : 15%]
     b_metrics[**Online Eval** : 5%]
     subgraph sol_des[Solution Design : 20%]
         api[I/O API : 5%]
@@ -50,7 +50,7 @@ flowchart TD
         model --- serve
 ```
 
-## Discover: Business Objective, Requirements, Scope (20%)
+## Discover: Business Objective, Requirements, Scope (15%)
 
 TL;DR: Definitions, KPI, QPS, Daily/Total Storage, Latency, Data Protection, Explainability
 
@@ -86,7 +86,7 @@ Other:
 * Existing data sources
 
 
-## Online eval (20%)
+## Online eval (5%)
 
 Prevalence
 
@@ -115,10 +115,16 @@ I/O spec:
 * input → output schema {attr: data type}
 * at what granularity (user / item / pair / session),
 * what cadence (one-shot vs sequential)
+* idempotency (with request id of retries)
+* pagination and versioning
 
-Label spec: exact positive definition, source (explicit / implicit / synthetic), proxy risks
+Label spec:
 
-API type: 
+* exact positive definition,
+* source (explicit / implicit / synthetic)
+* proxy risks
+
+API type:
 
 * REST (simple CRUD with HTTP),
 * GraphQL (selective query),
