@@ -19,11 +19,11 @@ This outline  (4 + 2x4 blocks) is very high level and incomplete. The `: x%` is 
 
 ```mermaid
 flowchart TD
-    discover[**Discover: Goal, FReq, Scope, Constraints** : 15%]
-    b_metrics[**Online Eval** : 5%]
+    discover["Discover (Def, Goal, FR, Scale, Constraints) : 15%"]
+    b_metrics[Online Eval : 5%]
     subgraph sol_des[Solution Design : 20%]
         api[I/O API : 5%]
-        ml_task[**ML Task & Eval** : 5%]
+        ml_task[ML Task & Eval : 5%]
         data[Data Engineering : 5%]
         sec_by_des[Responsible ML : 5%]
     end
@@ -59,9 +59,9 @@ Definitions (similarity/personalized/engagement) in this business project contex
 Business Objective, vision & goal. What is success? KPIs:
 
 * 💰: annual recurring revenue ARR, net profit margin NPM
-* 😊: customer acquisition cost CAC, churn rate, conversion rate CVR, customer lifetime value CLtV
+* 😊: customer acquisition cost CAC, Churn, customer lifetime value CLtV
 * ⭐: customer satisfaction score CSat, net promoter score NPS
-* 🚀: output per FTE, cost per task, cycle time per task
+* 🚀: output per FTE
 * 📦: average order value AOV, order fulfillment cycle time OFCT, inventory turnover COGS/avgINV
 * 🔑: incident/breach count, data subject access request (DSAR) response time, mean time to detect/respond MTTD/MTTR
 
@@ -69,8 +69,8 @@ Business Objective, vision & goal. What is success? KPIs:
 
 Scale of anticipated load:
 
-* 🫀 Traffic: Query Per Second ($\text{DAU} \times \text{RequestCountPerUser} \times \frac{1}{86.4K \text{sec/day}}$), ingestion vs query frequency, avg vs max (+20%)
-* 🐘 Data Volume: Daily Data Storage ($\text{DAU} \times \text{RequestCountPerUser} \times \text{RequestSize}$), Total Storage ($\text{Retention Period} \times \text{Daily Storage}$), rate of growth, avg vs max (+20%)
+* 🫀 Traffic info (for horizontal scale, precompute, multi-tier): Query Per Second ($\text{DAU} \times \text{RequestCountPerUser} \times \frac{1}{86.4K \text{sec/day}}$), peak-to-avg ratio (3x), request type split (ingest/serve) 
+* 🐘 Data Profile (): Daily Data Volume ($\text{DAU} \times \text{RequestCountPerUser} \times \text{RequestSize}$), Total Volume ($\text{Retention Period} \times \text{Daily Storage}$), rate of growth, peak-to-avg rate (3x), distinct-entity cardinality (for embedding indexing), labeled data volume
 
 Constraints:
 
@@ -83,7 +83,7 @@ Constraints:
 Other:
 
 * Project history: existing baseline, new target
-* Existing data sources
+* Existing data
 
 
 ## Online eval (5%)
@@ -91,18 +91,20 @@ Other:
 Prevalence
 
 User feedback:
-  * Explicit feedback (strong signal but few): User likes, valid dislike/escalation/complaint (hard negative), Perceptual Mean Opinion Score (MOS)
-  * Implicit feedback (noisy signal but abundant): Click-through rate (CTR, clickbait risk), conversion rate (# conversions / # impressions), Repeated Purchase Rate (RPR), query reformulation rate, watch/dwell time, completed watch, successful clicks, share clicks
+  * Explicit feedback (strong signal but few): User likes, valid dislike/escalation/complaint (hard negative), Mean Opinion Score (MOS)
+  * Implicit feedback (noisy signal but abundant): Click-through rate (CTR, clickbait risk), conversion rate (# conversions / # impressions), Repeated Purchase Rate (RPR), query reformulation rate, watch/dwell time, completed watch, share clicks
 
 Operational performance:
 
+  * time to process
+  * cost per task, total cost per month
   * [self-service (deflection) rate](#self-service-deflection-rate) (no-escalation-trick risk)
-  * time-to-process/detect, dwell time, stockout/overstock cost
+  * dwell time, stockout/overstock cost
   * SLA breach rate, fraud $ prevented, revenue error
 
 Safety:
   * field incident / miss rate
-  * time to mitifave
+  * time to mitigave
 
 
 ## Solution Design: I/O API, ML Task Framing, Data Engineering, Responsible ML
