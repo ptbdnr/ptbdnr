@@ -19,6 +19,8 @@ Trade-off: speed vs memory vs accuracy, batch vs real-time (stream?), CAP
 
 # Design
 
+[BigO](https://www.bigocheatsheet.com/)
+
 Brute force (verbal only)
 
 * enumerate/simulate then sort & filter
