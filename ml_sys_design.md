@@ -67,18 +67,19 @@ Business Objective, vision & goal. What is success? KPIs:
 
 👍 Functional Requirements: UX, user journey, input/output modality, language requirement, continuous improvement, explainability
 
-Scale of anticipated load:
-
-* 🫀 Traffic info (for horizontal scale, precompute, multi-tier): Query Per Second ($\text{DAU} \times \text{RequestCountPerUser} \times \frac{1}{86.4K \text{sec/day}}$), peak-to-avg ratio (3x), request type split (ingest/serve) 
-* 🐘 Data Profile (): Daily Data Volume ($\text{DAU} \times \text{RequestCountPerUser} \times \text{RequestSize}$), Total Volume ($\text{Retention Period} \times \text{Daily Storage}$), rate of growth, peak-to-avg rate (3x), distinct-entity cardinality (for embedding indexing), labeled data volume
-
 Constraints:
 
 * ⏱️: latency budget (time to first meaningful byte, batch/real-time/stream), roundtrip EU-US: 150ms, within same datacentre 0.5ms
+* ☁️: data protection ([ACL](#acl)), provenance, sovereignty, redundancy (99.9% down 9hr/yr, 99.999% down 5min/yr)
 * 🔍: interpretability, explainability
-* ☁️: data protection/sovereignty, [CAP Theorem](#cap-theorem), redundancy (99.9% down 9hr/yr, 99.999% down 5min/yr)
-* 📖: cost of data gathering (labelling)
 * 🖥️: deployment on hardware (edge device, server)
+* 📖: cost of data gathering (labelling)
+
+Scale of anticipated load (Fermi estimates):
+
+* 🫀 Traffic info (for horizontal scale, pre-compute, multi-tier): Query Per Second ($\text{DAU} \times \text{Request/User/Day} \times \frac{1}{86.4K \text{sec/day}}$), peak-to-avg ratio (3x), request type split (ingest/serve) 
+* 🐘 Data Profile (for ?): Daily Volume ($\text{DAU} \times \text{Request/User/Day} \times \text{RequestSize}$), Total Volume ($\text{RetentionDays} \times \text{DailyVolume}$), rate of growth, peak-to-avg rate (3x), distinct-entity cardinality (for embedding indexing), labeled volume
+
 
 Other:
 
@@ -462,6 +463,9 @@ Inference Serving:
 
 # Definitions
 
+## ACL
+
+An Access Control List (ACL) is a list of permissions that specifies which users or system processes are allowed to access certain resources and what operations they can perform on those resources. ACLs help manage data permissions effectively by defining who can read, write, or execute files and other system objects.
 
 ## CAP Theorem
 
@@ -881,7 +885,9 @@ where $P(R)$ is precision as a function of recall.
 
 > classification metric, threshold-free
 
-The Area Under the Receiver Operating Characteristic curve. It plots:
+The Area Under the Receiver Operating Characteristic curve.  A number between 0.0 and 1.0 representing a binary classification model's ability to separate positive classes from negative classes. The closer the AUC is to 1.0, the better the model's ability to separate classes from each other. AUC ignores any value you set for classification threshold. Instead, AUC considers all possible classification thresholds.
+
+It plots:
 
 True Positive Rate (ie. recall): $TPR = \frac{TP}{TP+FN}$
 
