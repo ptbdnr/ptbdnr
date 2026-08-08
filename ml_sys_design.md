@@ -67,7 +67,7 @@ Business Objective, vision & goal. What is success? KPIs:
 
 👍 Functional Requirements: UX, user journey, input/output modality, language requirement, continuous improvement, explainability
 
-Constraints:
+Constraints (incl. SLAs):
 
 * ⏱️: latency budget (time to first meaningful byte, batch/real-time/stream), roundtrip EU-US: 150ms, within same datacentre 0.5ms
 * ☁️: data protection ([ACL](#acl)), provenance, sovereignty, redundancy (99.9% down 9hr/yr, 99.999% down 5min/yr)
@@ -77,8 +77,8 @@ Constraints:
 
 Scale of anticipated load (Fermi estimates):
 
-* 🫀 Traffic info (for horizontal scale, pre-compute, multi-tier): Query Per Second ($\text{DAU} \times \text{Request/User/Day} \times \frac{1}{86.4K \text{sec/day}}$), peak-to-avg ratio (3x), request type split (ingest/serve) 
-* 🐘 Data Profile (for ?): Daily Volume ($\text{DAU} \times \text{Request/User/Day} \times \text{RequestSize}$), Total Volume ($\text{RetentionDays} \times \text{DailyVolume}$), rate of growth, peak-to-avg rate (3x), distinct-entity cardinality (for embedding indexing), labeled volume
+* 🫀 Traffic info (for horizontal scale, pre-compute, multi-tier): Query Per Second ($\text{DAU} \times \text{Request/User/Day} \times \frac{1}{86.4K \text{sec/day}}$), peak factor (3x), request type split (ingest/serve) 
+* 🐘 Data Profile (for batch or stream, 1TB RAM or partition, AB test durations): Daily Volume ($\text{DAU} \times \text{Request/User/Day} \times \text{RequestSize}$), Total Volume ($\text{RetentionDays} \times \text{DailyVolume}$), rate of growth, peak factor (3x), labeled volume and latency (<1K self-supervised/active learning, 10K/500hr baseline, fine-tune, 1M GBDT,10M NN, 100M embedding), distinct-entity cardinality (for embedding indexing) x embedding dimension x precision
 
 
 Other:
