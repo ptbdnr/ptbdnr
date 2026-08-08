@@ -1389,7 +1389,7 @@ It is technically a gradient heuristic.
 
 > listwise ranking method
 
-LambdaMART is [LambdaRank](#lambdarank)'s $\lambda$ gradients used as pseudo-residuals to fit gradient-boosted regression trees (MART) instead of a neural net. It's the standard production learning-to-rank algorithm (LightGBM/XGBoost ranking objectives), combining metric-aware gradients with the strength of tree ensembles. It's LambdaRank's gradients applied to gradient-boosted trees (MART), so it's the model/algorithm, not just a loss.
+LambdaMART is [LambdaRank](#lambdarank)'s $\lambda$ gradients used as pseudo-residuals to fit gradient-boosted regression trees (MART) instead of a neural net. It's the standard production learning-to-rank algorithm (LightGBM/XGBoost ranking objectives), combining metric-aware gradients with the strength of tree ensembles. It's LambdaRank's gradients applied to gradient-boosted trees (MART).
 
 ## Bert
 
