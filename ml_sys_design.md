@@ -54,26 +54,31 @@ flowchart TD
 
 TL;DR: Definitions, KPI, QPS, Daily/Total Storage, Latency, Data Protection, Explainability
 
-Definitions (similarity/personalized/engagement) in this business project context? Definition of success?
+Definitions in this context:
+* terminology (similarity/personalized/engagement)
+* user segment
+* problem (with quantifying numbers)
+* definition of success
 
-Business Objective, vision & goal. What is success? KPIs:
+Business Objective, vision & goal. KPIs:
 
-* 💰: annual recurring revenue ARR, net profit margin NPM
-* 😊: customer acquisition cost CAC, Churn, customer lifetime value CLtV
-* ⭐: customer satisfaction score CSat, net promoter score NPS
-* 🚀: output per FTE
-* 📦: average order value AOV, order fulfillment cycle time OFCT, inventory turnover COGS/avgINV
-* 🔑: incident/breach count, data subject access request (DSAR) response time, mean time to detect/respond MTTD/MTTR
+* 💰 : annual recurring revenue ARR, net profit margin NPM
+* 😊 : customer acquisition cost CAC, Churn, customer lifetime value CLtV
+* ⭐ : customer satisfaction score CSat, net promoter score NPS
+* 🚀 : output per FTE
+* 📦 : average order value AOV, order fulfillment cycle time OFCT, inventory turnover COGS/avgINV
+* 🔑 : incident/breach count, data subject access request (DSAR) response time, mean time to detect/respond MTTD/MTTR
 
-👍 Functional Requirements: UX, user journey, input/output modality, language requirement, continuous improvement, explainability
+👍 Functional Requirements: user segment, UX, user journey, input/output modality, language requirement, continuous improvement, explainability
 
 Constraints (incl. SLAs):
 
-* ⏱️: latency budget (time to first meaningful byte, batch/real-time/stream), roundtrip EU-US: 150ms, within same datacentre 0.5ms
-* ☁️: data protection ([ACL](#acl)), provenance, sovereignty, redundancy (99.9% down 9hr/yr, 99.999% down 5min/yr)
-* 🔍: interpretability, explainability
-* 🖥️: deployment on hardware (edge device, server)
-* 📖: cost of data gathering (labelling)
+* ⚖️ : regulatory
+* ⏱️ : latency budget (time to first meaningful byte, batch/real-time/stream), roundtrip EU-US: 150ms, within same datacentre 0.5ms
+* ☁️ : data protection ([ACL](#acl)), provenance, sovereignty, redundancy (99.9% down 9hr/yr, 99.999% down 5min/yr)
+* 🔍 : interpretability, explainability
+* 🖥️ : deployment on hardware (edge device, server)
+* 📖 : cost of data gathering (labelling)
 
 Scale of anticipated load (Fermi estimates):
 
@@ -86,8 +91,11 @@ Other:
 * Project history: existing baseline, new target
 * Existing data
 
+Summarise: business problem (with scale quantifier), expected impact on business KPI
 
 ## Online eval (5%)
+
+What is success? One primary and 2-3 seconday, 1 guardrail that must not degrade (target values with justification)
 
 Prevalence
 
@@ -448,12 +456,15 @@ Inference Serving:
 * monitoring, hardware utilisation, requests/responses, drift in performance (model/data/context drift)
 
 
-# Roadmap & Summary
+# Product Ownership
 
-* MVP to V1 to V2
-* release strategy: p-value, shadow deployment, canary release for bug focus, A/B testing quality focus
-* Priorities to de-risk
-* What to delegate to others
+* Roadmap: MVP (resolve risk first) to V1 to V2, what feature to deliberately cut (reason: impact, effort)
+* Risk and mitigations: priorities to de-risk
+* Team profile: roles, scale
+* Project management: agile (backlog, todo with AC, discovery/build/refine, qa, done), sprint goal, regular summary, retro
+* release strategy: feature flag, p-value, internal dogfood, shadow deployment, beta cohort, canary release for bug focus, A/B testing quality focus, GA, rollback criteria, kill switch
+* post release: iterate or roll back
+
 
 # TODO
 
