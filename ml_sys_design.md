@@ -11,8 +11,8 @@ Org certificate:
 
 This outline  (4 + 2x4 blocks) is very high level and incomplete. The `: x%` is the estimated time spent on the component. Instead of a waterfall, an agile approach is recommended. Of course, we need to add security, pipelines, monitoring, etc. Normal to return to previous stages and adjust the direction.
 
-> Business KPI ← online eval ← offline eval ← training loss. Between two is a surrogate relationship with a gap. Imperfect and comes with a risk: 
-> * Business KPI: the bottom line metric to improve
+> Business goal ← online eval ← offline eval ← training loss. Between two is a surrogate relationship with a gap. Imperfect and comes with a risk: 
+> * Business goal: the bottom line metric to improve
 > * Online eval: the real impact number to optimize for
 > * Offline eval: the performance on the holdout test dataset 
 > * Training loss: the model's loss on the training data
@@ -52,13 +52,17 @@ flowchart TD
 
 ## Discover: Business Objective, Requirements, Scope (15%)
 
-TL;DR: Definitions, KPI, QPS, Daily/Total Storage, Latency, Data Protection, Explainability
+TL;DR: Definitions, FR, Business Goal, Constraints, SLA, Scale
 
 Definitions in this context:
+
 * terminology (similarity/personalized/engagement)
 * user segment
-* problem (with quantifying numbers)
-* definition of success
+* problem with quantifying numbers
+
+
+👍 Functional Requirements: UX, user journey, input/output modality, language requirement, continuous improvement/active learning
+
 
 Business Objective, vision & goal. KPIs:
 
@@ -69,16 +73,16 @@ Business Objective, vision & goal. KPIs:
 * 📦 : average order value AOV, order fulfillment cycle time OFCT, inventory turnover COGS/avgINV
 * 🔑 : incident/breach count, data subject access request (DSAR) response time, mean time to detect/respond MTTD/MTTR
 
-👍 Functional Requirements: user segment, UX, user journey, input/output modality, language requirement, continuous improvement, explainability
 
 Constraints (incl. SLAs):
 
 * ⚖️ : regulatory
 * ⏱️ : latency budget (time to first meaningful byte, batch/real-time/stream), roundtrip EU-US: 150ms, within same datacentre 0.5ms
 * ☁️ : data protection ([ACL](#acl)), provenance, sovereignty, redundancy (99.9% down 9hr/yr, 99.999% down 5min/yr)
-* 🔍 : interpretability, explainability
+* 🔍 : explainability, interpretability
 * 🖥️ : deployment on hardware (edge device, server)
 * 📖 : cost of data gathering (labelling)
+
 
 Scale of anticipated load (Fermi estimates):
 
@@ -91,11 +95,15 @@ Other:
 * Project history: existing baseline, new target
 * Existing data
 
+
 Summarise: business problem (with scale quantifier), expected impact on business KPI
+
 
 ## Online eval (5%)
 
-What is success? One primary and 2-3 seconday, 1 guardrail that must not degrade (target values with justification)
+TL;DR: KPI
+
+What is success? One primary and 2-3 seconday, 1 guardrail that must not degrade (target values with justification), risk of aggregation [Simpson's paradox]
 
 Prevalence
 
@@ -173,6 +181,7 @@ Idiosync
 | Reinforcement Learning | | | | |
 | Translation text2text | $t → t'$ | BLEU n-gram comparison for translation, METEOR extended BLEU, GLEU sentence-level BLEU |
 | Transscript/Dictate T2S/StT | | [WER](#wer) for STT/TTS | |
+| Speaker recognition | | | |
 | Image object localization |  |
 | Image object detection | | [mAP](#map)@[.5:.95], [mAP](#map)@[IoU](#iou), per-class recall, FPS | (image, boxes + classes) |
 | Image semantic segmentation | img → set(bbox) | (img, set[pixel-wise mask with object class]) | [P](#precision)@[IOU](#iou), [AP](#ap), [mAP](#map) | 
@@ -181,7 +190,7 @@ Idiosync
 | Strategy Development (RL) | | | |
 | Combinatorial optimisation | $(f(x)≤C, z(x)) → x$| asymm costs | |
 | Anomaly detection |  $x → \{0,1\}$ | $(x,\{0,1\}) ∀ x∈X$ $ | precision@k alerts, PR-AUC on labeled slice, alert volume  |
-| Causal effect | | | |
+| Causal Inference | | | |
 
 
 ### Data Engineering (5%)
@@ -352,19 +361,7 @@ flowchart TD
     refresh -.-> src
 ```
 
-### Object detection
 
-TODO
-
-### Image Segmentation
-
-TODO
-
-### Continous Learning
-
-TODO
-
-### TODO
 
 * load balance before VM/node
 * cache (memory is fast, disk is slow)
@@ -394,7 +391,7 @@ Realistic system: add complexity only if justified
 
 1. Non-ML baseline first: popularity / rules / heuristic. ML must beat this.
 2. Candidate framings (2–3 of the ML Task), e.g. ranking vs retrieval+ranking
-3. Pick one; reject runner-up against: label cost, metric alignment, latency, data volume, interpretability.
+3. Pick one; reject runner-up against: label cost, metric alignment, latency, data volume, interpretability. trade-offs, strength, weakness, tech challenges, edge cases
 
 Idiosync:
 * Time Series Forecast: leakage through future-known covariates; hierarchical reconciliation
@@ -409,7 +406,7 @@ Idiosync:
 | Time Series Forecast | segment (weighted) avg/median, Holt-Winter's method, ETS/ARIMA | GBDT on lag features, Prophet, DeepAR, TFT | per-horizon point / quantile outputs | MSE / pinball |
 | Binary clf w/o imbalance  | majority cls, rule based, log regr, DT + bagg/boost | [Bert](#bert), DCN / DLRM | [sigmoid p(y)](#sigmoid-function) | ([Weighted](#weighted-bce)) [BCE](#bce--logloss); [Focal loss](#focal-loss), multi-task [weighted sum of losses](#weighted-sum-of-losses) |
 | Point ranking | | | | |
-| Multi-class clf | majority cls, 1vsAll log regr, DT + bagg/boost, naive bayes, SVM | [Bert](#bert), [CNN](#cnn) | [softmax](#softmax) over K | [CE](#ce); [KL-divergence](#kl-divergence) |
+| Multi-class clf | majority cls, 1vsAll log regr, DT + bagg/boost, naive bayes, SVM | [Bert](#bert), [CNN](#cnn)/ViT | [softmax](#softmax) over K | [CE](#ce); [KL-divergence](#kl-divergence) |
 | Multi-label clf | majority cls | | [sigmoid](#sigmoid-function) p(k) ∀k∈K | per-label [weighted BCE](#weighted-bce) |
 | Clustering | K-means, GMM | DEC | [K-means with SSE](#k-means-inertia--sse) / [GMM with negative log-likelihood](#gmm-negative-log-likelihood) / [DEC with KL loss](#dec-with-kl-loss) | |
 | Encoding | integer encoding, one-hot, [BoW](#bow), [Word2Vec](#word2vec) | Elmo, BERT, BLOOM, Contrastive Learning | embedding vector | [CE](#ce) / [InfoNCE](#infonce) / [triplet loss](#triplet-loss) |
@@ -439,10 +436,11 @@ Regularization:
 Model training/fitting:
 
 * dataset: data split to training, validation (k-fold), test (hold-out)
-
 * approach: forward feed (layers, bias, activation function, softmax) and backward propagation, contrastive training (feature= query + n objects, label = idx of object among n with highest similarity)
 * distributed training: PyTorch Distributed Data Parallel (copy model, forward minibatch, aggregate loss, sync gradients, update all)
 * Optimisation: stochastic gradient descent, weighted alternating least squares
+* Fine tuning
+* Continous leaninrg
 
 Inference Serving:
 
@@ -458,19 +456,14 @@ Inference Serving:
 
 # Product Ownership
 
-* Roadmap: MVP (resolve risk first) to V1 to V2, what feature to deliberately cut (reason: impact, effort)
+* Roadmap: short-term/MVP (resolve risk first) to medium to long-term solution, what feature to deliberately cut (reason: impact, effort)
 * Risk and mitigations: priorities to de-risk
 * Team profile: roles, scale
-* Project management: agile (backlog, todo with AC, discovery/build/refine, qa, done), sprint goal, regular summary, retro
+* Project management: agile (backlog, ready with AC, discovery/build/refine, qa, blocked, done), sprint goal, regular summary, retro
 * release strategy: feature flag, p-value, internal dogfood, shadow deployment, beta cohort, canary release for bug focus, A/B testing quality focus, GA, rollback criteria, kill switch
 * post release: iterate or roll back
 
 
-# TODO
-
-* ensemble: bagging vs boosting
-* decision tree with boosted gradients?
-* convolutional NN CNN
 
 # Definitions
 
@@ -485,6 +478,10 @@ Consistency, Availabiltiy, Partition Tolerance. Partition Tolerance is required 
 ## ACID
 
 Atomicity, Consistency, Isolation, Durability
+
+## Simpson's paradox
+
+Simpson's paradox is an edge case when the macro-level analysis contradicts the micro-level findings due to correlations between the grouping and hidden variables. Related to Baye's theorem.
 
 ## Self-service (deflection) rate
 
@@ -534,6 +531,7 @@ $$
 MAE = \frac{1}{n} \sum |y-\hat{y}|
 $$
 
+
 ## MSE
 
 > regression loss
@@ -546,7 +544,13 @@ $$
 
 ## MASE
 
-TODO
+> time series metric
+
+Mean Absolute Scaled Error is a time series forecasting metric that, it allows comparsion across different time series with different scales. It normalizes the absolute error by the average error of a naive baseline (typically the one-step seasonal naive forecast). MASE < 1 means the forecast is better than baseline.
+
+$$
+MASE = \frac{\frac{1}{n}\sum |y-\hat{y}|}{\text{MAE of naive forecast}}
+$$
 
 ## Huber loss
 
@@ -1212,9 +1216,8 @@ Issues:
 * exact n-gram match only, so synonyms/paraphrases are penalized like errors
 * designed for corpus-level aggregation; noisy at the single-sentence level
 
-## GLEU
+GLEU operates at a sentence level, and doesn't require brevity penalty. Recall oriented fince it focuses on keeping reference content.
 
-TODO
 
 ## ROUGE
 
@@ -1328,7 +1331,16 @@ ROC-AUC is smooth and ranking-oriented across the full margin distribution, it i
 
 ## IoU
 
-TODO
+> detection/segmentation metric
+
+Intersection over Union (IoU), also called Jaccard Index, measures overlap between predicted and ground-truth bounding boxes or masks. It is used when spatial accuracy matters. It is the area of intersection divided by the area of union. Range is [0, 1], where 1 is perfect overlap.
+
+$$
+\text{IoU} = \frac{|\text{Predicted} ∩ \text{Ground Truth}|}{|\text{Predicted} ∪ \text{Ground Truth}|}
+$$
+
+Intuition: strict penalty for spatial misalignment. Even if a box contains the object, off-by-a-few-pixels penalties it heavily. Common thresholds: IoU ≥ 0.5 (loose match), IoU ≥ 0.75 (strict match).
+
 
 ## RankNet
 
@@ -1404,11 +1416,11 @@ LambdaMART is [LambdaRank](#lambdarank)'s $\lambda$ gradients used as pseudo-res
 
 ## Bert
 
-Bert, DistilBert
+TODO: Bert, DistilBert
 
 ## CNN
 
-TODO
+Convolutional Neural Network (CNN) is a deep learning architecture designed to process grid-like data, especially images. It uses convolutional layers to automatically learn spatial hierarchies of features through learnable filters (kernels).
 
 ## NMS
 
@@ -1420,39 +1432,54 @@ Outline:
 3. Remove any other detections that overlap with it (based on an IoU threshold, typically 0.5)
 4. Repeat with the next highest-scoring remaining detection
 
+
 ## BoW
 
 Bag of Words (key-count, sparse representation)
 
+Bag of Words (BoW) is a text feature extraction technique that represents text as an unordered collection of word counts, ignoring word order and grammatical structure. Each document is converted into a sparse vector where each dimension represents a unique word in the vocabulary.
+
+Simple, fast, lightweight and interpretable. However, ignores context, synonyms, and word order while creating a sparse high dimentionality output dominated by common words.
+
+
 ## TF-IDF
 
-normalized BoW
+Normalized BoW, Weight by term frequency and inverse document frequency to down-weight common words.
+
 
 ## BM25
 
 TODO
 
+
+## Word2Vec
+
+Learn dense embeddings instead of sparse counts
+
+shallow NN, Continuous BoW + Skip-gram
+
+
 ## Matrix factorization
 
 TODO
 
-## Word2Vec
-
-shallow NN, Continuous BoW + Skip-gram
 
 ## kNN
 
 k Nearest Neighbour
 
+
 ## ANN
 
 approximate (tree and/or cluster based, locally sensitive hashing, ScaNN, DiscScann, HNSW)
+
 
 ## Apache Lucene
 
 retrieval/serving solution
 
 implementations: Elasticsearch, Solr
+
 
 ## RPN
 
