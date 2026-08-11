@@ -92,7 +92,7 @@ Summarise: business problem (with scale quantifier), expected impact on business
 
 TL;DR: KPI
 
-What is success? One primary and 2-3 seconday, 1 guardrail that must not degrade (target values with justification), risk of aggregation [Simpson's paradox]
+What is success? One primary North-star metric and 2-3 seconday, 1 guardrail that must not degrade (target values with justification), risk of aggregation [Simpson's paradox]. AARRR: Acquisition, Activation, Retention, Referral, Revenue
 
 Prevalence
 
@@ -434,7 +434,7 @@ Clustering: centroid, prototype
 
 Encoding:
  * integer encoding, one-hot, [BoW](#bow), [Word2Vec](#word2vec)
- * Elmo, BERT, BLOOM, Contrastive Learning
+ * [BERT](#bert), BLOOM, Contrastive Learning
    * head: embedding vector
    * loss: [CE](#ce) / [InfoNCE](#infonce) / [triplet loss](#triplet-loss)
 
@@ -533,7 +533,7 @@ Model training/fitting:
 * Risk and mitigations: priorities to de-risk
 * Team profile: roles, scale
 * Project management: agile (backlog, ready with AC, discovery/build/refine, qa, blocked, done), sprint goal, regular summary, retro
-* release strategy: feature flag, p-value, internal dogfood, shadow deployment, beta cohort, canary release for bug focus, A/B testing quality focus, GA, rollback criteria, kill switch
+* release strategy: feature flag, p-value, internal dogfood, shadow deployment, beta cohort, canary 1-5% release for bug focus, rolling release, A/B testing quality focus, recreate (reboot), blue/green (instant) switch, GA, rollback criteria, kill switch
 * post release: iterate or roll back
 
 
@@ -1489,7 +1489,11 @@ LambdaMART is [LambdaRank](#lambdarank)'s $\lambda$ gradients used as pseudo-res
 
 ## Bert
 
-TODO: Bert, DistilBert
+Bidirectional Encoder Representations from Transformers (BERT) is a pre-trained transformer-based 110M-param NN that learns deep contextual word representations by predicting masked tokens and next sentence relationships. It has multi-head attention and truly bidirectional.
+
+DistilBERT is a smaller, faster distilled version of Bert that retains ~97% of BERT's performance while being 40% smaller (66M param) and 60% faster. 
+
+Embeddings from Language Models (ELMo) is an earlier bidirectional contextualized embedding approach based on concatenated LSTMs with 94M params.
 
 ## CNN
 
@@ -1522,7 +1526,7 @@ Normalized BoW, Weight by term frequency and inverse document frequency to down-
 
 ## BM25
 
-TODO
+Best Matching 25 (BM25) is a probabilistic ranking function used in information retrieval to score document relevance given a query. It combines term frequency (TF) with inverse document frequency (IDF) while accounting for document length normalization.
 
 
 ## Word2Vec
