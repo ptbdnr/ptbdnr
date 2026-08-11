@@ -1,5 +1,9 @@
 # ML System Design
 
+> In short: "it depends".
+> In a few words: "there are multiple ways".
+> Better answer: "may I ask a few clarifying questions".
+
 Org certificate:
 
 * [AI Platform on Microsoft Azure Specialization](https://teams.public.onecdn.static.microsoft/evergreen-assets/safelinks/2/atp-safelinks.html)
@@ -19,35 +23,23 @@ This outline  (4 + 2x4 blocks) is very high level and incomplete. The `: x%` is 
 
 ```mermaid
 flowchart TD
-    discover["Discover (Def, Goal, FR, Scale, Constraints) : 15%"]
-    b_metrics[Online Eval : 5%]
-    subgraph sol_des[Solution Design : 20%]
-        api[I/O API : 5%]
-        ml_task[ML Task & Eval : 5%]
-        data[Data Engineering : 5%]
-        sec_by_des[Responsible ML : 5%]
+    discover["Discover (Def, Goal, FR, Scale, Constraints) : 15%"] --> b_metrics & sol_des
+    b_metrics[Online Eval : 5%] --> sol_des
+    sol_des[Solution Design : 20%] --> hld
+    hld[High Level Design: 20%] --> tech_des[Technical Design : 20%]
+
+    subgraph sol_des
+        api[I/O API : 5%] --- ml_task & data
+        ml_task[ML Task & Eval : 5%] --- data
+        data[Data Engineering : 5%] --- sec_by_des
+        sec_by_des[Responsible ML : 5%] --- ml_task
     end
-    hld[High Level Design: 20%]
-    subgraph tech_des[Technical Design : 20%]
-        feat_eng[Feature Engineering : 5%]
-        model[Model selection : 5%]
+    subgraph tech_des
+        feat_eng[Feature Engineering : 5%] --- train & serve
+        model[Model selection : 5%] --- train & serve
         train[Training : 5%]
         serve[Serving : 5%]
     end
-
-    discover --> b_metrics
-    b_metrics & discover --> sol_des
-        ml_task --- data
-        api --- ml_task
-        api --- data
-        ml_task --- sec_by_des
-        data --- sec_by_des
-    sol_des --> hld
-    hld --> tech_des
-        feat_eng --- train
-        feat_eng --- serve
-        model --- train
-        model --- serve
 ```
 
 ## Discover: Business Objective, Requirements, Scope (15%)
@@ -61,15 +53,14 @@ Definitions in this context:
 * problem with quantifying numbers
 
 
-👍 Functional Requirements: UX, user journey, input/output modality, language requirement, continuous improvement/active learning
+👍 Functional Requirements: UX, user journey, input/output modality, language requirement, event history, continuous improvement/active learning
 
 
 Business Objective, vision & goal. KPIs:
 
 * 💰 : annual recurring revenue ARR, net profit margin NPM
 * 😊 : customer acquisition cost CAC, Churn, customer lifetime value CLtV
-* ⭐ : customer satisfaction score CSat, net promoter score NPS
-* 🚀 : output per FTE
+* 🚀 : output per FTE, cost per task
 * 📦 : average order value AOV, order fulfillment cycle time OFCT, inventory turnover COGS/avgINV
 * 🔑 : incident/breach count, data subject access request (DSAR) response time, mean time to detect/respond MTTD/MTTR
 
@@ -108,7 +99,7 @@ What is success? One primary and 2-3 seconday, 1 guardrail that must not degrade
 Prevalence
 
 User feedback:
-  * Explicit feedback (strong signal but few): User likes, valid dislike/escalation/complaint (hard negative), Mean Opinion Score (MOS)
+  * Explicit feedback (strong signal but few): User likes, valid dislike/escalation/complaint (hard negative), Customer Satisfaction Score (CSat), Mean Opinion Score (MOS), Net Promoter Score (NPS)
   * Implicit feedback (noisy signal but abundant): Click-through rate (CTR, clickbait risk), conversion rate (# conversions / # impressions), Repeated Purchase Rate (RPR), query reformulation rate, watch/dwell time, completed watch, share clicks
 
 Operational performance:
@@ -116,12 +107,13 @@ Operational performance:
   * time to process
   * cost per task, total cost per month
   * [self-service (deflection) rate](#self-service-deflection-rate) (no-escalation-trick risk)
-  * dwell time, stockout/overstock cost
+  * stockout/overstock cost
   * SLA breach rate, fraud $ prevented, revenue error
 
 Safety:
   * field incident / miss rate
   * time to mitigave
+  * HITL expert confirm rate
 
 
 ## Solution Design: I/O API, ML Task Framing, Data Engineering, Responsible ML
@@ -168,7 +160,7 @@ Idiosync
 | Point ranking | $(q,d) → \{0,1\}$ | (q, d, {0,1}) |  |
 | Multi-class clf | $x → y∈K$ | (x, y∈K) | per-class/macro [P](#precision)/[R](#recall)/[Fβ](#f1), [Accuracy](#accuracy), [Hamming loss](#hamming-loss) | 
 | Multi-label clf | $x → Y⊆K$ | (x, Y⊆K) | per-class/macro [P](#precision)/[R](#recall)/[Fβ](#f1), [Accuracy](#accuracy), [Hamming loss](#hamming-loss) | 
-| Clustering | $x → x∈K/\text{Centroid}/\text{Prototype}$ / G=(X,E)+sim(i,j)∈E | x∈K ∀x∈X  | [Silhouette](#silhouette), [Davies-Bouldin](#davies-bouldin), [Calinski-Harabasz](#calinski-harabasz), + stability across samples, labels exist:[ARI](#ari) or [NMI](#nmi) | 
+| Clustering | $x → x∈K$ / G=(X,E)+sim(i,j)∈E | x∈K ∀x∈X  | [Silhouette](#silhouette), [Davies-Bouldin](#davies-bouldin), [Calinski-Harabasz](#calinski-harabasz), + stability across samples, labels exist:[ARI](#ari) or [NMI](#nmi) | 
 | Encoding | $x → \hat{x}$ | (x, n similar, m different) | [R](#recall)@k, [MRR](#mrr), [Silhouette](#silhouette), [Davies-Bouldin](#davies-bouldin), [Linear probe](#linear-probe) |
 | Retrieval | $q → d$| (q, positives, negatives) | [HitRate](#hitratek)@k, [R](#recall)/[P](#precision)@k, [diversity](#diversity), [catalog coverage](#catalog-coverage), [TF-IDF](#tf-idf), [BM25](#bm25) |
 | Pair Ranking | $q → d^{-}<d^{+}$ | (q, 2x scored d) |[MRR](#mrr), [Pairwise Accuracy](#pairwise-accuracy), [ROC-AUC on ordered pairs](#roc-auc-on-ordered-pairs) |
@@ -227,6 +219,17 @@ Data store: [CAP Theorem](#cap-theorem)
 
 
 # High Level Design (20%)
+
+Hints:
+* API
+* load balance before VM/node
+* cache (memory is fast, max 1TB, disk is slow)
+* db partitioning logic
+* chunking, indexing
+* proxy (edge node)
+* queue (priority, retry with dead letter)
+* redundancy & replication
+* options, trade offs (pro/cons)
 
 legend: 
 * act["actor (init)"] --action:data--> act["actor (process)"]
@@ -362,15 +365,6 @@ flowchart TD
 ```
 
 
-
-* load balance before VM/node
-* cache (memory is fast, disk is slow)
-* partitioning logic
-* indexing
-* proxy (edge node)
-* queue (priority, retry with dead letter)
-* redundancy & replication
-
 ## Technical Design: Feature Engineering, Model selection, Training, Serving (20%)
 
 Realistic system: add complexity only if justified
@@ -393,32 +387,110 @@ Realistic system: add complexity only if justified
 2. Candidate framings (2–3 of the ML Task), e.g. ranking vs retrieval+ranking
 3. Pick one; reject runner-up against: label cost, metric alignment, latency, data volume, interpretability. trade-offs, strength, weakness, tech challenges, edge cases
 
-Idiosync:
-* Time Series Forecast: leakage through future-known covariates; hierarchical reconciliation
-* Binary clf: class weights over naive oversampling; recalibrate after any resampling; threshold from cost matrix, not 0.5; label delay (chargebacks arrive weeks late) / multi-task (K binary heads)
-* Point rank: position bias (position feature at train, fixed at serve, or IPS); temporal split; negative downsampling then recalibrate
-* Multi-class clf (per-class thresholds; handle imbalance, taxonomy drift over time)
+Regression: 
+  * weighted avg/median
+  * linear regressions
+  * DT + bagging/boosting
+  * NN
+    * head: single scalar
+    * loss: [MSE](#mse) / [Huber](#huber-loss)
+  
+Interval Regression:
+  * segment P#
+  * NN
+    * head: [quantile heads for intervals](#quantile-heads-for-intervals)
+    * loss: [pinball for quantiles](#quantile-heads-for-intervals)
 
-| Task | Baseline | Advanced | ML head | ML loss | 
-|---|---|---|---|---|
-| Regression | (weighted) avg/median, linear regr, DT + bagg/boost  | NN | single scalar | [MSE](#mse) / [Huber](#huber-loss) |
-| Interval Regression | segment P## | | [quantile heads for intervals](#quantile-heads-for-intervals) | [pinball for quantiles](#quantile-heads-for-intervals) |
-| Time Series Forecast | segment (weighted) avg/median, Holt-Winter's method, ETS/ARIMA | GBDT on lag features, Prophet, DeepAR, TFT | per-horizon point / quantile outputs | MSE / pinball |
-| Binary clf w/o imbalance  | majority cls, rule based, log regr, DT + bagg/boost | [Bert](#bert), DCN / DLRM | [sigmoid p(y)](#sigmoid-function) | ([Weighted](#weighted-bce)) [BCE](#bce--logloss); [Focal loss](#focal-loss), multi-task [weighted sum of losses](#weighted-sum-of-losses) |
-| Point ranking | | | | |
-| Multi-class clf | majority cls, 1vsAll log regr, DT + bagg/boost, naive bayes, SVM | [Bert](#bert), [CNN](#cnn)/ViT | [softmax](#softmax) over K | [CE](#ce); [KL-divergence](#kl-divergence) |
-| Multi-label clf | majority cls | | [sigmoid](#sigmoid-function) p(k) ∀k∈K | per-label [weighted BCE](#weighted-bce) |
-| Clustering | K-means, GMM | DEC | [K-means with SSE](#k-means-inertia--sse) / [GMM with negative log-likelihood](#gmm-negative-log-likelihood) / [DEC with KL loss](#dec-with-kl-loss) | |
-| Encoding | integer encoding, one-hot, [BoW](#bow), [Word2Vec](#word2vec) | Elmo, BERT, BLOOM, Contrastive Learning | embedding vector | [CE](#ce) / [InfoNCE](#infonce) / [triplet loss](#triplet-loss) |
-| Retrieval | [kNN](#knn), [Apache Lucene](#apache-lucene) | [ANN](#ann) | dot/cosine (of 2 embeddings) | [InfoNCE](#infonce) / sampled [softmax](#softmax) / [triplet loss](#triplet-loss) |
-| Pair Ranking (in-batch negatives + hard-negative mining; logQ sampling correction; cold-start via content features) | rule-based, embedding based, heuristic, log regr w/ feature crosses; GBDT | [matrix factorization](#matrix-factorization) with ALS, Two Towers + HNSW/ScaNN, [RankNet](#ranknet) | 2x scalar score s(q,d)  | [BCE](#bce--logloss) / [Hinge ranking loss](#hinge-ranking-loss) |
-| List Ranking (split by query, never by doc; click labels are biased vs human judgments) | rule-based, heuristic, embedding based | content-based, collaborative filtering, cross-encoder re-ranker, [ListNet](#listnet), [LambdaRank](#lambdarank), [LambdaMART](#lambdamart) | k scalar scores s(q,d) | [CE](#ce) |
-| Text named entity segmentation | | |  per-token [softmax](#softmax) / CRF | token-level [CE](#ce) or CRF-NLL |
-| Generate text2text (hallucination guardrails) | prompt eng, composite (RAG) | PEFT, Transformer | [softmax](#softmax) over VOCAB | next-token [CE](#ce) for supervised fine-tuning; [DPO](#dpo) on preferences |
-| Image object detection (flip/crop/color augmentation; [NMS](#nms) and anchor tuning; small-object failure mode) | | YOLO family; Faster R-CNN; DETR, transfer-learn | box regression + class scores + objectness | composite: IoU/smooth-L1 + focal CE |
-| Image object localisation | | [RPN](#rpn), box regression + class scores + objectness | mAP@IoU 0.5 | composite: IoU/smooth-L1 + focal CE |
-| Image object segmentation | | ? + [NMS](#nms) | per-pixel [softmax](#softmax), dense FCN/U-Net/Mask decoder | per-pixel [CE](#ce) + Dice-IoU loss |
-| Anomaly detection ("normal" training data is contaminated; threshold set by alert budget, not statistics; feed confirmed alerts back as labels) | isolation forest; autoencoder; one-class SVM | 3 | per-metric z-score / quantile threshold | reconstruction error / one-class objective |
+Time Series Forecast: leakage through future-known covariates; hierarchical reconciliation, temporal value split
+  * segment (weighted) avg/median, Holt-Winter's method, ETS/ARIMA
+  * GBDT on lag features, Prophet, DeepAR, TFT
+  * NN
+    * head: per-horizon point / quantile outputs
+    * loss: MSE / MASE / pinball
+
+Binary clf w/o imbalance: class weights over naive oversampling; recalibrate after any resampling; threshold from cost matrix, not 0.5; label delay (chargebacks arrive weeks late) / multi-task (K binary heads)
+  * majority cls, rule based, log regr, DT + bagg/boost
+  * [Bert](#bert), DCN / DLRM
+    * head: [sigmoid p(y)](#sigmoid-function)
+    * loss: ([Weighted](#weighted-bce)) [BCE](#bce--logloss); [Focal loss](#focal-loss), multi-task [weighted sum of losses](#weighted-sum-of-losses)
+
+Point ranking: position bias (position feature at train, fixed at serve, or IPS); temporal split; negative downsampling then recalibrate
+  * TODO
+
+Multi-class clf: per-class thresholds; handle imbalance, taxonomy drift over time
+  * majority cls, 1vsAll log regr, DT + bagg/boost, naive bayes, SVM
+  * [Bert](#bert), [CNN](#cnn)/ViT
+    * head: [softmax](#softmax) over K
+    * loss: [CE](#ce); [KL-divergence](#kl-divergence)
+
+Multi-label clf:
+ * majority cls 
+ * NN: 
+   * head: [sigmoid](#sigmoid-function) p(k) ∀k∈K
+   * loss: per-label [weighted BCE](#weighted-bce)
+
+Clustering: centroid, prototype
+ * K-means: head: [SSE](#k-means-inertia--sse)
+ * GMM: head: [negative log-likelihood](#gmm-negative-log-likelihood)
+ * DEC: head: [KL loss](#dec-with-kl-loss)
+
+Encoding:
+ * integer encoding, one-hot, [BoW](#bow), [Word2Vec](#word2vec)
+ * Elmo, BERT, BLOOM, Contrastive Learning
+   * head: embedding vector
+   * loss: [CE](#ce) / [InfoNCE](#infonce) / [triplet loss](#triplet-loss)
+
+Retrieval:
+ * [kNN](#knn), [Apache Lucene](#apache-lucene)
+ * [ANN](#ann)
+   * head: dot/cosine (of 2 embeddings)
+   * loss: [InfoNCE](#infonce) / sampled [softmax](#softmax) / [triplet loss](#triplet-loss)
+
+Pair Ranking: in-batch negatives + hard-negative mining; logQ sampling correction; cold-start via content features
+ * rule-based, embedding based, heuristic, log regr w/ feature crosses; GBDT
+ * [matrix factorization](#matrix-factorization) with ALS
+ * Two Towers + HNSW/ScaNN
+ * [RankNet](#ranknet)
+   * head: 2x scalar score s(q,d)
+   * loss: [BCE](#bce--logloss) / [Hinge ranking loss](#hinge-ranking-loss)
+
+List Ranking: split by query, never by doc; click labels are biased vs human judgments
+ * rule-based, heuristic, embedding based
+ * content-based, collaborative filtering, cross-encoder re-ranker
+ * [ListNet](#listnet)
+   * head: k scalar scores s(q,d)
+   * loss: [CE](#ce)
+ * [LambdaRank](#lambdarank)
+ * [LambdaMART](#lambdamart)
+  
+Text named entity segmentation: head: per-token [softmax](#softmax) / CRF; loss: token-level [CE](#ce) or CRF-NLL
+
+Generate text2text: hallucination guardrails
+ * prompt eng, composite (RAG)
+ * PEFT, Transformer
+   * head: [softmax](#softmax) over VOCAB
+   * loss: next-token [CE](#ce) for supervised fine-tuning; [DPO](#dpo) on preferences
+
+Image object detection: flip/crop/color augmentation, [NMS](#nms) and anchor tuning; small-object failure mode
+ * YOLO family; Faster R-CNN; DETR, transfer-learn
+   * head: box regression + class scores + objectness
+   * loss: composite: IoU/smooth-L1 + focal CE
+  
+Image object localisation:
+ * [RPN](#rpn), box regression + class scores + objectness
+   * head: mAP@IoU 0.5
+   * loss: composite: IoU/smooth-L1 + focal CE
+
+Image object segmentation:
+ * ? + [NMS](#nms)
+   * head: per-pixel [softmax](#softmax), dense FCN/U-Net/Mask decoder
+   * loss: per-pixel [CE](#ce) + Dice-IoU loss
+
+Anomaly detection: "normal" training data is contaminated; threshold set by alert budget, not statistics; feed confirmed alerts back as labels
+ * isolation forest; autoencoder; one-class SVM
+ * NN: 
+   * head: per-metric z-score / quantile threshold
+   * loss: reconstruction error / one-class objective
 
 
 ### Training
@@ -426,7 +498,9 @@ Idiosync:
 Model architecture
 * number of stages: one vs multi-stage, early vs late fusion (simpler vs native combined understanding)
 
+
 Regularization: 
+
 * dropout
 * weight regularization: lasso k*sum|w|, ridge k*sum w^2, elastic net
 * early stopping
@@ -442,7 +516,8 @@ Model training/fitting:
 * Fine tuning
 * Continous leaninrg
 
-Inference Serving:
+
+### Serving
 
 * data ingestion, data indexing pipeline
 * latency budget: batch vs real-time, streaming output
@@ -450,7 +525,7 @@ Inference Serving:
 * Re-training cadence
 * host: cloud vs on-device
 * pipeline: stages, gates
-* model compression: quantization, knowledge distillation, pruning
+* model compression: quantization, knowledge distillation, pruning, weight sharing
 * monitoring, hardware utilisation, requests/responses, drift in performance (model/data/context drift)
 
 
