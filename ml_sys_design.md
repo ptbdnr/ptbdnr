@@ -1,8 +1,6 @@
 # ML System Design
 
-> In short: "it depends".
-> In a few words: "there are multiple ways".
-> Better answer: "may I ask a few clarifying questions".
+In short: "it depends". In a few words: "there are multiple ways". Better answer: "may I ask a few clarifying questions".
 
 Org certificate:
 
@@ -25,16 +23,16 @@ This outline  (4 + 2x4 blocks) is very high level and incomplete. The `: x%` is 
 flowchart TD
     discover["Discover (Def, Goal, FR, Scale, Constraints) : 15%"] --> b_metrics & sol_des
     b_metrics[Online Eval : 5%] --> sol_des
-    sol_des[Solution Design : 20%] --> hld
-    hld[High Level Design: 20%] --> tech_des[Technical Design : 20%]
+    sol_des --> hld
+    hld[High Level Design: 20%] --> tech_des
 
-    subgraph sol_des
+    subgraph sol_des[Solution Design : 20%]
         api[I/O API : 5%] --- ml_task & data
         ml_task[ML Task & Eval : 5%] --- data
         data[Data Engineering : 5%] --- sec_by_des
         sec_by_des[Responsible ML : 5%] --- ml_task
     end
-    subgraph tech_des
+    subgraph tech_des[Technical Design : 20%]
         feat_eng[Feature Engineering : 5%] --- train & serve
         model[Model selection : 5%] --- train & serve
         train[Training : 5%]
