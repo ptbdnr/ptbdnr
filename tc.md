@@ -3,6 +3,8 @@ Well, you know my exp and expertise I bring, based on that what do you think wil
 Stakeholders:
 * upstream reporting
 * managing direct/indirectly
+
+Time of work:
 * team working hours, hours of required online presence, pager/nightwatch
 
 Place of work:
