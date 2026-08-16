@@ -52,12 +52,12 @@ mutable: set, list, hashmap
 
 operations: 
 * create, destroy
-* read at index/start/end
+* read at index/start/end (peak)
 * insert/update at index/end/start
 * delete at index/end/start
 * find by key
 * sort by key, reverse
-* size
+* size, is_empty
 
 ## Hashmap
 
