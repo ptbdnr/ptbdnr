@@ -153,6 +153,10 @@ class TrieNode:
 * full binary
 * trie
 
+## Graph
+
+adjacency list/matrix
+
 ## Heap
 
 ```python
@@ -175,9 +179,42 @@ max_val = -1 * heappop(max_heap)
 
 binary heap
 
-## Algorithms
+## Graph
 
-### DFS
+
+# Algorithms
+
+## Binary Search
+
+...
+
+## Modulo aritmetic
+
+```python
+4%3 == 1
+-1 % 4 = 3
+divmod(x,y) == (x // y, x % y)
+divmod(7,3) == (2,1)
+```
+
+## Largest 2^n < K
+
+```python
+exp = 0
+while 2 **(exp+1) < K:
+  exp += 1
+return 2**exp
+```
+
+## Tree Travelsal
+
+In-order traversal
+
+Pre-order traversal
+
+Post-order traversal
+
+## DFS
 
 LIFO, O(n) or O(h) where h is depth
 
@@ -192,7 +229,7 @@ def dft(head: Node) -> set:
     return seen
 ```
 
-### BFS
+## BFS
 
 ```python
 from collections import dequeue
@@ -206,14 +243,68 @@ def bfs(head: Node) -> set:
     return seen
 ```
 
-### Dijkstra's algorithm
+## Dijkstra's algorithm
 
 topological sort
 
-### Kruskal's algorithm
+## Kruskal's algorithm
 
-### Prim's algorithms
+## Prim's algorithms
 
-### Tarjan's algorithm
+## Tarjan's algorithm
 
-### Floyd-Warshall algorithm
+## Floyd-Warshall algorithm
+
+## Greatest Common Divisor
+
+## Least Common Multiplier
+
+## Check for Primality
+
+## Sort
+
+Merge Sort
+
+Quick Sort
+
+Radix Sort
+
+## 2D grid travel
+
+```python
+dirs = [(0,1), (1,0), (0,-1), (-1,0)]
+dirs[5 % len(dirs)] == (1,0)
+```
+
+# Binary Operations
+
+AND `&`
+
+```python
+x & 0s = 0s
+x & 1s = x
+x & x = x
+```
+
+OR `|`
+
+```python
+x | 0s = x
+x | 1s = 1s
+x | x = x
+```
+
+NOT `~`
+
+XOR `^`
+
+```python
+x^0s = x
+x^1s = ~x
+x^x = 0s
+```
+
+Left Shift `<<`
+
+Right Shift `>>`
+
