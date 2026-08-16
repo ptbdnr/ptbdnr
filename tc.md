@@ -40,8 +40,9 @@ Personal Time Off:
 * Option for sabbatical: 6mo frozen contract every 3.5 years
 
 L&D:
-* annual budget
-* allocated time
+* annual budget: 3-5K
+* allocated time: 5 days
 
 Start date
 * compensation review (earliest date)
+* probation period, option to extend
