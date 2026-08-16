@@ -47,14 +47,14 @@ TL;DR: Definitions, FR, Business Goal, Constraints, SLA, Scale
 Definitions in this context:
 
 * terminology (similarity/personalized/engagement)
-* user segment
-* problem with quantifying numbers
+* user segment, who will use it and why
+* problem statement with quantifying numbers
 
 
-👍 Functional Requirements: UX, user journey, input/output modality, language requirement, event history, continuous improvement/active learning
+👍 Functional Requirements: UX, user journey, input/output modality, language requirement, event history, continuous improvement/active learning, priority features
 
 
-Business Objective, vision & goal. KPIs:
+Business objective:
 
 * 💰 : annual recurring revenue ARR, net profit margin NPM
 * 😊 : customer acquisition cost CAC, Churn, customer lifetime value CLtV
@@ -65,10 +65,10 @@ Business Objective, vision & goal. KPIs:
 
 Constraints (incl. SLAs):
 
-* ⚖️ : regulatory
-* ⏱️ : latency budget (time to first meaningful byte, batch/real-time/stream), roundtrip EU-US: 150ms, within same datacentre 0.5ms
-* ☁️ : data protection ([ACL](#acl)), provenance, sovereignty, redundancy (99.9% down 9hr/yr, 99.999% down 5min/yr)
-* 🔍 : explainability, interpretability
+* ⚖️ : regulatory, data sovereignty, GDPR
+* ⏱️ : response time, latency budget (time to first meaningful byte, batch/real-time/stream), roundtrip EU-US: 150ms, within same datacentre 0.5ms
+* ☁️ : data protection ([ACL](#acl)), provenance, redundancy (99.9% down 9hr/yr, 99.999% down 5min/yr)
+* 🔍 : explainability, interpretability, maintainability (operability, evolvability, changeability)
 * 🖥️ : deployment on hardware (edge device, server)
 * 📖 : cost of data gathering (labelling)
 
@@ -121,11 +121,12 @@ Safety:
 
 I/O spec:
  
-* input → output schema {attr: data type}
+* interface: input → output schema, request → response signature {attr: data type}
 * at what granularity (user / item / pair / session),
 * what cadence (one-shot vs sequential)
 * idempotency (with request id of retries)
 * pagination and versioning
+* routes and methods
 
 Label spec:
 
@@ -219,15 +220,19 @@ Data store: [CAP Theorem](#cap-theorem)
 # High Level Design (20%)
 
 Hints:
-* API
+* UI, CDN
+* API, OpenAPI spec, rate limit
 * load balance before VM/node
 * cache (memory is fast, max 1TB, disk is slow)
-* db partitioning logic
+* db partitioning logic, data lake, availability, recovery
 * chunking, indexing
 * proxy (edge node)
 * queue (priority, retry with dead letter)
-* redundancy & replication
+* data redundancy & replication, snapshot backup, standby secondary, 
 * options, trade offs (pro/cons)
+* logs
+* ACL, sec, data access
+* CI/CD, version control
 
 legend: 
 * act["actor (init)"] --action:data--> act["actor (process)"]
@@ -546,7 +551,10 @@ An Access Control List (ACL) is a list of permissions that specifies which users
 
 ## CAP Theorem
 
-Consistency, Availabiltiy, Partition Tolerance. Partition Tolerance is required to scale the system, however, the three together is impossible, so chose CP for with some downtime, or AP with delayed consistency.
+Consistency, Availabiltiy, Partition Tolerance. Partition Tolerance is required to scale the system, however, the three together is impossible, so choose:
+
+* CP with some downtime (consistent but may reject some requests),
+* AP with delayed consistency (always available but risk inconsistency).
 
 ## ACID
 
