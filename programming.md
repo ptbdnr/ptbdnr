@@ -1,6 +1,13 @@
 # Discover
 
-User: DAU, ingestion/query frequency, session duration
+Scale
+* Traffic: DAU, Request/User/Day, request type split
+
+session duration
+
+Constraints:
+* deployment: edge vs data center server
+
 
 Functional Requirements: UX, feature, session memory, continous improvement
 
@@ -10,7 +17,6 @@ Data
 * Array: emtpy, null, single element, all same, (un)sorted, (non)decreasing, (non)constant change, outliers at end
 * String: ANSII, special chars
  
-System: CPU time / memory / I/O operation constraints
 
 Quality: test first?
 
