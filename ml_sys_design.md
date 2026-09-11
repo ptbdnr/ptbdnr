@@ -156,31 +156,31 @@ Idiosync
 | Interval Regression | $x → (y^-,y^+)∈ℝ$ | $(x, y^-,y^+)$ | [interval coverage](#interval-coverage) |
 | Time Series Forecast | $(...,x_{t-1}) → y_t∈ℝ$ | $(...,x_{t-1}, x_{t})$ + covariates, horizon values | [wMAPE](#mape), [MASE](#mase) on [temporal split](#temporal-split) | 
 | Binary clf ±imbalance / multi-task (K binary heads) | $x → \{0,1\}$ | (x, y∈{0,1}) | [P](#precision)/[R](#recall)/[Fβ](#f1)@(0..1), [P@fixed-FPR](#precision), [PR-AUC](#pr-auc) w imbalance, [ROC-AUC](#roc-auc) w balance, [ECE](#calibration-ece)  |
-| Point ranking | $(q,d) → \{0,1\}$ | (q, d, {0,1}) |  |
+| Point ranking | $(q,d) → \{0,1\}$ | (q, d, {0,1}) | LogLoss/NCE, ROC-AUC, calibration since CTR feeds bidding |
 | Multi-class clf | $x → y∈K$ | (x, y∈K) | per-class/macro [P](#precision)/[R](#recall)/[Fβ](#f1), [Accuracy](#accuracy), [Hamming loss](#hamming-loss) | 
 | Multi-label clf | $x → Y⊆K$ | (x, Y⊆K) | per-class/macro [P](#precision)/[R](#recall)/[Fβ](#f1), [Accuracy](#accuracy), [Hamming loss](#hamming-loss) | 
 | Clustering | $x → x∈K$ / G=(X,E)+sim(i,j)∈E | x∈K ∀x∈X  | [Silhouette](#silhouette), [Davies-Bouldin](#davies-bouldin), [Calinski-Harabasz](#calinski-harabasz), + stability across samples, labels exist:[ARI](#ari) or [NMI](#nmi) | 
-| Encoding | $x → \hat{x}$ | (x, n similar, m different) | [R](#recall)@k, [MRR](#mrr), [Silhouette](#silhouette), [Davies-Bouldin](#davies-bouldin), [Linear probe](#linear-probe) |
+| Encoding | $x → z$ | (x, n similar, m different) | [R](#recall)@k, [MRR](#mrr), [Silhouette](#silhouette), [Davies-Bouldin](#davies-bouldin), [Linear probe](#linear-probe) |
 | Retrieval | $q → d$| (q, positives, negatives) | [HitRate](#hitratek)@k, [R](#recall)/[P](#precision)@k, [diversity](#diversity), [catalog coverage](#catalog-coverage) |
 | Pair Ranking | $q → d^{-}<d^{+}$ | (q, 2x scored d) |[MRR](#mrr), [Pairwise Accuracy](#pairwise-accuracy), [ROC-AUC on ordered pairs](#roc-auc-on-ordered-pairs) |
 | List Ranking | $q → sorted(D)$| (q, k scored d) | [mAP](#map), [nDCG](#ndcg)@k |
-| Text sequence labeling | ? | (token seq, per-token/span boundary labels) | text sequence pairwise or span-level micro [F1](#f1)/[ARI](#ari) |
+| Text sequence labeling | token seq -> label seq | (token seq, per-token/span boundary labels) | text sequence pairwise or span-level [F1](#f1) (seqeval) |
 | Generate text2text | $t → \hat{t}$ | $(t, \hat{t})$; preference pairs $(t, \hat{t}^+, \hat{t}^-)$ | [BLEU](#bleu), [GLEU](#gleu), [METEOR](#meteor), [ROUGE](#rouge), [RAGAS metrics](#ragas-metrics), [safety rates](#safety-rates), [perplexity](#perplexity) |
 
 | WIP Task framing | Mapping | Ground truth | Offline eval |
 |---|---|---|---|
 | Reinforcement Learning | | | | |
-| Translation text2text | $t → t'$ | BLEU n-gram comparison for translation, METEOR extended BLEU, GLEU sentence-level BLEU |
-| Transscript/Dictate T2S/StT | | [WER](#wer) for STT/TTS | |
+| Translation text2text | $t → t'$ | ? | BLEU n-gram comparison for translation, METEOR extended BLEU, GLEU sentence-level BLEU |
+| Transcript/Disctate T2S/StT | ? | ? | [WER](#wer) for STT/TTS |
 | Speaker recognition | | | |
 | Image object localization |  | | mAP@IoU 0.5 |
-| Image object detection | | [mAP](#map)@[.5:.95], [mAP](#map)@[IoU](#iou), per-class recall, FPS | (image, boxes + classes) |
+| Image object detection | | (img, (bbox,k)) | [mAP](#map)@[.5:.95], [mAP](#map)@[IoU](#iou), per-class recall, FPS |
 | Image semantic segmentation | img → P(k∈K@pixel) | (img, set[pixel-wise mask with object class]) | [P](#precision)@[IOU](#iou), [AP](#ap), [mAP](#map) | 
 | Image instance segmentation | img → P(i∈Instances@pixel) | (image, set[pixel-wise mask with object id]) | mIoU, obj boundary [mAP](#map)@[IoU](#iou), 1-vs-all recall, FPS |
 | Generate text2img | t → img | (t, pixels) | [Inception Score](#inception-score), [FID](#fid) |
 | Strategy Development (RL) | | | |
 | Combinatorial optimisation | $(f(x)≤C, z(x)) → x$| asymm costs | |
-| Anomaly detection |  $x → \{0,1\}$ | $(x,\{0,1\}) ∀ x∈X$ $ | precision@k alerts, PR-AUC on labeled slice, alert volume  |
+| Anomaly detection |  $x → \{0,1\}$ | $(x,\{0,1\}) ∀ x∈X$ | precision@k alerts, PR-AUC on labeled slice, alert volume  |
 | Causal Inference | | | |
 
 
@@ -201,8 +201,8 @@ Data schema: field name, data type (numerical discrete vs continuous, categorica
 Data store: [CAP Theorem](#cap-theorem)
 
 * Blob: Bucket in S3/GCS, Azure SA Container
-* Tabular row-based: vertically scalable, reliability, [ACID](#acid), RDBS, MySQL, PostgreSQL
-* Column-based: Cassandra, HBase, RedShift
+* Tabular row-based: vertically scalable, reliability, [ACID](#acid), RDBS, MySQL, PostgreSQL, or wide-column row (Cassandra, HBase)
+* Column-based: RedShift
 * Key/Value: horizontally scalable, dynamic schema, Redis, DynamoDB, CosmosDB
 * Document: MongoDB, CouchDB
 * Graph: Neo4J
@@ -302,6 +302,7 @@ flowchart TD
     end 
 
     subgraph valid["Validation per batch"]
+        todo
     end
 ```
 
@@ -314,8 +315,8 @@ title: Serve inference
 flowchart
     client["client (init)"]  --query:payload--> trans["transform (augment/encode)"] --submit:features--> infer
     infer --show:prediction--> client
-    infer --insert:log--> log_db[("log data store")]
-    client --insert:feedback --> log_db[("logs")]
+    infer --insert:log--> log_db[("logs")]
+    client --insert:feedback --> log_db
 
     subgraph infer["Inference"]
         predict["predict (forward pass, prediction head)"]
@@ -374,7 +375,7 @@ Realistic system: add complexity only if justified
 
 ### Feature Engineering (5%)
 
-* balance dataset (over vs under sampling),
+* balance dataset (over vs under sampling, or weights),
 * handle missing values (deletion, imputation)
 * data transform:
     * numerical: scaling (normalization = min-max scaling, standardization = z-score normalisation, log scaling), discretization (bucketing) log-transform skewed targets, clip outliers
@@ -409,7 +410,7 @@ Time Series Forecast: leakage through future-known covariates; hierarchical reco
   * GBDT on lag features, Prophet, DeepAR, TFT
   * NN
     * head: per-horizon point / quantile outputs
-    * loss: MSE / MASE / pinball
+    * loss: MSE / MSE / pinball
 
 Binary clf ±imbalance: class weights over naive oversampling; recalibrate after any resampling; threshold from cost matrix, not 0.5; label delay (chargebacks arrive weeks late) / multi-task (K binary heads)
   * majority cls, rule based, log regr, DT + bagg/boost
@@ -445,14 +446,13 @@ Encoding:
 
 Retrieval:
  * [kNN](#knn), [TF-IDF](#tf-idf), [BM25](#bm25),  [Apache Lucene](#apache-lucene)
- * [ANN](#ann)
+ * [ANN](#ann): Two Towers + HNSW/ScaNN
    * head: dot/cosine (of 2 embeddings)
    * loss: [InfoNCE](#infonce) / sampled [softmax](#softmax) / [triplet loss](#triplet-loss)
 
 Pair Ranking: in-batch negatives + hard-negative mining; logQ sampling correction; cold-start via content features
  * rule-based, embedding based, heuristic, log regr w/ feature crosses; GBDT
  * [matrix factorization](#matrix-factorization) with ALS
- * Two Towers + HNSW/ScaNN
  * [RankNet](#ranknet)
    * head: 2x scalar score s(q,d)
    * loss: [BCE](#bce--logloss) / [Hinge ranking loss](#hinge-ranking-loss)
@@ -538,7 +538,7 @@ Model training/fitting:
 * Risk and mitigations: priorities to de-risk
 * Team profile: roles, scale
 * Project management: agile (backlog, ready with AC, discovery/build/refine, qa, blocked, done), sprint goal, regular summary, retro
-* release strategy: feature flag, p-value, internal dogfood, shadow deployment, beta cohort, canary 1-5% release for bug focus, rolling release, A/B testing quality focus, recreate (reboot), blue/green (instant) switch, GA, rollback criteria, kill switch
+* release strategy: feature flag, internal dogfood, shadow deployment, beta cohort, canary 1-5% release for bug focus, rolling release, A/B testing quality focus w/ p-value, recreate (reboot), blue/green (instant) switch, GA, rollback criteria, kill switch
 * post release: iterate or roll back
 
 
@@ -562,7 +562,7 @@ Atomicity, Consistency, Isolation, Durability
 
 ## Simpson's paradox
 
-Simpson's paradox is an edge case when the macro-level analysis contradicts the micro-level findings due to correlations between the grouping and hidden variables. Related to Baye's theorem.
+Simpson's paradox is an edge case when the macro-level analysis contradicts the micro-level findings due to correlations between the grouping and hidden variables.
 
 ## Self-service (deflection) rate
 
@@ -1013,7 +1013,7 @@ Calibration means predicted probabilities should match observed frequencies.
 
 Expected Calibration Error (ECE) is a summary of mismatch. Intuition: predictions around 0.8 should be correct about 80% of the time. If they are correct only 65%, the model is overconfident in that region.
 
-Reliability curves (aka calibration plots): $y=z$: perfect calibration on the diagonal, above diagonal the model is underconfident, below diagonal the model is overconfident.
+Reliability curves (aka calibration plots): $y=x$: perfect calibration on the diagonal, above diagonal the model is underconfident, below diagonal the model is overconfident.
 
 1. Bin predictions by confidence [(0.0-0.1), (0.1-0.2),...]
 2. For each bin, compute avg predicted probability and observed positive rate
