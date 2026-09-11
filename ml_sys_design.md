@@ -155,13 +155,13 @@ Idiosync
 | Regression | $x → y∈ℝ$ | (x, y∈ℝ) | [MAE](#mae), [RMSE](#rmse), [wMAPE](#mape), [R²](#r) | 
 | Interval Regression | $x → (y^-,y^+)∈ℝ$ | $(x, y^-,y^+)$ | [interval coverage](#interval-coverage) |
 | Time Series Forecast | $(...,x_{t-1}) → y_t∈ℝ$ | $(...,x_{t-1}, x_{t})$ + covariates, horizon values | [wMAPE](#mape), [MASE](#mase) on [temporal split](#temporal-split) | 
-| Binary clf w/o imbalance / multi-task (K binary heads) | $x → \{0,1\}$ | (x, y∈{0,1}) | [P](#precision)/[R](#recall)/[Fβ](#f1)@(0..1), [P@fixed-FPR](#precision), [PR-AUC](#pr-auc) w imbalance, [ROC-AUC](#roc-auc) w balance, [ECE](#calibration-ece)  |
+| Binary clf ±imbalance / multi-task (K binary heads) | $x → \{0,1\}$ | (x, y∈{0,1}) | [P](#precision)/[R](#recall)/[Fβ](#f1)@(0..1), [P@fixed-FPR](#precision), [PR-AUC](#pr-auc) w imbalance, [ROC-AUC](#roc-auc) w balance, [ECE](#calibration-ece)  |
 | Point ranking | $(q,d) → \{0,1\}$ | (q, d, {0,1}) |  |
 | Multi-class clf | $x → y∈K$ | (x, y∈K) | per-class/macro [P](#precision)/[R](#recall)/[Fβ](#f1), [Accuracy](#accuracy), [Hamming loss](#hamming-loss) | 
 | Multi-label clf | $x → Y⊆K$ | (x, Y⊆K) | per-class/macro [P](#precision)/[R](#recall)/[Fβ](#f1), [Accuracy](#accuracy), [Hamming loss](#hamming-loss) | 
 | Clustering | $x → x∈K$ / G=(X,E)+sim(i,j)∈E | x∈K ∀x∈X  | [Silhouette](#silhouette), [Davies-Bouldin](#davies-bouldin), [Calinski-Harabasz](#calinski-harabasz), + stability across samples, labels exist:[ARI](#ari) or [NMI](#nmi) | 
 | Encoding | $x → \hat{x}$ | (x, n similar, m different) | [R](#recall)@k, [MRR](#mrr), [Silhouette](#silhouette), [Davies-Bouldin](#davies-bouldin), [Linear probe](#linear-probe) |
-| Retrieval | $q → d$| (q, positives, negatives) | [HitRate](#hitratek)@k, [R](#recall)/[P](#precision)@k, [diversity](#diversity), [catalog coverage](#catalog-coverage), [TF-IDF](#tf-idf), [BM25](#bm25) |
+| Retrieval | $q → d$| (q, positives, negatives) | [HitRate](#hitratek)@k, [R](#recall)/[P](#precision)@k, [diversity](#diversity), [catalog coverage](#catalog-coverage) |
 | Pair Ranking | $q → d^{-}<d^{+}$ | (q, 2x scored d) |[MRR](#mrr), [Pairwise Accuracy](#pairwise-accuracy), [ROC-AUC on ordered pairs](#roc-auc-on-ordered-pairs) |
 | List Ranking | $q → sorted(D)$| (q, k scored d) | [mAP](#map), [nDCG](#ndcg)@k |
 | Text sequence labeling | ? | (token seq, per-token/span boundary labels) | text sequence pairwise or span-level micro [F1](#f1)/[ARI](#ari) |
@@ -173,10 +173,10 @@ Idiosync
 | Translation text2text | $t → t'$ | BLEU n-gram comparison for translation, METEOR extended BLEU, GLEU sentence-level BLEU |
 | Transscript/Dictate T2S/StT | | [WER](#wer) for STT/TTS | |
 | Speaker recognition | | | |
-| Image object localization |  |
+| Image object localization |  | | mAP@IoU 0.5 |
 | Image object detection | | [mAP](#map)@[.5:.95], [mAP](#map)@[IoU](#iou), per-class recall, FPS | (image, boxes + classes) |
-| Image semantic segmentation | img → set(bbox) | (img, set[pixel-wise mask with object class]) | [P](#precision)@[IOU](#iou), [AP](#ap), [mAP](#map) | 
-| Image object segmentation | img → set(labelled bbox) | (image, set[pixel-wise mask with object id]) | mIoU, obj boundary [mAP](#map)@[IoU](#iou), 1-vs-all recall, FPS |
+| Image semantic segmentation | img → P(k∈K@pixel) | (img, set[pixel-wise mask with object class]) | [P](#precision)@[IOU](#iou), [AP](#ap), [mAP](#map) | 
+| Image instance segmentation | img → P(i∈Instances@pixel) | (image, set[pixel-wise mask with object id]) | mIoU, obj boundary [mAP](#map)@[IoU](#iou), 1-vs-all recall, FPS |
 | Generate text2img | t → img | (t, pixels) | [Inception Score](#inception-score), [FID](#fid) |
 | Strategy Development (RL) | | | |
 | Combinatorial optimisation | $(f(x)≤C, z(x)) → x$| asymm costs | |
@@ -298,7 +298,7 @@ flowchart TD
         
         predict["predict (forward pass, prediction head)"] --show:prediction--> loss
         loss --search:filter--> tdb[("train labels")] --show:doc--> loss
-        loss --show:error--> opt["optimiser (compute gradient x learning rate)"] --request:delta--> fit["update (backward propagation)"]
+        loss --show:error--> backprop["compute gradient"] --fit:weights--> opt["optimiser (update = gradient x learning rate)"]
     end 
 
     subgraph valid["Validation per batch"]
@@ -411,7 +411,7 @@ Time Series Forecast: leakage through future-known covariates; hierarchical reco
     * head: per-horizon point / quantile outputs
     * loss: MSE / MASE / pinball
 
-Binary clf w/o imbalance: class weights over naive oversampling; recalibrate after any resampling; threshold from cost matrix, not 0.5; label delay (chargebacks arrive weeks late) / multi-task (K binary heads)
+Binary clf ±imbalance: class weights over naive oversampling; recalibrate after any resampling; threshold from cost matrix, not 0.5; label delay (chargebacks arrive weeks late) / multi-task (K binary heads)
   * majority cls, rule based, log regr, DT + bagg/boost
   * [Bert](#bert), DCN / DLRM
     * head: [sigmoid p(y)](#sigmoid-function)
@@ -433,7 +433,7 @@ Multi-label clf:
    * loss: per-label [weighted BCE](#weighted-bce)
 
 Clustering: centroid, prototype
- * K-means: head: [SSE](#k-means-inertia--sse)
+ * K-means: objective [SSE](#k-means-inertia--sse)
  * GMM: head: [negative log-likelihood](#gmm-negative-log-likelihood)
  * DEC: head: [KL loss](#dec-with-kl-loss)
 
@@ -444,7 +444,7 @@ Encoding:
    * loss: [CE](#ce) / [InfoNCE](#infonce) / [triplet loss](#triplet-loss)
 
 Retrieval:
- * [kNN](#knn), [Apache Lucene](#apache-lucene)
+ * [kNN](#knn), [TF-IDF](#tf-idf), [BM25](#bm25),  [Apache Lucene](#apache-lucene)
  * [ANN](#ann)
    * head: dot/cosine (of 2 embeddings)
    * loss: [InfoNCE](#infonce) / sampled [softmax](#softmax) / [triplet loss](#triplet-loss)
@@ -481,10 +481,10 @@ Image object detection: flip/crop/color augmentation, [NMS](#nms) and anchor tun
   
 Image object localisation:
  * [RPN](#rpn), box regression + class scores + objectness
-   * head: mAP@IoU 0.5
+   * head: 
    * loss: composite: IoU/smooth-L1 + focal CE
 
-Image object segmentation:
+Image instance segmentation:
  * ? + [NMS](#nms)
    * head: per-pixel [softmax](#softmax), dense FCN/U-Net/Mask decoder
    * loss: per-pixel [CE](#ce) + Dice-IoU loss
@@ -911,7 +911,7 @@ If you cap $FPR$ at 0.5%, and precision there is 40%, then about 4 in 10 selecte
 Issues:
 
 * does not consider ranking quality
-* ceiling effect: $P@k = \frac{TP@k}{K}$ but if Positive count is low ($< k$), then P@k has upper bound, P@k can be punished for low $k$
+* ceiling effect: if |positives| < k the ceiling is |positives|/k, so P@k is punished for large k.
 
 ## Recall
 
@@ -926,7 +926,7 @@ $$
 Issues:
 
 * Does not consider ranking quality
-* ceiling effect: $R@k = \frac{TP@k}{|Positives|}$ but if Positive count is large ($> k$), then R@k is punished for low k
+* ceiling effect: if |positives| > k, then the ceiling is k / |positives|, so R@k is punished for small k
 
 ## F1
 
