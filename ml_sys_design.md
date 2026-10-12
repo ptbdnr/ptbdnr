@@ -70,7 +70,7 @@ Constraints (incl. SLAs):
 * ☁️ : data protection ([ACL](#acl)), provenance, availability (99.9% down ~9hr/yr, 99.999% down 5min/yr)
 * 🔍 : explainability, interpretability, maintainability (Kleppmann’s 3: operability, evolvability, simplicity)
 * 🖥️ : deployment on hardware (edge device, server)
-* 📖 : cost of data gathering (labelling)
+* 📖 : cost of data gathering (labelling, proportionate golden dataset)
 
 
 Scale of anticipated load (Fermi estimates):
@@ -90,7 +90,7 @@ Summarise: business problem (with scale quantifier), expected impact on business
 
 ## Online eval (5%)
 
-TL;DR: KPI
+TL;DR: KPI with focus on positives/negative metrics
 
 What is success? One primary North-star metric and 2-3 secondary, 1 guardrail that must not degrade (target values with justification), risk of aggregation [Simpson's paradox](#simpsons-paradox). AARRR: Acquisition, Activation, Retention, Referral, Revenue
 
@@ -115,6 +115,13 @@ Safety:
 
 
 ## Solution Design: I/O API, ML Task Framing, Data Engineering, Responsible ML
+
+
+A prediction can be:
+
+ * inductive (supervised): based on past observation (reference class)
+ * deductive (reinforcement, unsupervised): given a predictable environment we can use theory
+ * subjective (rule based)
 
 
 ### I/O API (5%)
@@ -432,6 +439,8 @@ Multi-class clf: per-class thresholds; handle imbalance, taxonomy drift over tim
   * [BERT](#bert), [CNN](#cnn)/ViT
     * head: [softmax](#softmax) over K
     * loss: [CE](#ce); [KL-divergence](#kl-divergence)
+  * GLiNER for PII
+  * Jev: instruction based
 
 Multi-label clf:
  * majority cls 
@@ -479,6 +488,8 @@ Generate text2text: hallucination guardrails
  * PEFT, Transformer
    * head: [softmax](#softmax) over VOCAB
    * loss: next-token [CE](#ce) for supervised fine-tuning; [DPO](#dpo) on preferences
+
+Reinforcement Learning: GRPO, DPO
 
 Image object detection: flip/crop/color augmentation, [NMS](#nms) and anchor tuning; small-object failure mode
  * YOLO family; Faster R-CNN; DETR, transfer-learn
