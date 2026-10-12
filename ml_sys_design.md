@@ -2,9 +2,9 @@
 
 In short: "it depends". In a few words: "there are multiple ways". Better answer: "may I ask a few clarifying questions".
 
-Org certificate:
+Certifications & compliance references:
 
-* [AI Platform on Microsoft Azure Specialization](https://teams.public.onecdn.static.microsoft/evergreen-assets/safelinks/2/atp-safelinks.html)
+* [AI Platform on Microsoft Azure Specialization](https://partner.microsoft.com/en-us/partnership/specialization/ai-platform-on-microsoft-azure)
 * [AWS Prescriptive Guidance](https://docs.aws.amazon.com/pdfs/prescriptive-guidance/latest/gen-ai-workload-assessment/gen-ai-workload-assessment.pdf)
 * [GCP Audit Manager](https://cloud.google.com/products/audit-manager?hl=en)
 * [ISO/IEC 42001](https://www.iso.org/standard/42001): [Azure ISO 42001](https://learn.microsoft.com/en-us/compliance/regulatory/offering-iso-42001); [AWS ISO 42001 FAQS](https://aws.amazon.com/compliance/iso-42001-faqs/); [GCP ISO 42001](https://cloud.google.com/security/compliance/iso-42001?hl=en)
@@ -66,9 +66,9 @@ Business objective:
 Constraints (incl. SLAs):
 
 * ⚖️ : regulatory, data sovereignty, GDPR
-* ⏱️ : response time, latency budget (time to first meaningful byte, batch/real-time/stream), roundtrip EU-US: 150ms, within same datacentre 0.5ms
-* ☁️ : data protection ([ACL](#acl)), provenance, redundancy (99.9% down 9hr/yr, 99.999% down 5min/yr)
-* 🔍 : explainability, interpretability, maintainability (operability, evolvability, changeability)
+* ⏱️ : response time, latency budget (time to first meaningful byte, batch/real-time/stream), roundtrip EU-US: 75-150ms, within same datacentre 0.5ms
+* ☁️ : data protection ([ACL](#acl)), provenance, availability (99.9% down ~9hr/yr, 99.999% down 5min/yr)
+* 🔍 : explainability, interpretability, maintainability (Kleppmann’s 3: operability, evolvability, simplicity)
 * 🖥️ : deployment on hardware (edge device, server)
 * 📖 : cost of data gathering (labelling)
 
@@ -76,7 +76,7 @@ Constraints (incl. SLAs):
 Scale of anticipated load (Fermi estimates):
 
 * 🫀 Traffic info (for horizontal scale, pre-compute, multi-tier): Query Per Second ($\text{DAU} \times \text{Request/User/Day} \times \frac{1}{86.4K \text{sec/day}}$), peak factor (3x), request type split (ingest/serve) 
-* 🐘 Data Profile (for batch or stream, 1TB RAM or partition, AB test durations): Daily Volume ($\text{DAU} \times \text{Request/User/Day} \times \text{RequestSize}$), Total Volume ($\text{RetentionDays} \times \text{DailyVolume}$), rate of growth, peak factor (3x), labeled volume and latency (<1K self-supervised/active learning, 10K/500hr baseline, fine-tune, 1M GBDT,10M NN, 100M embedding), distinct-entity cardinality (for embedding indexing) x embedding dimension x precision
+* 🐘 Data Profile (for batch or stream, 1TB RAM or partition, AB test durations): Daily Volume ($\text{DAU} \times \text{Request/User/Day} \times \text{RequestSize}$), Total Volume ($\text{RetentionDays} \times \text{DailyVolume}$), rate of growth, peak factor (3x), labeled volume and latency (<1K self-supervised/active learning, 10K/500hr baseline, fine-tune, 1M GBDT, 10M NN, 100M embedding), distinct-entity cardinality (for embedding indexing) x embedding dimension x precision
 
 
 Other:
@@ -92,7 +92,7 @@ Summarise: business problem (with scale quantifier), expected impact on business
 
 TL;DR: KPI
 
-What is success? One primary North-star metric and 2-3 seconday, 1 guardrail that must not degrade (target values with justification), risk of aggregation [Simpson's paradox]. AARRR: Acquisition, Activation, Retention, Referral, Revenue
+What is success? One primary North-star metric and 2-3 secondary, 1 guardrail that must not degrade (target values with justification), risk of aggregation [Simpson's paradox](#simpsons-paradox). AARRR: Acquisition, Activation, Retention, Referral, Revenue
 
 Prevalence
 
@@ -110,7 +110,7 @@ Operational performance:
 
 Safety:
   * field incident / miss rate
-  * time to mitigave
+  * time to mitigate
   * HITL expert confirm rate
 
 
@@ -147,7 +147,8 @@ API type:
 
 Task from label availability: supervised / self-supervised / unsupervised / RL.
 
-Idiosync
+Idiosync:
+
 * Point ranking is a binary clf problem where $x$ consists of query $q$ (eg. user) and doc $d$ (eg. ad), and $q$ and $d$ are from two different domains
 
 | Task framing | Mapping | Ground truth | Offline eval |
@@ -156,33 +157,33 @@ Idiosync
 | Interval Regression | $x → (y^-,y^+)∈ℝ$ | $(x, y^-,y^+)$ | [interval coverage](#interval-coverage) |
 | Time Series Forecast | $(...,x_{t-1}) → y_t∈ℝ$ | $(...,x_{t-1}, x_{t})$ + covariates, horizon values | [wMAPE](#mape), [MASE](#mase) on [temporal split](#temporal-split) | 
 | Binary clf ±imbalance / multi-task (K binary heads) | $x → \{0,1\}$ | (x, y∈{0,1}) | [P](#precision)/[R](#recall)/[Fβ](#f1)@(0..1), [P@fixed-FPR](#precision), [PR-AUC](#pr-auc) w imbalance, [ROC-AUC](#roc-auc) w balance, [ECE](#calibration-ece)  |
-| Point ranking | $(q,d) → \{0,1\}$ | (q, d, {0,1}) | LogLoss/NCE, ROC-AUC, calibration since CTR feeds bidding |
-| Multi-class clf | $x → y∈K$ | (x, y∈K) | per-class/macro [P](#precision)/[R](#recall)/[Fβ](#f1), [Accuracy](#accuracy), [Hamming loss](#hamming-loss) | 
-| Multi-label clf | $x → Y⊆K$ | (x, Y⊆K) | per-class/macro [P](#precision)/[R](#recall)/[Fβ](#f1), [Accuracy](#accuracy), [Hamming loss](#hamming-loss) | 
-| Clustering | $x → x∈K$ / G=(X,E)+sim(i,j)∈E | x∈K ∀x∈X  | [Silhouette](#silhouette), [Davies-Bouldin](#davies-bouldin), [Calinski-Harabasz](#calinski-harabasz), + stability across samples, labels exist:[ARI](#ari) or [NMI](#nmi) | 
+| Point ranking | $(q,d) → \{0,1\}$ | (q, d, {0,1}) | [NE](#ne), ROC-AUC, calibration since CTR feeds bidding |
+| Multi-class clf | $x → y∈K$ | (x, y∈K) | per-class/macro [P](#precision)/[R](#recall)/[Fβ](#f1), [Accuracy](#accuracy)
+| Multi-label clf | $x → Y⊆K$ | (x, Y⊆K) | subset/micro/macro [P](#precision)/[R](#recall)/[Fβ](#f1), [Accuracy](#accuracy), [Hamming loss](#hamming-loss) | 
+| Clustering | $x → k∈K$ / G=(X,E)+sim(i,j)∈E | none / x∈K ∀x∈X  | [Silhouette](#silhouette), [Davies-Bouldin](#davies-bouldin), [Calinski-Harabasz](#calinski-harabasz), + stability across samples, labels exist:[ARI](#ari) or [NMI](#nmi) | 
 | Encoding | $x → z$ | (x, n similar, m different) | [R](#recall)@k, [MRR](#mrr), [Silhouette](#silhouette), [Davies-Bouldin](#davies-bouldin), [Linear probe](#linear-probe) |
 | Retrieval | $q → d$| (q, positives, negatives) | [HitRate](#hitratek)@k, [R](#recall)/[P](#precision)@k, [diversity](#diversity), [catalog coverage](#catalog-coverage) |
 | Pair Ranking | $q → d^{-}<d^{+}$ | (q, 2x scored d) |[MRR](#mrr), [Pairwise Accuracy](#pairwise-accuracy), [ROC-AUC on ordered pairs](#roc-auc-on-ordered-pairs) |
 | List Ranking | $q → sorted(D)$| (q, k scored d) | [mAP](#map), [nDCG](#ndcg)@k |
 | Text sequence labeling | token seq -> label seq | (token seq, per-token/span boundary labels) | text sequence pairwise or span-level [F1](#f1) (seqeval) |
-| Generate text2text | $t → \hat{t}$ | $(t, \hat{t})$; preference pairs $(t, \hat{t}^+, \hat{t}^-)$ | [BLEU](#bleu), [GLEU](#gleu), [METEOR](#meteor), [ROUGE](#rouge), [RAGAS metrics](#ragas-metrics), [safety rates](#safety-rates), [perplexity](#perplexity) |
+| Generate text2text | $t → \hat{t}$ | $(t, \hat{t})$; preference pairs $(t, \hat{t}^+, \hat{t}^-)$ | [BLEU](#bleu), [GLEU](#bleu), [METEOR](#meteor), [ROUGE](#rouge), [RAGAS metrics](#ragas-metrics), [safety rates](#safety-rates), [perplexity](#perplexity) |
 
 | WIP Task framing | Mapping | Ground truth | Offline eval |
 |---|---|---|---|
-| Reinforcement Learning | | | | |
-| Translation text2text | $t → t'$ | ? | BLEU n-gram comparison for translation, METEOR extended BLEU, GLEU sentence-level BLEU |
+| Reinforcement Learning | ? | ? | ? |
+| Translation text2text | $t → t'$ | ? | [BLEU](#bleu) n-gram comparison for translation, METEOR extended BLEU, GLEU sentence-level BLEU, [CharF](#charf) |
 | Transcript/Dictate StT | ? | ? | [CER/WER](#wer) for STT/TTS |
-| Syntetize TTS | ? | ? | [BLEU](#bleu), [CharF](#charf) |
+| Synthesize TTS | ? | ? | MOS for naturalness, [CER/WER](#wer) for intelligibility |
 | Speaker recognition | ? | ? | ? |
 | Image object localization | ? | ? | mAP@IoU 0.5 |
-| Image object detection | | (img, (bbox,k)) | [mAP](#map)@[.5:.95], [mAP](#map)@[IoU](#iou), per-class recall, FPS |
-| Image semantic segmentation | img → P(k∈K@pixel) | (img, set[pixel-wise mask with object class]) | [P](#precision)@[IOU](#iou), [AP](#ap), [mAP](#map) | 
-| Image instance segmentation | img → P(i∈Instances@pixel) | (image, set[pixel-wise mask with object id]) | mIoU, obj boundary [mAP](#map)@[IoU](#iou), 1-vs-all recall, FPS |
+| Image object detection | ? | (img, (bbox,k)) | [mAP](#map)@[.5:.95], [mAP](#map)@[IoU](#iou), per-class recall, FPS |
+| Image semantic segmentation | img → P(k∈K@pixel) | (img, set[pixel-wise mask with object class]) |  mIoU,[P](#precision)@[IOU](#iou) | 
+| Image instance segmentation | img → P(i∈Instances@pixel) | (image, set[pixel-wise mask with object id]) | [AP](#ap), obj boundary [mAP](#map)@[IoU](#iou), 1-vs-all recall, FPS |
 | Generate text2img | t → img | (t, pixels) | [Inception Score](#inception-score), [FID](#fid) |
-| Strategy Development (RL) | | | |
-| Combinatorial optimisation | $(f(x)≤C, z(x)) → x$| asymm costs | |
+| Strategy Development (RL) | ? | ? | ? |
+| Combinatorial optimisation | $(f(x)≤C, z(x)) → x$| asymm costs | ? |
 | Anomaly detection |  $x → \{0,1\}$ | $(x,\{0,1\}) ∀ x∈X$ | precision@k alerts, PR-AUC on labeled slice, alert volume  |
-| Causal Inference | | | |
+| Causal Inference | ? | ? | ? |
 
 
 ### Data Engineering (5%)
@@ -202,8 +203,9 @@ Data schema: field name, data type (numerical discrete vs continuous, categorica
 Data store: [CAP Theorem](#cap-theorem)
 
 * Blob: Bucket in S3/GCS, Azure SA Container
-* Tabular row-based: vertically scalable, reliability, [ACID](#acid), RDBS, MySQL, PostgreSQL, or wide-column row (Cassandra, HBase)
-* Column-based: RedShift
+* Tabular row-based: vertically scalable, reliability, [ACID](#acid), RDBMS, MySQL, PostgreSQL
+* Column-based: RedShift, BigQuery, Snowflake
+* Wide-column NoSQL: horizontal scalable, evantually consistent, but not ACID, Cassandra, HBase
 * Key/Value: horizontally scalable, dynamic schema, Redis, DynamoDB, CosmosDB
 * Document: MongoDB, CouchDB
 * Graph: Neo4J
@@ -214,11 +216,11 @@ Data store: [CAP Theorem](#cap-theorem)
 * HITL
 * Guardrails: api, intent classification, GenAI alignment with RLHF, output classification
 * Fairness and bias (age, gender, ethnicity) with contrastive evaluation
-* Watermarking (Coalition for Content Provenance and Authenticity, C2PA)
+* Provenance (Coalition for Content Provenance and Authenticity, C2PA) and watermarking (e.g. SynthID)
 * [PUPPET](#puppet)
 
 
-# High Level Design (20%)
+## High Level Design (20%)
 
 Hints:
 * UI, CDN
@@ -299,13 +301,15 @@ flowchart TD
         
         predict["predict (forward pass, prediction head)"] --show:prediction--> loss
         loss --search:filter--> tdb[("train labels")] --show:doc--> loss
-        loss --show:error--> backprop["compute gradient"] --fit:weights--> opt["optimiser (update = gradient x learning rate)"]
+        loss --show:error--> backprop["compute gradient"] --send:gradients--> opt["optimiser (update = gradient x learning rate)"]
     end 
 
-    subgraph valid["Validation per batch"]
+    subgraph valid["Validation per epoch"]
         todo
     end
 ```
+
+note: DDP doesn’t aggregate the loss. Each rank computes its own loss on its shard and runs backward. Gradients are then all-reduced (averaged), and every replica applies the same update.
 
 ### Serve
 
@@ -331,7 +335,7 @@ flowchart
 ```mermaid
 flowchart TD
     subgraph ingest["Ingestion"]
-        src[**Data Sources**]
+        src["`**Data Sources**`"]
         load["Loader<br>Parser (dedup, redact)<br>Chunking (fix/semantic)"]
         meta[Metadata Extraction]
         embed_i[Embedding Model]
@@ -350,7 +354,7 @@ flowchart TD
         retrieve[Retrieve top-k]
         rerank[Rerank<br/>cross-encoder]
         assemble[Context Assembly]
-        llm[**LLM Generation**]
+        llm["`**LLM Generation**`"]
         guard[Guardrails]
         resp[Response + Citations]
 
@@ -383,7 +387,7 @@ Realistic system: add complexity only if justified
     * categorical: encoding (enumerating, one-hot encoder, embedding learning), 
     * natural language: stemming & lemmatization (remove stop words), tokenization, embedding
     * image: resize, crop, rotate, color shift, color mode (RGB/CMYK)
-    * audio: ?
+    * audio: resampling, log-mel spectrograms or MFCC, SpecAugment, noise mixing.
 
 
 ### Model Selection: (task → models → pitfalls) (5%)
@@ -401,30 +405,31 @@ Regression:
     * loss: [MSE](#mse) / [Huber](#huber-loss)
   
 Interval Regression:
+  * coverage alone can be gamed with very wide intervals. Pair it with mean interval width or the Winkler/interval score.
   * segment P#
   * NN
     * head: [quantile heads for intervals](#quantile-heads-for-intervals)
     * loss: [pinball for quantiles](#quantile-heads-for-intervals)
 
 Time Series Forecast: leakage through future-known covariates; hierarchical reconciliation, temporal value split
-  * segment (weighted) avg/median, Holt-Winter's method, ETS/ARIMA
+  * segment (weighted) avg/median, Holt-Winters method, ETS/ARIMA
   * GBDT on lag features, Prophet, DeepAR, TFT
   * NN
     * head: per-horizon point / quantile outputs
-    * loss: MSE / MSE / pinball
+    * loss: MSE (point) / pinball (quantile)
 
 Binary clf ±imbalance: class weights over naive oversampling; recalibrate after any resampling; threshold from cost matrix, not 0.5; label delay (chargebacks arrive weeks late) / multi-task (K binary heads)
   * majority cls, rule based, log regr, DT + bagg/boost
-  * [Bert](#bert), DCN / DLRM
+  * [BERT](#bert), DCN / DLRM
     * head: [sigmoid p(y)](#sigmoid-function)
     * loss: ([Weighted](#weighted-bce)) [BCE](#bce--logloss); [Focal loss](#focal-loss), multi-task [weighted sum of losses](#weighted-sum-of-losses)
 
 Point ranking: position bias (position feature at train, fixed at serve, or IPS); temporal split; negative downsampling then recalibrate
-  * TODO
+  * LR with feature crosses, GBDT, FM/FFM, DeepFM, DCN-v2, DLRM, with a sigmoid head and BCE loss.
 
 Multi-class clf: per-class thresholds; handle imbalance, taxonomy drift over time
   * majority cls, 1vsAll log regr, DT + bagg/boost, naive bayes, SVM
-  * [Bert](#bert), [CNN](#cnn)/ViT
+  * [BERT](#bert), [CNN](#cnn)/ViT
     * head: [softmax](#softmax) over K
     * loss: [CE](#ce); [KL-divergence](#kl-divergence)
 
@@ -436,12 +441,12 @@ Multi-label clf:
 
 Clustering: centroid, prototype
  * K-means: objective [SSE](#k-means-inertia--sse)
- * GMM: head: [negative log-likelihood](#gmm-negative-log-likelihood)
- * DEC: head: [KL loss](#dec-with-kl-loss)
+ * GMM: objective [negative log-likelihood](#gmm-negative-log-likelihood)
+ * DEC: objective [KL loss](#dec-with-kl-loss)
 
 Encoding:
  * integer encoding, one-hot, [BoW](#bow), [Word2Vec](#word2vec)
- * [BERT](#bert), BLOOM, Contrastive Learning
+ * [BERT](#bert), Sentence-BERT, E5, CLIP, Contrastive Learning
    * head: embedding vector
    * loss: [CE](#ce) / [InfoNCE](#infonce) / [triplet loss](#triplet-loss)
 
@@ -467,7 +472,7 @@ List Ranking: ranking against a number of signals (relevance, freshness, popular
  * [LambdaRank](#lambdarank)
  * [LambdaMART](#lambdamart)
   
-Text named entity segmentation: head: per-token [softmax](#softmax) / CRF; loss: token-level [CE](#ce) or CRF-NLL
+Text sequence labeling: aka. text named entity segmentation. head: per-token [softmax](#softmax) / CRF; loss: token-level [CE](#ce) or CRF-NLL
 
 Generate text2text: hallucination guardrails
  * prompt eng, composite (RAG)
@@ -481,13 +486,17 @@ Image object detection: flip/crop/color augmentation, [NMS](#nms) and anchor tun
    * loss: composite: IoU/smooth-L1 + focal CE
   
 Image object localisation:
- * [RPN](#rpn), box regression + class scores + objectness
-   * head: 
+ * [RPN](#rpn)
+   * head: 2-4 value box regression + class scores + objectness
    * loss: composite: IoU/smooth-L1 + focal CE
 
-Image instance segmentation:
- * ? + [NMS](#nms)
-   * head: per-pixel [softmax](#softmax), dense FCN/U-Net/Mask decoder
+Image segmentation: Mask R-CNN or Mask2Former
+   * head: a per-instance sigmoid mask
+   * loss: class CE + box loss + mask BCE
+
+Semantic segmentation:
+ * FCN/U-Net/DeepLab + [NMS](#nms)
+   * head: per-pixel [softmax](#softmax), dense FCN/U-Net/DeepLab
    * loss: per-pixel [CE](#ce) + Dice-IoU loss
 
 Anomaly detection: "normal" training data is contaminated; threshold set by alert budget, not statistics; feed confirmed alerts back as labels
@@ -518,7 +527,7 @@ Model training/fitting:
 * distributed training: PyTorch Distributed Data Parallel (copy model, forward minibatch, aggregate loss, sync gradients, update all)
 * Optimisation: stochastic gradient descent, weighted alternating least squares
 * Fine tuning
-* Continous leaninrg
+* Continuous learning
 
 
 ### Serving
@@ -530,7 +539,7 @@ Model training/fitting:
 * host: cloud vs on-device
 * pipeline: stages, gates
 * model compression: quantization, knowledge distillation, pruning, weight sharing
-* monitoring, hardware utilisation, requests/responses, drift in performance (model/data/context drift)
+* monitoring, hardware utilisation, requests/responses, drift in performance (data drift P(X), concept drift P(Y|X))
 
 
 # Product Ownership
@@ -552,7 +561,7 @@ An Access Control List (ACL) is a list of permissions that specifies which users
 
 ## CAP Theorem
 
-Consistency, Availabiltiy, Partition Tolerance. Partition Tolerance is required to scale the system, however, the three together is impossible, so choose:
+Consistency, Availability, Partition Tolerance. Partition Tolerance is required to scale the system, however, the three together is impossible, so choose:
 
 * CP with some downtime (consistent but may reject some requests),
 * AP with delayed consistency (always available but risk inconsistency).
@@ -573,7 +582,7 @@ Self-service (deflection) rate is the percentage of customer issues resolved ent
 
 https://arxiv.org/html/2603.20907v4 (Jul 2026)
 
-PUPPET is a theoretical framework for identifying and evaluating manipulation in LLM-human dialogue based on identification (is it manipulative) and evalution (is it wrong or right).
+PUPPET is a theoretical framework for identifying and evaluating manipulation in LLM-human dialogue based on identification (is it manipulative) and evaluation (is it wrong or right).
 
 It contains a dataset of 1000+ chat conversations to predict impact. PUPPET shifts focus from detecting how manipulation happens linguistically to predicting what effect it actually has on human beliefs.
 
@@ -599,7 +608,7 @@ $$
 \text{Hamming loss} = \frac{FP+FN}{n} = 1 - \text{Accuracy}
 $$
 
-In multiclass classification, the Hamming loss corresponds to the Hamming distance between $y$ and $\hat{y}$. which is equivalent to the subset $zero_one_loss$ function, when normalize parameter is set to True.
+In multiclass classification, the Hamming loss corresponds to the Hamming distance between $y$ and $\hat{y}$. which is equivalent to the subset `zero_one_loss` function, when normalize parameter is set to True.
 
 In multi-label classification, Hamming loss is more forgiving than the subset zero-one loss in that it penalizes only the individual labels.
 
@@ -628,10 +637,10 @@ $$
 
 > time series metric
 
-Mean Absolute Scaled Error is a time series forecasting metric that, it allows comparsion across different time series with different scales. It normalizes the absolute error by the average error of a naive baseline (typically the one-step seasonal naive forecast). MASE < 1 means the forecast is better than baseline.
+Mean Absolute Scaled Error is a time series forecasting metric, it allows comparison across different time series with different scales. It normalizes the absolute error by the average error of a naive baseline (typically the one-step seasonal naive forecast). MASE < 1 means the forecast is better than baseline.
 
 $$
-MASE = \frac{\frac{1}{n}\sum |y-\hat{y}|}{\text{MAE of naive forecast}}
+MASE = \frac{\frac{1}{n}\sum |y-\hat{y}|}{\text{in-sample MAE of naive forecast}}
 $$
 
 ## Huber loss
@@ -643,7 +652,7 @@ Huber loss is a hybrid of squared error and absolute error. For small errors it 
 $$
 L_δ(r)=\begin{cases}
 \frac{1}{2} r^2 & \text{if} |r| ≤ δ \\ 
-δ(∣r∣−(1/2)δ) & \text{if} |r| > δ
+δ(∣r∣−(1/2)δ) & \text{if} |r| > δ 
 \end{cases}
 $$
 
@@ -673,7 +682,7 @@ $$
 MAPE = \frac{100\%}{n} \sum |\frac{y_i-\hat{y_i}}{y_i}|
 $$
 
-Weighted Mean Absolute Percentage Error weights each error by the actual value, making it more stable for intermittent or low-volume data. Prefered in forecasting because it reflects total error relative to total volume rather than treating each item equally.
+Weighted Mean Absolute Percentage Error weights each error by the actual value, making it more stable for intermittent or low-volume data. Preferred in forecasting because it reflects total error relative to total volume rather than treating each item equally.
 
 $$
 wMAPE = \frac{\sum |y - \hat{y}|}{\sum |y|} \times 100\%
@@ -714,7 +723,7 @@ where $1(.)$ is the indicator function.
 
 > validation methodology
 
-Temporal split of the dataset respects time order: train on older data, validate on newer data. Also called: rolling-origin backtest.
+Temporal split of the dataset respects time order: train on older data, validate on newer data. Rolling-origin means repeated temporal splits at successive cut-off dates.
 
 Instead of randomly splitting examples, you split by timestamp so the model is evaluated the way it will be used in production.
 
@@ -742,7 +751,8 @@ The asymmetry is what makes it work for quantiles: for τ=0.95 it penalizes unde
 
 Architecture — one shared trunk, one linear head per quantile:
 ```python
-import torch; import torch.nn
+import torch
+from torch import nn
 class QuantileRegressor(nn.Module):
     def __init__(self, in_dim, quantiles=(0.05, 0.5, 0.95)):
         super().__init__()
@@ -786,7 +796,7 @@ $$
 \sigma (z) = \frac{1}{1+e^{-z}}
 $$
 
-$σ(0)=0.5$; as $z → +∞, σ(z) → 1$; az $z → -∞, σ(z) → 0$; 
+$σ(0)=0.5$; as $z → +∞, σ(z) → 1$; as $z → -∞, σ(z) → 0$; 
 
 ## Silhouette
 
@@ -808,12 +818,12 @@ $$
 
 where $\mu$ is the centroid of cluster $C$
 
-Inter-cluster distance is the distance between different clusters. Different groups should be far apart.Usually you want it large. 
+Inter-cluster distance is the distance between different clusters. Different groups should be far apart. Usually you want it large. 
 
 $$
 d_{inter}(a,b) = ||\mu_a - \mu_b||
 $$
-where $\mu_i$ is cluster centrod
+where $\mu_i$ is cluster centroid
 
 ## Davies-Bouldin
 
@@ -825,7 +835,7 @@ Davies-Bouldin measures avg “similarity” between each cluster and its most s
 
 > clustering separability
 
-Calinski-Harabasz ratio of between-cluster dispersion to within-cluster dispersion. Clusters should be tight inside and far apart from each other. Higher is better.
+Calinski-Harabasz is the ratio of between-cluster dispersion to within-cluster dispersion. Clusters should be tight inside and far apart from each other. Higher is better.
 
 $$
 CH = \frac{\text{between-cluster variance} / (K-1)}{\text{within-cluster variance} /(N-K)}
@@ -857,7 +867,7 @@ Requires: ground truth labels
 
 Normalized Mutual Information measures shared information between cluster assignments and true labels. If clusters align well with labels, mutual information is high. Range is [0,1], higher is better.
 
-Requires: gound-truth labels
+Requires: ground-truth labels
 
 ## K-means inertia / SSE
 
@@ -990,7 +1000,7 @@ True Positive Rate (ie. recall): $TPR = \frac{TP}{TP+FN}$
 
 False Positive Rate: $FPR=\frac{FP}{FP+TN}$
 
-for all classification tresholds.
+for all classification thresholds.
 
 $$
 \text{ROC-AUC} = \int_{0}^{1}\mathrm{TPR}(\mathrm{FPR})\,d(\mathrm{FPR})
@@ -1014,6 +1024,10 @@ Calibration means predicted probabilities should match observed frequencies.
 
 Expected Calibration Error (ECE) is a summary of mismatch. Intuition: predictions around 0.8 should be correct about 80% of the time. If they are correct only 65%, the model is overconfident in that region.
 
+$$
+\text{ECE}=\sum_b \frac{n_b}{N}\,|\text{acc}(b)-\text{conf}(b)|
+$$
+
 Reliability curves (aka calibration plots): $y=x$: perfect calibration on the diagonal, above diagonal the model is underconfident, below diagonal the model is overconfident.
 
 1. Bin predictions by confidence [(0.0-0.1), (0.1-0.2),...]
@@ -1024,7 +1038,7 @@ Platt scaling: post-hoc calibration method, mainly for binary classification, fi
 
 Isotonic regression: post-hoc non-parametric calibration method for binary classification, requires large calibration dataset. Learns a monotonic function $f$ such that $\hat{p}=f(s)$, where $f$ is non-decreasing. More flexible than Platt scaling, it can fit complex shapes, but can overfit with small calibration data.
 
-Temperature scaling: post-hoc calibration method for multi-class NN. Divides logits by temperature $T > 0$ before softmax: $\hat{p} = \frac{e^{z/T}}{\sum e ^{z/T}}$. Fir one scalar T on validation data. $1<T$ softens overconfident predictions, $0<T<1$ sharpens. Preserves class ranking (argmax usually unchanged), mainly fixed confidence values.
+Temperature scaling: post-hoc calibration method for multi-class NN. Divides logits by temperature $T > 0$ before softmax: $\hat{p} = \frac{e^{z/T}}{\sum e ^{z/T}}$. Fit one scalar T on validation data. $1<T$ softens overconfident predictions, $0<T<1$ sharpens. Preserves class ranking (argmax unchanged), mainly fixed confidence values.
 
 ## Inception Score
 
@@ -1039,13 +1053,13 @@ Inception Score rewards images that are individually classifiable (low entropy i
 Fréchet Inception Distance compares feature distributions of real vs generated images (features usually from an Inception network). Captures both quality and diversity mismatch. Sensitive to preprocessing, sample count, and implementation details. Lower is better.
 
 $$
-\text{FID} = |\mu_r - \mu_g|^2_2 + Tr(\Sigma_r + \Sigma_g - 2(\Sigma_r \Sigma_g)^{1/2})
+\text{FID} = \|\mu_r - \mu_g\|_2^2 + Tr(\Sigma_r + \Sigma_g - 2(\Sigma_r \Sigma_g)^{1/2})
 $$
 where real features have mean/covariance $(\mu_r, \Sigma_r)$ and generated features have $(\mu_g, \Sigma_g)$
 
 ## KL-divergence
 
-> ditribution divergence
+> distribution divergence
 
 Kullback-Leibler divergence measures how one probability distribution $Q$ differs from a reference distribution $P$:
 
@@ -1070,17 +1084,28 @@ Intuition:
 $$
 CE = - \sum y \log p
 $$
-​
+
 For one-hot labels, this simplifies to 
 $− \log p_{\text{true class}}$
 
-Normalised CE (NCE) is model CE over baseline model's CE where baseline model is simpler (e.g. majority class).
+## NE
+
+> classification loss
+
+Normalised Entropy (NE) is model CE over baseline model's CE where baseline model is simpler (e.g. majority class).
+
+$$
+NE = \text{LogLoss} / H(p̄)
+$$
+where, $H(p̄)$ is the entropy of always predicting the base CTR.
+
+Note NCE, normally means noise-contrastive estimation, so the name is confusing.
 
 ## BCE / LogLoss
 
 > classification loss
 
-Binary Cross-Entropy (aka Logarithmic Loss, LogLoss for binary classification tasks) is the binary case of CE. It is used when target is $y∈\{0,1\}$ and model outputs probability $p=P(y=1∣x)$. It heavily penalizes being confidently wrong in binary classification, while creating a smooth (differentiable) curve. It treat every training example equally. For multi-label classification (several can be 1) we use independent BCE per label.
+Binary Cross-Entropy (aka Logarithmic Loss, LogLoss for binary classification tasks) is the binary case of CE. It is used when target is $y∈\{0,1\}$ and model outputs probability $p=P(y=1∣x)$. It heavily penalizes being confidently wrong in binary classification, while creating a smooth (differentiable) curve. It treats every training example equally. For multi-label classification (several can be 1) we use independent BCE per label.
 
 $$
 \text{BCE} = \text{LogLoss} = - \frac{1}{n} \sum [y \log p + (1-y) \log (1-p)]
@@ -1107,10 +1132,10 @@ Focal loss is for heavy imbalance with many easy negatives (e.g., detection, rar
 
 For binary classification:
 $$
-L_{\text{FL}} = - α (1-p_t)^{\gamma} \log (p_t)
+L_{\text{FL}} = - α_t (1-p_t)^{\gamma} \log (p_t)
 $$
 
-where $p_t = p \text{ iff } y=1 \text{ else } 1-p$, $p$ is the model’s estimated probability, and $α$ is the balance parameter.
+where $p_t = p \text{ iff } y=1 \text{ else } 1-p$, $p$ is the model’s estimated probability, and $α_t$ is the balance parameter.
 
 ## HitRate@k
 
@@ -1122,7 +1147,7 @@ $$
 HR@k = \frac{1}{Q} \sum 1(\text{top-k} ∩ R \ne ∅)
 $$
 
-whre $R_q$ is the set of relevant items for query $q \in Q$
+where $R_q$ is the set of relevant items for query $q \in Q$
 
 ## DPO
 
@@ -1134,7 +1159,7 @@ Direct Preference Optimization trains a NN on preference pairs (chosen response 
 
 > ranking metric
 
-Mean Reciprocal Rank rewards getting at least one correct result very early, but it ony considers the first. For each query $q$, find the rank of the first relevant result, $\text{rank}$. Reciprocal rank is $1/\text{rank}_q$ (or 0 if no relevant item found).
+Mean Reciprocal Rank rewards getting at least one correct result very early, but it only considers the first. For each query $q$, find the rank of the first relevant result, $\text{rank}$. Reciprocal rank is $1/\text{rank}_q$ (or 0 if no relevant item found).
 
 Then average over queries:
 
@@ -1149,7 +1174,7 @@ Issues:
 
 > ranking/detection metric
 
-Average Precision rewards putting true positives early in the ranked list, not just finding them eventually For one query or one class, Average Precision (AP):
+Average Precision rewards putting true positives early in the ranked list, not just finding them eventually. For one query or one class, Average Precision (AP):
 
 $$
 \text{AP} = \sum P(k) \Delta R(k)
@@ -1175,7 +1200,7 @@ where $AP$ is the Average Precision
 
 Issues:
 
-* designed for binary relevances (inherrited issue from to AP)
+* designed for binary relevances (inherited issue from to AP)
 
 ## nDCG
 
@@ -1191,7 +1216,7 @@ Intuition:
 For top-K results:
 
 $$
-\text{DCG@k} = \sum^K \frac{2^{rel_i} - 1}{\log_2 (i+1)}
+\text{DCG@k} = \sum^K_{i=1} \frac{2^{rel_i} - 1}{\log_2 (i+1)}
 $$
 
 Compute ideal DCG (best possible ordering): $\text{IDCG@k}$
@@ -1246,7 +1271,7 @@ Sampled softmax is an approximation of full softmax over a huge catalog. Instead
 
 > contrastive loss
 
-InfoNCE treats retrieval as a classification problem: pick the true item among distractors. In-batch negatives are commonly used for efficiency. It is a strong default for two-tower retrieval. It helps models learn to distinguish between positive and negative samples by estimating mutual information.
+InfoNCE (Info Noise-Contrastive Estimation) treats retrieval as a classification problem: pick the true item among distractors. In-batch negatives are commonly used for efficiency. It is a strong default for two-tower retrieval. It helps models learn to distinguish between positive and negative samples by estimating mutual information.
 
 $$
 \mathcal{L}_{\text{InfoNCE}} = - \log \frac{e ^ {s(q,i^+)/\tau}}{e^{s(q, i^+) / \tau} + \sum e^{s(q,i^-)/\tau}}
@@ -1273,7 +1298,7 @@ where $q$ is the query, $i^+$ is positive, $i^-$ is negative, $d(.,.)$ is distan
 The training loss is a weighted combination of several loss functions. Used to align model training with business value, and prevent one task/aspect dominating gradients. To choose weight use one of:
 1. manual business priors,
 2. normalise by label prevalence or loss scale
-3. dynamic wighting methods (uncertainty weighting, GradNorm)
+3. dynamic weighting methods (uncertainty weighting, GradNorm)
 
 $$
 \mathcal{L}_{\text{total}} = \sum w L
@@ -1298,7 +1323,7 @@ Issues:
 * exact n-gram match only, so synonyms/paraphrases are penalized like errors
 * designed for corpus-level aggregation; noisy at the single-sentence level
 
-GLEU operates at a sentence level, and doesn't require brevity penalty. Recall oriented fince it focuses on keeping reference content.
+GLEU (Google-BLEU) operates at a sentence level: $min(n-gram precision, n-gram recall)$ per sentence. It is symmetric.
 
 
 ## ROUGE
@@ -1342,7 +1367,7 @@ Correlates better with human judgment at the sentence level than BLEU (recall is
 Answer Relevancy \ Repeatability checks whether the answer truly addresses the question. LLM generates paraphrases of the question and measures semantic alignment.
 
 $$
-\text{Answer Relevancy} = sim(\text{Answer}, \text{Answer to Paraphased Q})
+\text{Answer Relevancy} = sim(\text{Answer}, \text{Answer to Paraphrased Q})
 $$
 
 Context Utilization (similar to BLEU) measures how much of the retrieved context is actually used. LLM detects which context portions were used or ignored. High utilization indicates strong grounding; low means hallucination.
@@ -1375,7 +1400,7 @@ self-harm content, hateful or unfair content, violent content, sexual content, p
 
 > generative text metric
 
-Perplexity measures how well the model predicts the reference next tokens. It is roughly the model's average branching uncertainty per token. Good for fluency/fit to reference text, but not enought for usefulness or safety. Likelihood-based, token-level fit.
+Perplexity measures how well the model predicts the reference next tokens. It is roughly the model's average branching uncertainty per token. Good for fluency/fit to reference text, but not enough for usefulness or safety. Likelihood-based, token-level fit.
 
 
 ## Pairwise Accuracy
@@ -1421,7 +1446,7 @@ $$
 \text{IoU} = \frac{|\text{Predicted} ∩ \text{Ground Truth}|}{|\text{Predicted} ∪ \text{Ground Truth}|}
 $$
 
-Intuition: strict penalty for spatial misalignment. Even if a box contains the object, off-by-a-few-pixels penalties it heavily. Common thresholds: IoU ≥ 0.5 (loose match), IoU ≥ 0.75 (strict match).
+Intuition: strict penalty for spatial misalignment. Even if a box contains the object, off-by-a-few-pixels penalises it heavily. Common thresholds: IoU ≥ 0.5 (loose match), IoU ≥ 0.75 (strict match).
 
 
 ## RankNet
@@ -1481,7 +1506,7 @@ CE is used as the loss function, computing the difference between the true top-o
 
 > listwise ranking method
 
-LambdaRank extends [Pairwise logistic loss](#pairwise-logistic-loss) (RankNet) to optimize listwise ranking metrics directly. Since metrics like [nDCG](#ndcg) are computed on sorted ranks, they're flat almost everywhere and non-differentiable — so LambdaRank scales each pair's RankNet gradient by the change in nDCG that swapping that pair would cause, $|\Delta nDCG|$. Pairs whose swap would hurt nDCG a lot get pushed apart harder.
+LambdaRank extends [RankNet](#ranknet) (Pairwise Logistic Loss) to optimize listwise ranking metrics directly. Since metrics like [nDCG](#ndcg) are computed on sorted ranks, they're flat almost everywhere and non-differentiable — so LambdaRank scales each pair's RankNet gradient by the change in nDCG that swapping that pair would cause, $|\Delta nDCG|$. Pairs whose swap would hurt nDCG a lot get pushed apart harder.
 
 $$
 \lambda_{ij} = \frac{\partial \mathcal{L}_{\text{RankNet}}}{\partial s_i} \times |\Delta nDCG_{ij}|
@@ -1496,11 +1521,11 @@ It is technically a gradient heuristic.
 
 LambdaMART is [LambdaRank](#lambdarank)'s $\lambda$ gradients used as pseudo-residuals to fit gradient-boosted regression trees (MART) instead of a neural net. It's the standard production learning-to-rank algorithm (LightGBM/XGBoost ranking objectives), combining metric-aware gradients with the strength of tree ensembles. It's LambdaRank's gradients applied to gradient-boosted trees (MART).
 
-## Bert
+## BERT
 
-Bidirectional Encoder Representations from Transformers (BERT) is a pre-trained transformer-based 110M-param NN that learns deep contextual word representations by predicting masked tokens and next sentence relationships. It has multi-head attention and truly bidirectional.
+Bidirectional Encoder Representations from Transformers (BERT) is a pre-trained transformer-based 110M-param NN (BERT-large has 340M params) that learns deep contextual word representations by predicting masked tokens and next sentence relationships. It has multi-head attention and truly bidirectional.
 
-DistilBERT is a smaller, faster distilled version of Bert that retains ~97% of BERT's performance while being 40% smaller (66M param) and 60% faster. 
+DistilBERT is a smaller, faster distilled version of BERT that retains ~97% of BERT's performance while being 40% smaller (66M param) and 60% faster. 
 
 Embeddings from Language Models (ELMo) is an earlier bidirectional contextualized embedding approach based on concatenated LSTMs with 94M params.
 
@@ -1525,7 +1550,7 @@ Bag of Words (key-count, sparse representation)
 
 Bag of Words (BoW) is a text feature extraction technique that represents text as an unordered collection of word counts, ignoring word order and grammatical structure. Each document is converted into a sparse vector where each dimension represents a unique word in the vocabulary.
 
-Simple, fast, lightweight and interpretable. However, ignores context, synonyms, and word order while creating a sparse high dimentionality output dominated by common words.
+Simple, fast, lightweight and interpretable. However, ignores context, synonyms, and word order while creating a sparse high dimensionality output dominated by common words.
 
 
 ## TF-IDF
@@ -1542,12 +1567,12 @@ Best Matching 25 (BM25) is a probabilistic ranking function used in information 
 
 Learn dense embeddings instead of sparse counts
 
-shallow NN, Continuous BoW + Skip-gram
+shallow NN, Continuous BoW or Skip-gram architectures.
 
 
 ## Matrix factorization
 
-TODO
+$R ≈ UV^T$. Minimise the squared error on observed entries plus an L2 penalty, fitted with ALS (or WALS for implicit feedback).
 
 
 ## kNN
@@ -1557,7 +1582,7 @@ k Nearest Neighbour
 
 ## ANN
 
-approximate (tree and/or cluster based, locally sensitive hashing, ScaNN, DiscScann, HNSW)
+approximate (tree and/or cluster based, locality-sensitive hashing, ScaNN, DiskANN, HNSW)
 
 
 ## Apache Lucene
