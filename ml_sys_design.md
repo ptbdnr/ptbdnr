@@ -171,9 +171,10 @@ Idiosync
 |---|---|---|---|
 | Reinforcement Learning | | | | |
 | Translation text2text | $t → t'$ | ? | BLEU n-gram comparison for translation, METEOR extended BLEU, GLEU sentence-level BLEU |
-| Transcript/Disctate T2S/StT | ? | ? | [WER](#wer) for STT/TTS |
-| Speaker recognition | | | |
-| Image object localization |  | | mAP@IoU 0.5 |
+| Transcript/Dictate StT | ? | ? | [CER/WER](#wer) for STT/TTS |
+| Syntetize TTS | ? | ? | [BLEU](#bleu), [CharF](#charf) |
+| Speaker recognition | ? | ? | ? |
+| Image object localization | ? | ? | mAP@IoU 0.5 |
 | Image object detection | | (img, (bbox,k)) | [mAP](#map)@[.5:.95], [mAP](#map)@[IoU](#iou), per-class recall, FPS |
 | Image semantic segmentation | img → P(k∈K@pixel) | (img, set[pixel-wise mask with object class]) | [P](#precision)@[IOU](#iou), [AP](#ap), [mAP](#map) | 
 | Image instance segmentation | img → P(i∈Instances@pixel) | (image, set[pixel-wise mask with object id]) | mIoU, obj boundary [mAP](#map)@[IoU](#iou), 1-vs-all recall, FPS |
@@ -445,7 +446,7 @@ Encoding:
    * loss: [CE](#ce) / [InfoNCE](#infonce) / [triplet loss](#triplet-loss)
 
 Retrieval:
- * [kNN](#knn), [TF-IDF](#tf-idf), [BM25](#bm25),  [Apache Lucene](#apache-lucene)
+ * [kNN](#knn), [TF-IDF](#tf-idf), [BM25](#bm25), [Apache Lucene](#apache-lucene)
  * [ANN](#ann): Two Towers + HNSW/ScaNN
    * head: dot/cosine (of 2 embeddings)
    * loss: [InfoNCE](#infonce) / sampled [softmax](#softmax) / [triplet loss](#triplet-loss)
@@ -457,7 +458,7 @@ Pair Ranking: in-batch negatives + hard-negative mining; logQ sampling correctio
    * head: 2x scalar score s(q,d)
    * loss: [BCE](#bce--logloss) / [Hinge ranking loss](#hinge-ranking-loss)
 
-List Ranking: split by query, never by doc; click labels are biased vs human judgments
+List Ranking: ranking against a number of signals (relevance, freshness, popularity, usage, evaluate with external raters with objective guidelines); split by query, never by doc; click labels are biased vs human judgments
  * rule-based, heuristic, embedding based
  * content-based, collaborative filtering, cross-encoder re-ranker
  * [ListNet](#listnet)
