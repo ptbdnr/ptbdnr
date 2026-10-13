@@ -5,7 +5,8 @@ Stakeholders:
 * managing direct/indirectly
 
 Time of work:
-* team working hours, hours of required online presence, pager/nightwatch
+* team working hours, hours of required online presence, pager/nightwatch/on-call rota
+* meetings outside local hours pre9am/post5pm
 
 Place of work:
 * base address
@@ -22,11 +23,11 @@ Financial compensation:
 
 Employee Benefits (own/partner):
 * private medical insurance, virtual GP, 
-* dental insurance: 20GBP/mo
+* dental insurance: 20 GBP/mo
 * vision insurance: 
 * personal accident insurance
 * life insurance: 4x salary
-* critical illness insurance: 50K GBP
+* critical illness insurance: 50K GBP/mo
 * income protection: 75% of base
 * travel insurance: personal, business
 * gadget insurance
@@ -46,5 +47,6 @@ L&D:
 * allocated time: 5 days
 
 Start date
+* notice period 1mo-12wk
 * compensation review (earliest date)
 * probation period, option to extend
