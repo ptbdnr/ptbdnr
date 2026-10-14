@@ -89,7 +89,9 @@ Docker: [dive](https://github.com/wagoodman/dive)
 Code Editor: [VSCode](https://code.visualstudio.com/), [Cursor](https://www.cursor.com/),
 [Windsurf](https://windsurf.com/), [JetBrains](https://www.jetbrains.com/), [Claude Code](https://code.claude.com/), [Google Antigravity](https://antigravity.google/), Google AI Studio, [OpenAI Codex IDE](https://chatgpt.com/codex)
 
-Git Commit Standards: [Google](https://developers.google.com/blockly/guides/contribute/get-started/commits)
+Code collaboration:
+* Git Commit Standards: [Google](https://developers.google.com/blockly/guides/contribute/get-started/commits)
+* [Scion](https://github.com/googlecloudplatform/scion) for AI agent collaboration. Agents learn the scion CLI through skills and help text; humans describe responsibilities and collaboration patterns in instructions.
 
 
 ### Python
