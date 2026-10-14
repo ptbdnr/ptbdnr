@@ -91,7 +91,7 @@ Code Editor: [VSCode](https://code.visualstudio.com/), [Cursor](https://www.curs
 
 Code collaboration:
 * Git Commit Standards: [Google](https://developers.google.com/blockly/guides/contribute/get-started/commits)
-* [Scion](https://github.com/googlecloudplatform/scion) for AI agent collaboration. Agents learn the scion CLI through skills and help text; humans describe responsibilities and collaboration patterns in instructions.
+* [Scion](https://github.com/googlecloudplatform/scion) for AI agent collaboration. Agents learn the scion CLI through skills and help text; humans describe responsibilities and collaboration patterns in instructions. See [documentation](https://googlecloudplatform.github.io/scion/overview/).
 
 
 ### Python
