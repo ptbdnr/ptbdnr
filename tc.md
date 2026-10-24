@@ -1,3 +1,8 @@
+push/pull factors
+
+* What factors have led you to feeling this way? What, if anything can we do to help with this?
+* What motivates you? How can we help create this?
+
 Well, you know my exp and expertise I bring, based on that what do you think will be a good range that your comp pays?
 
 Stakeholders:
