@@ -1,13 +1,29 @@
-push/pull factors
+salary expectation
+* Before I share it, could you describe the breakdown of the TC for this role, base + bonus + equity?
+* Well, you know my exp and expertise I bring, based on that what do you think will be a good range that your comp pays?
 
+Retention risk:
 * What factors have led you to feeling this way? What, if anything can we do to help with this?
 * What motivates you? How can we help create this?
+* What are your aspirations and how can we help you to realise these in ORG?
+* What attracts you to the new role/opportunity?
+* How have you raised these concerns, and with whom? What was agreed?
+* What, if anything could ORG do influence your decision? (Try not to jump to financials as a solution as there may be other factors they are dissatisfied with)
 
-Well, you know my exp and expertise I bring, based on that what do you think will be a good range that your comp pays?
+Push/Pull factors:
+The below is a non-exhaustive list and may be used to frame your discussion:
+
+| Push | Pull |
+| ---  | ---- |
+| Dissatisfaction with current project/assignment/current team/customer and/or others |	Enhanced flexible working proposition by competitors |
+| Uncertainty of their career path or progression opportunities | Family pressures/personal circumstances e.g. childcare, caring responsibilities |
+| Feeling overworked or “burnt out” | Wellbeing |
+| Not feeling valued or recognised for contribution or effort | Relocation |
+| Ways of working | Compensation offered by new employer |
 
 Stakeholders:
 * upstream reporting
-* managing direct/indirectly
+* managing directly/indirectly
 
 Time of work:
 * team working hours, hours of required online presence, pager/nightwatch/on-call rota
@@ -22,7 +38,7 @@ Financial compensation:
 * base (cost of living adjustment)
 * sign on bonus (schedule)
 * bonus (schedule, range from on-target to max)
-* equity: RSU (vesting schedule), stock option, profit sharing
+* equity: RSU (vesting schedule), stock option, profit sharing, refresher is automatic
 * financial rewards
 * pension: employer pension contribution, employee pension matching
 
@@ -37,7 +53,7 @@ Employee Benefits (own/partner):
 * travel insurance: personal, business
 * gadget insurance
 * physiotherapy
-* employee assistance programme (EAP)
+* Employee Assistance Program (EAP)
 * vehicle financing: EV, cycle to work schema
 
 Personal Time Off:
