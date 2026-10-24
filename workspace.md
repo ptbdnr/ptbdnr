@@ -63,7 +63,7 @@ no/pro-code: [Mermaid](https://mermaid.js.org), [LikeC4](https://likec4.dev/)
 
 package manager: [Homebrew](https://brew.sh/)
 
-terminal: Ghostty, iTerm2
+terminal: Ghostty, iTerm2, herdr (for detached agents)
 
 ### Windows
 
