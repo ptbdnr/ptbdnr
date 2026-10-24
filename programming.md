@@ -13,7 +13,7 @@ Functional Requirements: UX, feature, session memory, continous improvement
 
 Data
 
-* Numberic: min/max, negative, zero, null, `float("inf")`, if 2+ params then magnitude difference
+* Numeric: min/max, negative, zero, null, `float("inf")`, if 2+ params then magnitude difference
 * Array: emtpy, null, single element, all same, (un)sorted, (non)decreasing, (non)constant change, outliers at end
 * String: ANSII, special chars
  
