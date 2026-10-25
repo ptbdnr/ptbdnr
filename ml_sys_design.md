@@ -440,7 +440,7 @@ Multi-class clf: per-class thresholds; handle imbalance, taxonomy drift over tim
     * head: [softmax](#softmax) over K
     * loss: [CE](#ce); [KL-divergence](#kl-divergence)
   * GLiNER for PII
-  * Jev: instruction based
+  * Jev, d1-ultra: instruction based
 
 Multi-label clf:
  * majority cls 
