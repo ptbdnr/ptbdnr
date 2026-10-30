@@ -100,6 +100,10 @@ assert counter_map['c'] == 3
 
 ## Set
 
+initialization
+
+operators: intersect | add & remove -{...}
+
 ## Array
 
 ```python
