@@ -516,6 +516,8 @@ Anomaly detection: "normal" training data is contaminated; threshold set by aler
    * head: per-metric z-score / quantile threshold
    * loss: reconstruction error / one-class objective
 
+Combinatorial Optimisation: sensitivity analysis (shadow price, reduced cost, opportunity cost)
+
 
 ### Training
 
