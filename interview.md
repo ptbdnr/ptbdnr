@@ -28,6 +28,16 @@
   * ask process/decision “How do you reason about whether it will scale?” “what if … how would you want to solve it?”\
   * move one: “Ok. Let's leave that one.”
 
+# Behavioral
+
+* Innovation:
+* Challenges:
+* Mistakes/Failures:
+* Enjoyed:
+* Leadership:
+* Conflicts:
+* Learning:
+
 # What-if scenario
 
 to test reasoning. If candidates claim is conflicting then state the tension neutrally, offer a hint and observe recovery.
