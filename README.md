@@ -24,9 +24,16 @@ fun_fact: "HTTP/1.1 418 I'm a teapot"
 ---
 
 ### 🚀 &nbsp;Languages and Tools:
-<!-- ### 📝 &nbsp;Languages: -->
 <div align="center">
 <p>
+<!-- ### 📝 &nbsp;Specifications: -->
+<span style="display: inline-block; margin-right: 10px;">
+  <a href="https://openapis.org/" target="_blank"><img src="static/icons/openapi.svg" alt="openapi" width="40" height="40" /></a>
+</span>
+<span style="display: inline-block; margin-right: 10px;">
+  <a href="https://www.asyncapi.com/" target="_blank"><img src="static/icons/asyncapi.svg" alt="asyncapi" width="40" height="40" /></a>
+</span>
+<!-- ### 📝 &nbsp;Languages: -->
 <span style="display: inline-block; margin-right: 10px;">
   <a href="https://www.python.org/" target="_blank"><img src="static/icons/python-dark.svg" alt="python" width="40" height="40" /></a>
 </span>
