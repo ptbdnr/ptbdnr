@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 96 96" id="Async-Api-Icon--Streamline-Svg-Logos" height="24" width="24">
+  <desc>
+    Async Api Icon Streamline Icon: https://streamlinehq.com
+  </desc>
+  <path fill="url(#a)" d="M72.7677 1.56982H23.2325C10.9538 1.56982 1 11.403 1 23.5328v48.9344c0 12.1299 9.9538 21.963 22.2325 21.963h49.5352C85.0461 94.4302 95 84.5971 95 72.4672V23.5328C95 11.403 85.0461 1.56982 72.7677 1.56982Z"></path>
+  <path fill="#ffffff" d="m28.5487 42.0042 2.7976-3.8088 22.0005 15.7744-2.7977 3.8088-22.0004-15.7744Zm14.1256 0 2.7976-3.8088 22.0005 15.7744-2.7977 3.8088-22.0004-15.7744Zm5.343-23.3045c-11.6094 0-21.0954 6.9857-21.4702 15.6785l-.0115.7161h4.7767v-.1818c0-6.3437 7.5065-11.5074 16.7187-11.5074 9.2123 0 16.7188 5.1637 16.7188 11.5074v.1818h4.7766v-.1818c-.0271-8.939-9.6626-16.2128-21.5091-16.2128ZM64.702 61.0818c0 6.3434-7.5064 11.5072-16.7257 11.5072-9.2189 0-16.7187-5.1638-16.7187-11.5072v-.1821H26.481v.1821c0 8.9389 9.6353 16.2127 21.4817 16.2127 11.6094 0 21.0956-6.9858 21.4704-15.6784l.0115-.7164h-4.7769l.0343.1821Z"></path>
+  <defs>
+    <linearGradient id="a" x1="8521.38" x2="1269.59" y1="961.468" y2="8301.58" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#21d4fd"></stop>
+      <stop offset=".03" stop-color="#27cdfc"></stop>
+      <stop offset=".23" stop-color="#4e9cf4"></stop>
+      <stop offset=".43" stop-color="#6e73ee"></stop>
+      <stop offset=".61" stop-color="#8753e9"></stop>
+      <stop offset=".77" stop-color="#993ce5"></stop>
+      <stop offset=".9" stop-color="#a42ee3"></stop>
+      <stop offset="1" stop-color="#a829e2"></stop>
+    </linearGradient>
+  </defs>
+</svg>
