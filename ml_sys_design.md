@@ -69,7 +69,7 @@ Constraints (incl. SLAs):
 * ⏱️ : response time, latency budget (time to first meaningful byte, batch/real-time/stream), roundtrip EU-US: 75-150ms, within same datacentre 0.5ms
 * ☁️ : data protection ([ACL](#acl)), provenance, availability (99.9% down ~9hr/yr, 99.999% down 5min/yr)
 * 🔍 : explainability, interpretability, maintainability (Kleppmann’s 3: operability, evolvability, simplicity)
-* 🖥️ : deployment on hardware (edge device, server)
+* 🖥️ : deployment on hardware (edge device, server): battery power budget
 * 📖 : cost of data gathering (labelling, proportionate golden dataset)
 
 
@@ -560,9 +560,20 @@ Model training/fitting:
 * Roadmap: short-term/MVP (resolve risk first) to medium to long-term solution, what feature to deliberately cut (reason: impact, effort)
 * Risk and mitigations: priorities to de-risk
 * Team profile: roles, scale
+* Ways of working - Rules: no estimates (outcomes over story points), transcript every call (everything is evidence), write it down (if not written, then it did not happen), one backlog (all worked tracked in one place, no side lists), evidence over opinion (back ideas with data, research of user input), celebrate learning (no bad questions, every insight is valuable), ceremony etiquette (if cannot attend, then send update in advance)
+* Ways of working - Ceremonies
+    * kick-off: scope, roles, definition of done agreed
+    * daily stand-up: progress and blockers, tickets updated before the call
+    * weekly user acceptance test review: tests run vs outstanding, ever defect has an owner
+    * weekly delivery call: delivery status, risks and decisions agreed
+    * fortnightly planning: carry-over reviewed and the next sprint committed
+    * show & tell: playback from product, research, and engineering
+    * sprint retro: what worked, what to change, actions
+    * wrap-up: outcomes, lessons learned, and next steps
 * Project management: agile (backlog, ready with AC, discovery/build/refine, qa, blocked, done), sprint goal, regular summary, retro
 * release strategy: feature flag, internal dogfood, shadow deployment, beta cohort, canary 1-5% release for bug focus, rolling release, A/B testing quality focus w/ p-value, recreate (reboot), blue/green (instant) switch, GA, rollback criteria, kill switch
 * post release: iterate or roll back
+
 
 
 
