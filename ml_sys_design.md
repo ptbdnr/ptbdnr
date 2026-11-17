@@ -573,8 +573,11 @@ Model training/fitting:
 * Project management: agile (backlog, ready with AC, discovery/build/refine, qa, blocked, done), sprint goal, regular summary, retro
 * release strategy: feature flag, internal dogfood, shadow deployment, beta cohort, canary 1-5% release for bug focus, rolling release, A/B testing quality focus w/ p-value, recreate (reboot), blue/green (instant) switch, GA, rollback criteria, kill switch
 * post release: iterate or roll back
-
-
+* dependencies:
+    * data and test input: representative dataset
+    * access & environment: dev, hosting & integration access, connectivity with external service providers
+    * people & decisions: governance representatives, SME and end users available, feedback and tool approval, product owner with decision authority, user acceptance test sign-off, communication support for change management
+    * governance & assurance: info sec, responsible AI, data-ethics (ethical walls agreement), approval routes (DPIA, architecture review board), penetration test and remediation,
 
 
 # Definitions
