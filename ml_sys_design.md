@@ -170,8 +170,8 @@ Idiosync:
 | Clustering | $x → k∈K$ / G=(X,E)+sim(i,j)∈E | none / x∈K ∀x∈X  | [Silhouette](#silhouette), [Davies-Bouldin](#davies-bouldin), [Calinski-Harabasz](#calinski-harabasz), + stability across samples, labels exist:[ARI](#ari) or [NMI](#nmi) | 
 | Encoding | $x → z$ | (x, n similar, m different) | [R](#recall)@k, [MRR](#mrr), [Silhouette](#silhouette), [Davies-Bouldin](#davies-bouldin), [Linear probe](#linear-probe) |
 | Retrieval | $q → d$| (q, positives, negatives) | [HitRate](#hitratek)@k, [R](#recall)/[P](#precision)@k, [diversity](#diversity), [catalog coverage](#catalog-coverage) |
-| Pair Ranking | $q → d^{-}<d^{+}$ | (q, 2x scored d) |[MRR](#mrr), [Pairwise Accuracy](#pairwise-accuracy), [ROC-AUC on ordered pairs](#roc-auc-on-ordered-pairs) |
-| List Ranking | $q → sorted(D)$| (q, k scored d) | [mAP](#map), [nDCG](#ndcg)@k |
+| Pair Ranking | $q → d^{-}<d^{+}$ | (q, 2x scored d) | [Pairwise Accuracy](#pairwise-accuracy), [ROC-AUC on ordered pairs](#roc-auc-on-ordered-pairs) |
+| List Ranking | $q → sorted(D)$| (q, k scored d) | [MRR](#mrr), [MAP](#map), [nDCG](#ndcg)@k |
 | Text sequence labeling | token seq -> label seq | (token seq, per-token/span boundary labels) | text sequence pairwise or span-level [F1](#f1) (seqeval) |
 | Generate text2text | $t → \hat{t}$ | $(t, \hat{t})$; preference pairs $(t, \hat{t}^+, \hat{t}^-)$ | [BLEU](#bleu), [GLEU](#bleu), [METEOR](#meteor), [ROUGE](#rouge), [RAGAS metrics](#ragas-metrics), [safety rates](#safety-rates), [perplexity](#perplexity) |
 
@@ -1186,7 +1186,7 @@ Direct Preference Optimization trains a NN on preference pairs (chosen response 
 
 > ranking metric
 
-Mean Reciprocal Rank rewards getting at least one correct result very early, but it only considers the first. For each query $q$, find the rank of the first relevant result, $\text{rank}$. Reciprocal rank is $1/\text{rank}_q$ (or 0 if no relevant item found).
+Mean Reciprocal Rank rewards getting at least one correct result very early, but it only considers the first. For each query $q$, find the rank of the first relevant result, $\text{rank}$. Reciprocal rank is $1/\text{rank}_q$ (or 0 if no relevant item found). It becomes useful if the lists get longer (3+ docs).
 
 Then average over queries:
 
@@ -1195,7 +1195,7 @@ $$
 $$
 
 Issues:
-* only considers the first relevant result
+* only considers the first relevant result.
 
 ## AP
 
@@ -1213,11 +1213,11 @@ Issues:
 
 * designed for binary relevances
 
-## mAP
+## MAP
 
 > ranking/detection metric
 
-Mean Average Precision is used to aggregate AP over multiple classes. Same as AP, it rewards putting true positives early in the ranked list, not just finding them eventually
+Mean Average Precision (MAP) is used to aggregate AP over multiple classes. Same as AP, it rewards putting true positives early in the ranked list, not just finding them eventually
 
 $$
 \text{mAP} = \frac {1}{K} \sum \text{AP}
@@ -1228,6 +1228,9 @@ where $AP$ is the Average Precision
 Issues:
 
 * designed for binary relevances (inherited issue from to AP)
+
+mAP is for computer vision, where the AP for a class is the area under the precision-recall curve. This can be approximated using numerical integration methods such as the trapezoidal rule.
+A common approach is to compute precision at fixed recall levels (e.g., at every 0.1 increment from 0 to 1) and average these values.
 
 ## nDCG
 
